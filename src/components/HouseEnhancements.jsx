@@ -1,5 +1,6 @@
 import React, { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
 
 function smoothstep(min, max, value) {
@@ -606,6 +607,80 @@ function useOscilloscopeScreenTexture() {
     ctx.fillText('CH1: 59.9dB GAIN  |  PM: 76.7°  |  180nm CMOS', 22, 34)
 
     const tex = new THREE.CanvasTexture(canvas)
+    tex.needsUpdate = true
+    return tex
+  }, [])
+}
+
+/**
+ * Generates a vibrant, modern 4K Smart TV screen texture for the Living Room TV console.
+ */
+function useLivingRoomTVScreenTexture() {
+  return useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 640
+    canvas.height = 360
+    const ctx = canvas.getContext('2d')
+
+    const grad = ctx.createLinearGradient(0, 0, 640, 360)
+    grad.addColorStop(0, '#090d16')
+    grad.addColorStop(0.55, '#0f172a')
+    grad.addColorStop(1, '#1e3a8a')
+    ctx.fillStyle = grad
+    ctx.fillRect(0, 0, 640, 360)
+
+    // Subtle glowing wave backdrop
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)'
+    ctx.lineWidth = 4
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath()
+      ctx.moveTo(0, 220 + i * 26)
+      ctx.bezierCurveTo(200, 160 + i * 18, 440, 290 - i * 14, 640, 200 + i * 22)
+      ctx.stroke()
+    }
+
+    // Top bar
+    ctx.fillStyle = '#38bdf8'
+    ctx.font = '800 18px "Inter", sans-serif'
+    ctx.fillText('● LIVE SHOWCASE   |   AKANKSHA TV', 36, 44)
+
+    // Main title
+    ctx.fillStyle = '#ffffff'
+    ctx.font = '900 36px "Inter", sans-serif'
+    ctx.fillText('SARKARI SAHAYAK AI & VLSI', 36, 108)
+
+    ctx.fillStyle = '#fde047'
+    ctx.font = '700 22px "Inter", sans-serif'
+    ctx.fillText('Multilingual Civic Platform • 60% Faster UI • 59.9 dB CMOS', 36, 146)
+
+    // Feature cards on screen
+    const cards = [
+      { title: 'REACT + THREE.JS', sub: 'Interactive 3D & Web', col: '#0284c7' },
+      { title: 'HINDI & DIALECT AI', sub: 'Voice + NLP Assistant', col: '#059669' },
+      { title: 'RISC-V & SILICON', sub: '180nm Analog & CPU', col: '#d97706' },
+    ]
+    cards.forEach((c, idx) => {
+      const cx = 36 + idx * 194
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.82)'
+      ctx.strokeStyle = c.col
+      ctx.lineWidth = 3
+      ctx.fillRect(cx, 188, 178, 126)
+      ctx.strokeRect(cx, 188, 178, 126)
+
+      ctx.fillStyle = c.col
+      ctx.fillRect(cx, 188, 178, 8)
+
+      ctx.fillStyle = '#f8fafc'
+      ctx.font = '800 17px "Inter", sans-serif'
+      ctx.fillText(c.title, cx + 14, 235)
+
+      ctx.fillStyle = '#94a3b8'
+      ctx.font = '600 15px "Inter", sans-serif'
+      ctx.fillText(c.sub, cx + 14, 268)
+    })
+
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.anisotropy = 4
     tex.needsUpdate = true
     return tex
   }, [])
@@ -1564,6 +1639,78 @@ export function KitchenSkillsShowcase() {
       <pointLight position={[-1.74, 1.95, 3.45]} intensity={1.75} distance={3.8} decay={2} color="#fde68a" />
       <pointLight position={[-1.82, 1.72, 2.22]} intensity={1.75} distance={3.8} decay={2} color="#fef08a" />
 
+      {/* --- POLISHED CHROME GOOSENECK TAP ON THE KITCHEN SINK --- */}
+      <group position={[-3.27, 0.895, 2.51]}>
+        {/* Chrome Deck Plate / Escutcheon */}
+        <mesh position={[0, 0.01, 0]} castShadow receiveShadow>
+          <boxGeometry args={[0.06, 0.02, 0.22]} />
+          <meshStandardMaterial color="#e2e8f0" metalness={0.92} roughness={0.14} />
+        </mesh>
+
+        {/* Central Mixer Stem */}
+        <mesh position={[0, 0.065, 0]} castShadow>
+          <cylinderGeometry args={[0.02, 0.024, 0.11, 20]} />
+          <meshStandardMaterial color="#f8fafc" metalness={0.95} roughness={0.12} />
+        </mesh>
+
+        {/* High-Arc Gooseneck Spout curving East (+x) over the double-basin sink */}
+        <mesh position={[0.095, 0.115, 0]} castShadow>
+          <torusGeometry args={[0.095, 0.014, 16, 32, Math.PI]} />
+          <meshStandardMaterial color="#f8fafc" metalness={0.95} roughness={0.12} />
+        </mesh>
+
+        {/* Spout Tip & Aerator Nozzle pointing down into the basin */}
+        <mesh position={[0.19, 0.095, 0]} castShadow>
+          <cylinderGeometry args={[0.015, 0.017, 0.04, 16]} />
+          <meshStandardMaterial color="#cbd5e1" metalness={0.9} roughness={0.2} />
+        </mesh>
+
+        {/* Subtle Gentle Water Stream / Droplet Shimmer from the Tap */}
+        <mesh position={[0.19, -0.02, 0]}>
+          <cylinderGeometry args={[0.005, 0.008, 0.21, 12]} />
+          <meshStandardMaterial
+            color="#bae6fd"
+            emissive="#38bdf8"
+            emissiveIntensity={0.35}
+            transparent
+            opacity={0.48}
+            roughness={0.05}
+          />
+        </mesh>
+
+        {/* Hot Water Handle (Left / South) */}
+        <group position={[0, 0.032, 0.075]}>
+          <mesh position={[0, 0.018, 0]} castShadow>
+            <cylinderGeometry args={[0.014, 0.016, 0.036, 16]} />
+            <meshStandardMaterial color="#f1f5f9" metalness={0.92} roughness={0.15} />
+          </mesh>
+          <mesh position={[0.025, 0.032, 0.015]} rotation={[0, -0.4, Math.PI / 2]} castShadow>
+            <cylinderGeometry args={[0.006, 0.006, 0.065, 12]} />
+            <meshStandardMaterial color="#f8fafc" metalness={0.95} roughness={0.12} />
+          </mesh>
+          <mesh position={[0, 0.037, 0]}>
+            <cylinderGeometry args={[0.007, 0.007, 0.003, 12]} />
+            <meshStandardMaterial color="#ef4444" roughness={0.3} />
+          </mesh>
+        </group>
+
+        {/* Cold Water Handle (Right / North) */}
+        <group position={[0, 0.032, -0.075]}>
+          <mesh position={[0, 0.018, 0]} castShadow>
+            <cylinderGeometry args={[0.014, 0.016, 0.036, 16]} />
+            <meshStandardMaterial color="#f1f5f9" metalness={0.92} roughness={0.15} />
+          </mesh>
+          <mesh position={[0.025, 0.032, -0.015]} rotation={[0, 0.4, Math.PI / 2]} castShadow>
+            <cylinderGeometry args={[0.006, 0.006, 0.065, 12]} />
+            <meshStandardMaterial color="#f8fafc" metalness={0.95} roughness={0.12} />
+          </mesh>
+          <mesh position={[0, 0.037, 0]}>
+            <cylinderGeometry args={[0.007, 0.007, 0.003, 12]} />
+            <meshStandardMaterial color="#38bdf8" roughness={0.3} />
+          </mesh>
+        </group>
+      </group>
+
       {/* --- AI FRIDGE MAGNET 1 (Screen Left): AGENTIC AI & PROMPT ENGINEERING --- */}
       <group position={[-1.55, 1.36, 4.272]} rotation={[0, Math.PI, 0]}>
         <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.004]} castShadow>
@@ -1737,6 +1884,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
   const page1FrontTex = useNewspaperPageTexture('page1-front')
   const page1BackTex = useNewspaperPageTexture('page1-back')
   const page2InsideTex = useNewspaperPageTexture('page2-inside')
+  const tvScreenTex = useLivingRoomTVScreenTexture()
 
   const skill1BadgeTex = useFloatingTextTexture(
     [
@@ -1839,60 +1987,223 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
         </mesh>
       </group>
 
-      {/* 2. Plush 3-Seater Living Room Couch */}
+      {/* 2. Soft, Plush Blue 3-Seater Living Room Couch with Puffy Cushions */}
       <group position={[3.32, 0, 1.92]}>
         {[
-          [-0.72, 0.06, -0.3],
-          [0.72, 0.06, -0.3],
-          [-0.72, 0.06, 0.3],
-          [0.72, 0.06, 0.3],
+          [-0.72, 0.06, -0.28],
+          [0.72, 0.06, -0.28],
+          [-0.72, 0.06, 0.28],
+          [0.72, 0.06, 0.28],
         ].map((leg, i) => (
           <mesh key={`cleg-${i}`} position={leg} castShadow>
-            <cylinderGeometry args={[0.03, 0.022, 0.12, 10]} />
-            <meshStandardMaterial color="#78350f" roughness={0.6} />
+            <cylinderGeometry args={[0.032, 0.022, 0.12, 12]} />
+            <meshStandardMaterial color="#78350f" roughness={0.55} />
           </mesh>
         ))}
-        <mesh position={[0, 0.22, 0]} castShadow receiveShadow>
-          <boxGeometry args={[1.62, 0.22, 0.76]} />
-          <meshStandardMaterial color="#1e293b" roughness={0.75} />
-        </mesh>
-        {[-0.48, 0, 0.48].map((cx, i) => (
-          <mesh key={`seat-${i}`} position={[cx, 0.38, 0.04]} castShadow receiveShadow>
-            <boxGeometry args={[0.46, 0.14, 0.64]} />
-            <meshStandardMaterial color="#334155" roughness={0.7} />
-          </mesh>
-        ))}
-        <mesh position={[0, 0.62, -0.3]} castShadow receiveShadow>
-          <boxGeometry args={[1.62, 0.58, 0.16]} />
-          <meshStandardMaterial color="#0f172a" roughness={0.75} />
-        </mesh>
-        {[-0.48, 0, 0.48].map((cx, i) => (
-          <mesh
-            key={`back-${i}`}
-            position={[cx, 0.62, -0.18]}
-            rotation={[0.12, 0, 0]}
+
+        {/* Soft Rounded Blue Couch Base */}
+        <RoundedBox
+          args={[1.66, 0.22, 0.80]}
+          radius={0.08}
+          smoothness={5}
+          position={[0, 0.22, 0]}
+          castShadow
+          receiveShadow
+        >
+          <meshStandardMaterial color="#1d4ed8" roughness={0.85} />
+        </RoundedBox>
+
+        {/* Three Plush, Puffy Rounded Seat Cushions */}
+        {[-0.50, 0, 0.50].map((cx, i) => (
+          <RoundedBox
+            key={`seat-${i}`}
+            args={[0.49, 0.17, 0.68]}
+            radius={0.075}
+            smoothness={5}
+            position={[cx, 0.38, 0.04]}
             castShadow
             receiveShadow
           >
-            <boxGeometry args={[0.45, 0.42, 0.12]} />
-            <meshStandardMaterial color="#334155" roughness={0.7} />
+            <meshStandardMaterial color="#3b82f6" roughness={0.88} />
+          </RoundedBox>
+        ))}
+
+        {/* Soft Rounded Couch Backrest Frame */}
+        <RoundedBox
+          args={[1.66, 0.56, 0.18]}
+          radius={0.08}
+          smoothness={5}
+          position={[0, 0.60, -0.31]}
+          castShadow
+          receiveShadow
+        >
+          <meshStandardMaterial color="#1e40af" roughness={0.85} />
+        </RoundedBox>
+
+        {/* Three Overstuffed Blue Backrest Cushions */}
+        {[-0.50, 0, 0.50].map((cx, i) => (
+          <RoundedBox
+            key={`back-${i}`}
+            args={[0.48, 0.44, 0.16]}
+            radius={0.07}
+            smoothness={5}
+            position={[cx, 0.63, -0.18]}
+            rotation={[0.14, 0, 0]}
+            castShadow
+            receiveShadow
+          >
+            <meshStandardMaterial color="#60a5fa" roughness={0.88} />
+          </RoundedBox>
+        ))}
+
+        {/* Puffy Rolled/Rounded Blue Armrests */}
+        <RoundedBox
+          args={[0.18, 0.40, 0.82]}
+          radius={0.085}
+          smoothness={5}
+          position={[-0.78, 0.46, 0.01]}
+          castShadow
+          receiveShadow
+        >
+          <meshStandardMaterial color="#2563eb" roughness={0.85} />
+        </RoundedBox>
+        <RoundedBox
+          args={[0.18, 0.40, 0.82]}
+          radius={0.085}
+          smoothness={5}
+          position={[0.78, 0.46, 0.01]}
+          castShadow
+          receiveShadow
+        >
+          <meshStandardMaterial color="#2563eb" roughness={0.85} />
+        </RoundedBox>
+
+        {/* Cozy Plump Throw Cushions / Pillows on the Blue Couch */}
+        {/* Left Baby-Blue & Cream Throw Cushion */}
+        <RoundedBox
+          args={[0.28, 0.28, 0.12]}
+          radius={0.055}
+          smoothness={5}
+          position={[-0.56, 0.56, 0.04]}
+          rotation={[0.18, 0.38, -0.20]}
+          castShadow
+        >
+          <meshStandardMaterial color="#bae6fd" roughness={0.82} />
+        </RoundedBox>
+        {/* Left Accent Warm Gold Cushion */}
+        <RoundedBox
+          args={[0.25, 0.25, 0.11]}
+          radius={0.05}
+          smoothness={5}
+          position={[-0.36, 0.53, 0.07]}
+          rotation={[0.14, 0.22, -0.12]}
+          castShadow
+        >
+          <meshStandardMaterial color="#fde047" roughness={0.82} />
+        </RoundedBox>
+        {/* Center-Right Cozy Cream Cushion */}
+        <RoundedBox
+          args={[0.26, 0.24, 0.11]}
+          radius={0.05}
+          smoothness={5}
+          position={[0.22, 0.53, 0.05]}
+          rotation={[0.20, -0.15, 0.08]}
+          castShadow
+        >
+          <meshStandardMaterial color="#fef3c7" roughness={0.84} />
+        </RoundedBox>
+        {/* Right Soft Sky-Blue Throw Cushion */}
+        <RoundedBox
+          args={[0.28, 0.28, 0.12]}
+          radius={0.055}
+          smoothness={5}
+          position={[0.56, 0.56, 0.04]}
+          rotation={[0.18, -0.38, 0.20]}
+          castShadow
+        >
+          <meshStandardMaterial color="#93c5fd" roughness={0.82} />
+        </RoundedBox>
+      </group>
+
+      {/* 2B. Living Room Widescreen Smart TV & Media Console (Facing the Blue Couch) */}
+      <group position={[3.32, 0, 3.38]} rotation={[0, Math.PI, 0]}>
+        {/* Mid-Century Walnut & Slate TV Media Stand */}
+        <RoundedBox
+          args={[1.38, 0.36, 0.40]}
+          radius={0.03}
+          smoothness={4}
+          position={[0, 0.26, 0]}
+          castShadow
+          receiveShadow
+        >
+          <meshStandardMaterial color="#78350f" roughness={0.5} />
+        </RoundedBox>
+        {/* Console Cabinet Doors & Open Shelf */}
+        <mesh position={[-0.44, 0.26, 0.202]}>
+          <boxGeometry args={[0.42, 0.28, 0.01]} />
+          <meshStandardMaterial color="#92400e" roughness={0.48} />
+        </mesh>
+        <mesh position={[0.44, 0.26, 0.202]}>
+          <boxGeometry args={[0.42, 0.28, 0.01]} />
+          <meshStandardMaterial color="#92400e" roughness={0.48} />
+        </mesh>
+        <mesh position={[0, 0.26, 0.18]}>
+          <boxGeometry args={[0.40, 0.26, 0.04]} />
+          <meshStandardMaterial color="#1e293b" roughness={0.7} />
+        </mesh>
+        {/* Soundbar sitting on top of the TV Media Stand */}
+        <RoundedBox
+          args={[0.68, 0.05, 0.08]}
+          radius={0.015}
+          smoothness={4}
+          position={[0, 0.465, 0.08]}
+          castShadow
+        >
+          <meshStandardMaterial color="#0f172a" metalness={0.5} roughness={0.35} />
+        </RoundedBox>
+        {/* Tapered Wooden Console Legs */}
+        {[
+          [-0.60, 0.05, -0.14],
+          [0.60, 0.05, -0.14],
+          [-0.60, 0.05, 0.14],
+          [0.60, 0.05, 0.14],
+        ].map((lpos, idx) => (
+          <mesh key={`tvleg-${idx}`} position={lpos} castShadow>
+            <cylinderGeometry args={[0.022, 0.015, 0.10, 10]} />
+            <meshStandardMaterial color="#451a03" roughness={0.6} />
           </mesh>
         ))}
-        <mesh position={[-0.76, 0.46, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.14, 0.38, 0.78]} />
-          <meshStandardMaterial color="#1e293b" roughness={0.75} />
+
+        {/* Sleek Metallic TV Pedestal Stand */}
+        <mesh position={[0, 0.455, -0.02]} castShadow>
+          <boxGeometry args={[0.42, 0.02, 0.20]} />
+          <meshStandardMaterial color="#334155" metalness={0.75} roughness={0.25} />
         </mesh>
-        <mesh position={[0.76, 0.46, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.14, 0.38, 0.78]} />
-          <meshStandardMaterial color="#1e293b" roughness={0.75} />
+        <mesh position={[0, 0.52, -0.04]} castShadow>
+          <cylinderGeometry args={[0.032, 0.038, 0.13, 16]} />
+          <meshStandardMaterial color="#334155" metalness={0.75} roughness={0.25} />
         </mesh>
-        <mesh position={[-0.56, 0.54, 0.02]} rotation={[0.15, 0.35, -0.22]} castShadow>
-          <boxGeometry args={[0.26, 0.26, 0.1]} />
-          <meshStandardMaterial color="#89CFF0" roughness={0.55} />
+
+        {/* 55-Inch Ultra-Thin 4K Smart TV Panel */}
+        <RoundedBox
+          args={[1.22, 0.70, 0.035]}
+          radius={0.012}
+          smoothness={4}
+          position={[0, 0.90, -0.02]}
+          castShadow
+          receiveShadow
+        >
+          <meshStandardMaterial color="#090d16" metalness={0.65} roughness={0.22} />
+        </RoundedBox>
+        {/* Illuminated 4K Display Screen */}
+        <mesh position={[0, 0.90, 0.001]}>
+          <planeGeometry args={[1.16, 0.64]} />
+          <meshBasicMaterial map={tvScreenTex} />
         </mesh>
-        <mesh position={[0.56, 0.54, 0.02]} rotation={[0.15, -0.35, 0.22]} castShadow>
-          <boxGeometry args={[0.26, 0.26, 0.1]} />
-          <meshStandardMaterial color="#fbbf24" roughness={0.55} />
+        {/* Power Status LED */}
+        <mesh position={[0.54, 0.565, 0.002]}>
+          <sphereGeometry args={[0.008, 8, 8]} />
+          <meshBasicMaterial color="#38bdf8" />
         </mesh>
       </group>
 

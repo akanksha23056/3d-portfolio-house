@@ -81,13 +81,13 @@ const SPLINE_KEYFRAMES = [
   { cam: [-1.74, 1.43, 3.12], look: [-1.74, 1.43, 4.27], chapter: 2 },
   { cam: [-1.74, 1.43, 3.18], look: [-1.74, 1.43, 4.27], chapter: 2 },
 
-  // 3. Smooth 180° Pan Across the Kitchen to the Oven (u = 0.35, 0.40, 0.45)
-  { cam: [-1.65, 1.34, 2.88], look: [-3.1, 1.24, 2.75], chapter: 3 },
+  // 3. Smooth 180° Pan Across the Kitchen Sink & Tap to the Oven (u = 0.35, 0.40, 0.45)
+  { cam: [-1.72, 1.32, 2.82], look: [-3.18, 1.04, 2.52], chapter: 3 },
   { cam: [-1.815, 1.14, 2.46], look: [-1.815, 0.98, 1.61], chapter: 3 },
   { cam: [-1.815, 1.10, 2.38], look: [-1.815, 0.96, 1.61], chapter: 3 },
 
   // 4. Zooming Out from Oven & Panning East into the Living Room (u = 0.50, 0.55)
-  { cam: [0.65, 1.36, 2.75], look: [3.45, 0.92, 1.98], chapter: 4 },
+  { cam: [0.85, 1.32, 2.58], look: [3.45, 0.78, 2.42], chapter: 4 },
   { cam: [3.65, 1.22, 2.88], look: [4.55, 0.65, 1.98], chapter: 4 },
 
   // 5. Zooming Into the Top of the Newspaper — Page 1 (u = 0.60)
