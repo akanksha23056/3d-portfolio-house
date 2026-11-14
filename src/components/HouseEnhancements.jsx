@@ -8,20 +8,19 @@ function smoothstep(min, max, value) {
 }
 
 /**
- * Generates a high-DPI transparent CanvasTexture for crisp floating 3D labels.
+ * Generates clean, borderless diegetic 3D editorial/stencil typography (NO neon pill boxes!).
+ * Uses rich multi-layer drop shadows and warm subtle glow so it sits naturally in the 3D scene.
  */
 function useFloatingTextTexture(lines, options = {}) {
   const {
     color = '#ffffff',
-    subColor = '#bae6fd',
-    stroke = 'rgba(15, 23, 42, 0.92)',
-    badgeBg = 'rgba(15, 23, 42, 0.78)',
-    badgeBorder = 'rgba(56, 189, 248, 0.88)',
+    subColor = '#fde68a',
+    stroke = 'rgba(15, 23, 42, 0.95)',
     align = 'center',
-    fontSize = 74,
-    subFontSize = 42,
+    fontSize = 82,
+    subFontSize = 44,
     width = 1024,
-    height = 420,
+    height = 380,
   } = options
 
   return useMemo(() => {
@@ -31,35 +30,9 @@ function useFloatingTextTexture(lines, options = {}) {
     const ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, width, height)
 
-    const padX = 28
-    const padY = 24
-    const r = 36
-    const w = width - padX * 2
-    const h = height - padY * 2
-
-    ctx.save()
-    ctx.beginPath()
-    ctx.moveTo(padX + r, padY)
-    ctx.lineTo(padX + w - r, padY)
-    ctx.quadraticCurveTo(padX + w, padY, padX + w, padY + r)
-    ctx.lineTo(padX + w, padY + h - r)
-    ctx.quadraticCurveTo(padX + w, padY + h, padX + w - r, padY + h)
-    ctx.lineTo(padX + r, padY + h)
-    ctx.quadraticCurveTo(padX, padY + h, padX, padY + h - r)
-    ctx.lineTo(padX, padY + r)
-    ctx.quadraticCurveTo(padX, padY, padX + r, padY)
-    ctx.closePath()
-
-    ctx.fillStyle = badgeBg
-    ctx.fill()
-    ctx.lineWidth = 6
-    ctx.strokeStyle = badgeBorder
-    ctx.stroke()
-    ctx.restore()
-
     ctx.textAlign = align
     ctx.textBaseline = 'middle'
-    const xPos = align === 'center' ? width / 2 : align === 'right' ? width - 60 : 60
+    const xPos = align === 'center' ? width / 2 : align === 'right' ? width - 48 : 48
 
     let yCursor = lines.length > 1 ? height * 0.38 : height * 0.5
     lines.forEach((lineObj) => {
@@ -67,27 +40,33 @@ function useFloatingTextTexture(lines, options = {}) {
       const isSub = typeof lineObj === 'object' && lineObj.sub
       const size = isSub ? subFontSize : fontSize
 
-      ctx.font = `italic 900 ${size}px "Inter", "Segoe UI", "Arial Black", sans-serif`
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.65)'
-      ctx.shadowBlur = 10
-      ctx.shadowOffsetX = 3
-      ctx.shadowOffsetY = 4
+      ctx.font = isSub
+        ? `800 ${size}px "Inter", "Segoe UI", sans-serif`
+        : `italic 900 ${size}px "Inter", "Segoe UI", "Arial Black", sans-serif`
 
-      ctx.lineWidth = isSub ? 6 : 10
+      // Deep soft ambient occlusion shadow behind letters
+      ctx.shadowColor = 'rgba(2, 6, 23, 0.88)'
+      ctx.shadowBlur = isSub ? 14 : 22
+      ctx.shadowOffsetX = 0
+      ctx.shadowOffsetY = 6
+
+      ctx.lineWidth = isSub ? 7 : 12
+      ctx.lineJoin = 'round'
       ctx.strokeStyle = stroke
       ctx.strokeText(text, xPos, yCursor)
 
+      ctx.shadowBlur = 4
       ctx.fillStyle = isSub ? subColor : color
       ctx.fillText(text, xPos, yCursor)
 
-      yCursor += size * 1.32
+      yCursor += size * 1.28
     })
 
     const tex = new THREE.CanvasTexture(canvas)
     tex.anisotropy = 4
     tex.needsUpdate = true
     return tex
-  }, [lines, color, subColor, stroke, badgeBg, badgeBorder, align, fontSize, subFontSize, width, height])
+  }, [lines, color, subColor, stroke, align, fontSize, subFontSize, width, height])
 }
 
 /**
@@ -238,11 +217,9 @@ function useNewspaperPageTexture(pageType) {
     canvas.height = 1024
     const ctx = canvas.getContext('2d')
 
-    // Warm newsprint paper base
     ctx.fillStyle = '#faf6ee'
     ctx.fillRect(0, 0, 1024, 1024)
 
-    // Outer double newsprint frame
     ctx.strokeStyle = '#1e293b'
     ctx.lineWidth = 8
     ctx.strokeRect(24, 24, 976, 976)
@@ -250,7 +227,6 @@ function useNewspaperPageTexture(pageType) {
     ctx.strokeRect(36, 36, 952, 952)
 
     if (pageType === 'page1-front') {
-      // Masthead Header at the very top of Newspaper Page 1
       ctx.fillStyle = '#0f172a'
       ctx.font = '900 44px Georgia, "Times New Roman", serif'
       ctx.textAlign = 'center'
@@ -269,7 +245,6 @@ function useNewspaperPageTexture(pageType) {
       ctx.font = '700 22px "Inter", sans-serif'
       ctx.fillText('IIIT-DELHI EDITION  •  FRONT PAGE FEATURE  •  SCROLL TO FLIP PAGE ➔', 512, 134)
 
-      // BIG TOP BANNER REVEALING SKILL 1 (VLSI & CMOS IC DESIGN)
       ctx.fillStyle = '#0f172a'
       ctx.fillRect(52, 166, 920, 215)
       ctx.strokeStyle = '#0284c7'
@@ -288,19 +263,16 @@ function useNewspaperPageTexture(pageType) {
       ctx.font = '800 32px "Inter", sans-serif'
       ctx.fillText('CADENCE VIRTUOSO  •  VERILOG  •  VHDL  •  RTL', 512, 344)
 
-      // Sub-headline below banner
       ctx.fillStyle = '#0f172a'
       ctx.font = '900 36px Georgia, serif'
       ctx.fillText('2-Stage CMOS Op-Amp Hits 59.9 dB Gain & 76.7° PM', 512, 434)
 
-      // Left Column: Op-Amp Schematic & Bode Plot Graphic
       ctx.fillStyle = '#e0f2fe'
       ctx.fillRect(56, 468, 435, 310)
       ctx.strokeStyle = '#0284c7'
       ctx.lineWidth = 4
       ctx.strokeRect(56, 468, 435, 310)
 
-      // Draw Bode Gain Curve & Op-Amp triangle symbol
       ctx.strokeStyle = '#0f172a'
       ctx.lineWidth = 6
       ctx.beginPath()
@@ -322,7 +294,6 @@ function useNewspaperPageTexture(pageType) {
       ctx.font = '800 26px "Inter", sans-serif'
       ctx.fillText('59.9 dB DC GAIN | 76.7° PM', 274, 738)
 
-      // Right Column: 21.3 um2 CMOS Latch & Specs
       ctx.fillStyle = '#f1f5f9'
       ctx.fillRect(520, 468, 452, 310)
       ctx.strokeStyle = '#475569'
@@ -342,14 +313,12 @@ function useNewspaperPageTexture(pageType) {
       ctx.fillStyle = '#0284c7'
       ctx.fillText('• Low-Power 180nm Node', 548, 744)
 
-      // Bottom Newsprint Columns
       ctx.fillStyle = '#334155'
       for (let y = 815; y <= 945; y += 26) {
         ctx.fillRect(56, y, 435, 10)
         ctx.fillRect(520, y, 452, 10)
       }
     } else if (pageType === 'page2-inside') {
-      // Masthead Header at the top of Newspaper Page 2 (Revealed after Flip!)
       ctx.fillStyle = '#0f172a'
       ctx.font = '900 40px Georgia, "Times New Roman", serif'
       ctx.textAlign = 'center'
@@ -368,7 +337,6 @@ function useNewspaperPageTexture(pageType) {
       ctx.font = '700 22px "Inter", sans-serif'
       ctx.fillText('SYSTEMS ARCHITECTURE  •  INSIDE FEATURE  •  PAGE FLIPPED', 512, 134)
 
-      // BIG TOP BANNER REVEALING SKILL 2 (EMBEDDED C/C++ & RISC-V ISA)
       ctx.fillStyle = '#064e3b'
       ctx.fillRect(52, 166, 920, 215)
       ctx.strokeStyle = '#34d399'
@@ -387,12 +355,10 @@ function useNewspaperPageTexture(pageType) {
       ctx.font = '800 31px "Inter", sans-serif'
       ctx.fillText('5-STAGE PIPELINE  •  BIOMETRIC SCANNER  •  AUDIO AMP', 512, 344)
 
-      // Sub-headline below banner
       ctx.fillStyle = '#0f172a'
       ctx.font = '900 35px Georgia, serif'
       ctx.fillText('5-Stage Pipelined RISC-V Simulator & Biometric System', 512, 434)
 
-      // 5-Stage Pipeline Diagram Box
       ctx.fillStyle = '#ecfdf5'
       ctx.fillRect(56, 468, 916, 150)
       ctx.strokeStyle = '#059669'
@@ -413,7 +379,6 @@ function useNewspaperPageTexture(pageType) {
         ctx.fillText(st, bx + 66, 554)
       })
 
-      // Two Feature Boxes Below Pipeline
       ctx.textAlign = 'left'
       ctx.fillStyle = '#f1f5f9'
       ctx.fillRect(56, 642, 440, 290)
@@ -445,7 +410,6 @@ function useNewspaperPageTexture(pageType) {
       ctx.fillText('• 3-Band Op-Amp Equalizer', 550, 820)
       ctx.fillText('• Zero-Distortion Bass/Treble', 550, 862)
     } else {
-      // Back of Page 1 (visible on the left side of the spread after Page 1 flips open)
       ctx.fillStyle = '#0f172a'
       ctx.font = '900 34px Georgia, serif'
       ctx.textAlign = 'center'
@@ -457,7 +421,6 @@ function useNewspaperPageTexture(pageType) {
       ctx.font = '900 42px "Inter", sans-serif'
       ctx.fillText('$689.56B GLOBAL CHIP KPI REPORT', 512, 208)
 
-      // Bar chart graphic
       const barH = [180, 260, 220, 340, 410, 470]
       barH.forEach((h, i) => {
         ctx.fillStyle = i % 2 === 0 ? '#0284c7' : '#059669'
@@ -474,6 +437,178 @@ function useNewspaperPageTexture(pageType) {
     tex.needsUpdate = true
     return tex
   }, [pageType])
+}
+
+/**
+ * Generates original artwork textures for Akanksha's Meraki Art & Machaan Theatre Studio.
+ */
+function useStudioArtworkTexture(variant) {
+  return useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 512
+    canvas.height = 512
+    const ctx = canvas.getContext('2d')
+
+    if (variant === 'easel-masterpiece') {
+      // Rich midnight cobalt & golden-hour impasto landscape with swirling stars
+      const grad = ctx.createLinearGradient(0, 0, 0, 512)
+      grad.addColorStop(0, '#090d16')
+      grad.addColorStop(0.45, '#1e3a8a')
+      grad.addColorStop(0.78, '#c2410c')
+      grad.addColorStop(1, '#fde047')
+      ctx.fillStyle = grad
+      ctx.fillRect(0, 0, 512, 512)
+
+      // Glowing crescent moon & swirling brushstrokes
+      ctx.fillStyle = '#fef08a'
+      ctx.beginPath()
+      ctx.arc(370, 118, 52, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.strokeStyle = 'rgba(186, 230, 253, 0.7)'
+      ctx.lineWidth = 10
+      ctx.lineCap = 'round'
+      for (let i = 0; i < 7; i++) {
+        ctx.beginPath()
+        ctx.arc(170 + i * 32, 165 + (i % 2) * 28, 38 + i * 7, 0.2, Math.PI * 1.35)
+        ctx.stroke()
+      }
+
+      // Mountain silhouettes
+      ctx.fillStyle = '#0f172a'
+      ctx.beginPath()
+      ctx.moveTo(0, 410)
+      ctx.lineTo(145, 285)
+      ctx.lineTo(275, 375)
+      ctx.lineTo(410, 255)
+      ctx.lineTo(512, 355)
+      ctx.lineTo(512, 512)
+      ctx.lineTo(0, 512)
+      ctx.closePath()
+      ctx.fill()
+    } else if (variant === 'machaan-theatre') {
+      // Crimson & gold theatrical spotlight poster ("MACHAAN — ASHOKA STAGE PLAY WINNER")
+      const grad = ctx.createRadialGradient(256, 120, 20, 256, 280, 380)
+      grad.addColorStop(0, '#fde047')
+      grad.addColorStop(0.4, '#be123c')
+      grad.addColorStop(1, '#1e1b4b')
+      ctx.fillStyle = grad
+      ctx.fillRect(0, 0, 512, 512)
+
+      // Golden stage beam cone
+      ctx.fillStyle = 'rgba(254, 240, 138, 0.28)'
+      ctx.beginPath()
+      ctx.moveTo(256, 24)
+      ctx.lineTo(75, 490)
+      ctx.lineTo(437, 490)
+      ctx.closePath()
+      ctx.fill()
+
+      ctx.fillStyle = '#fef08a'
+      ctx.font = '900 44px Georgia, serif'
+      ctx.textAlign = 'center'
+      ctx.fillText('MACHAAN', 256, 155)
+      ctx.font = 'italic 700 26px "Inter", sans-serif'
+      ctx.fillText('STAGE PLAY WINNER', 256, 198)
+
+      // Stylized theatre masks / silhouette
+      ctx.strokeStyle = '#ffffff'
+      ctx.lineWidth = 10
+      ctx.beginPath()
+      ctx.arc(210, 310, 52, 0, Math.PI * 2)
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.arc(305, 330, 52, 0, Math.PI * 2)
+      ctx.stroke()
+    } else {
+      // Meraki botanical & geometric study
+      ctx.fillStyle = '#fefce8'
+      ctx.fillRect(0, 0, 512, 512)
+
+      ctx.fillStyle = '#f97316'
+      ctx.beginPath()
+      ctx.arc(175, 190, 95, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.fillStyle = '#0284c7'
+      ctx.beginPath()
+      ctx.arc(335, 325, 105, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.strokeStyle = '#0f172a'
+      ctx.lineWidth = 9
+      ctx.beginPath()
+      ctx.moveTo(120, 445)
+      ctx.quadraticCurveTo(256, 240, 390, 85)
+      ctx.stroke()
+    }
+
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.needsUpdate = true
+    return tex
+  }, [variant])
+}
+
+/**
+ * Generates an animated-style Oscilloscope CRT screen texture for the Silicon Lab Bench.
+ */
+function useOscilloscopeScreenTexture() {
+  return useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 512
+    canvas.height = 340
+    const ctx = canvas.getContext('2d')
+
+    ctx.fillStyle = '#022c22'
+    ctx.fillRect(0, 0, 512, 340)
+
+    // Graticule grid
+    ctx.strokeStyle = 'rgba(52, 211, 153, 0.22)'
+    ctx.lineWidth = 2
+    for (let x = 0; x <= 512; x += 64) {
+      ctx.beginPath()
+      ctx.moveTo(x, 0)
+      ctx.lineTo(x, 340)
+      ctx.stroke()
+    }
+    for (let y = 0; y <= 340; y += 56) {
+      ctx.beginPath()
+      ctx.moveTo(0, y)
+      ctx.lineTo(512, y)
+      ctx.stroke()
+    }
+
+    // Channel 1: High-Gain Op-Amp Sine Wave (Cyan/Green)
+    ctx.strokeStyle = '#34d399'
+    ctx.lineWidth = 6
+    ctx.beginPath()
+    for (let x = 16; x < 496; x += 4) {
+      const y = 140 + Math.sin((x / 480) * Math.PI * 4) * 72
+      if (x === 16) ctx.moveTo(x, y)
+      else ctx.lineTo(x, y)
+    }
+    ctx.stroke()
+
+    // Channel 2: 4-Bit CMOS Latch Clock Pulse (Yellow)
+    ctx.strokeStyle = '#fde047'
+    ctx.lineWidth = 4
+    ctx.beginPath()
+    for (let x = 16; x < 496; x += 60) {
+      ctx.lineTo(x, 285)
+      ctx.lineTo(x, 240)
+      ctx.lineTo(x + 30, 240)
+      ctx.lineTo(x + 30, 285)
+    }
+    ctx.stroke()
+
+    ctx.fillStyle = '#6ee7b7'
+    ctx.font = '800 22px monospace'
+    ctx.fillText('CH1: 59.9dB GAIN  |  PM: 76.7°  |  180nm CMOS', 22, 34)
+
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.needsUpdate = true
+    return tex
+  }, [])
 }
 
 /**
@@ -515,25 +650,23 @@ export function useWelcomeSignTexture() {
 }
 
 /**
- * 3D Plane displaying crisp floating typography with a subtle glass pill backing.
+ * Clean, borderless 3D floating typography plane.
  */
 function FloatingLabel3D({
   position,
   rotation = [0, 0, 0],
-  size = [0.42, 0.18],
+  size = [0.46, 0.17],
   lines,
   color = '#ffffff',
-  subColor = '#bae6fd',
-  badgeBorder = 'rgba(56, 189, 248, 0.85)',
-  fontSize = 74,
-  subFontSize = 42,
+  subColor = '#fde68a',
+  fontSize = 82,
+  subFontSize = 44,
   bobPhase = 0,
 }) {
   const meshRef = useRef(null)
   const tex = useFloatingTextTexture(lines, {
     color,
     subColor,
-    badgeBorder,
     fontSize,
     subFontSize,
   })
@@ -541,7 +674,7 @@ function FloatingLabel3D({
   useFrame(({ clock }) => {
     if (meshRef.current) {
       meshRef.current.position.y =
-        position[1] + Math.sin(clock.getElapsedTime() * 2.4 + bobPhase) * 0.008
+        position[1] + Math.sin(clock.getElapsedTime() * 2.2 + bobPhase) * 0.006
     }
   })
 
@@ -554,18 +687,129 @@ function FloatingLabel3D({
 }
 
 /**
+ * Warm Volumetric Golden Sunbeams slanting through the house windows + drifting golden dust motes.
+ * Gives the interior a cozy, sunlit miniature-diorama atmosphere!
+ */
+export function GoldenWindowSunbeams() {
+  const beamTex = useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 256
+    canvas.height = 512
+    const ctx = canvas.getContext('2d')
+    const grad = ctx.createLinearGradient(0, 0, 0, 512)
+    grad.addColorStop(0, 'rgba(254, 240, 138, 0.22)')
+    grad.addColorStop(0.5, 'rgba(253, 224, 71, 0.10)')
+    grad.addColorStop(1, 'rgba(253, 224, 71, 0.0)')
+    ctx.fillStyle = grad
+    ctx.fillRect(0, 0, 256, 512)
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.needsUpdate = true
+    return tex
+  }, [])
+
+  const motesRef = useRef(null)
+  const motes = useMemo(() => {
+    const arr = []
+    for (let i = 0; i < 36; i++) {
+      arr.push({
+        id: i,
+        x: -2.8 + ((i * 7) % 10) * 0.82,
+        y: 0.45 + ((i * 3) % 7) * 0.24,
+        z: -1.2 + ((i * 5) % 9) * 0.65,
+        phase: i * 0.9,
+      })
+    }
+    return arr
+  }, [])
+
+  useFrame(({ clock }) => {
+    if (!motesRef.current) return
+    const t = clock.getElapsedTime()
+    motesRef.current.children.forEach((child, idx) => {
+      const m = motes[idx]
+      if (!m) return
+      child.position.y = m.y + Math.sin(t * 1.2 + m.phase) * 0.08
+      child.position.x = m.x + Math.cos(t * 0.8 + m.phase) * 0.05
+    })
+  })
+
+  return (
+    <group>
+      {/* Sunbeam streaming through the Left Kitchen Window */}
+      <mesh
+        position={[-2.65, 1.15, 3.85]}
+        rotation={[0.48, -0.18, -0.12]}
+      >
+        <coneGeometry args={[0.95, 2.8, 16, 1, true]} />
+        <meshBasicMaterial
+          map={beamTex}
+          transparent
+          opacity={0.55}
+          depthWrite={false}
+          side={THREE.DoubleSide}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+
+      {/* Sunbeams streaming through the Right Living Room Panoramic Window */}
+      {[1.85, 3.25].map((bx, i) => (
+        <mesh
+          key={`lbeam-${i}`}
+          position={[bx, 1.12, 3.65]}
+          rotation={[0.52, -0.22, -0.1]}
+        >
+          <coneGeometry args={[1.15, 3.1, 16, 1, true]} />
+          <meshBasicMaterial
+            map={beamTex}
+            transparent
+            opacity={0.5}
+            depthWrite={false}
+            side={THREE.DoubleSide}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
+      ))}
+
+      {/* Sunbeam streaming into the Living Room Side Table from the East Window */}
+      <mesh
+        position={[4.85, 1.18, 2.35]}
+        rotation={[0.15, 0, 0.52]}
+      >
+        <coneGeometry args={[0.9, 2.6, 16, 1, true]} />
+        <meshBasicMaterial
+          map={beamTex}
+          transparent
+          opacity={0.48}
+          depthWrite={false}
+          side={THREE.DoubleSide}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+
+      {/* Floating Golden Dust Motes in the Sunlit Interior */}
+      <group ref={motesRef}>
+        {motes.map((m) => (
+          <mesh key={`mote-${m.id}`} position={[m.x, m.y, m.z]}>
+            <sphereGeometry args={[0.012, 6, 6]} />
+            <meshBasicMaterial color="#fef08a" transparent opacity={0.55} />
+          </mesh>
+        ))}
+      </group>
+    </group>
+  )
+}
+
+/**
  * Custom Baby-Blue Front Wall (at z = 5.10) with two SEE-THROUGH windows.
  */
 export function FrontWallWithWindows() {
   return (
     <group position={[0, 0, 5.10]}>
-      {/* 1. Far-Left Wall Pillar: x from -3.54 to -3.28 (width 0.26) */}
       <mesh position={[-3.41, 1.25, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.26, 2.5, 0.2]} />
         <meshStandardMaterial color="#89CFF0" roughness={0.6} />
       </mesh>
 
-      {/* 2. Left Kitchen Window Section: x from -3.28 to -2.20 (width 1.08), opening y: 1.02..2.02 */}
       <mesh position={[-2.74, 0.51, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.08, 1.02, 0.2]} />
         <meshStandardMaterial color="#89CFF0" roughness={0.6} />
@@ -631,13 +875,11 @@ export function FrontWallWithWindows() {
         ))}
       </group>
 
-      {/* 3. Solid Wall Pillar Behind Fridge & Left of Front Door: x from -2.20 to -0.98 (width 1.22) */}
       <mesh position={[-1.59, 1.25, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.22, 2.5, 0.2]} />
         <meshStandardMaterial color="#89CFF0" roughness={0.6} />
       </mesh>
 
-      {/* 4. Front Door Header above Doorway: x from -0.98 to -0.08 (width 0.90), y: 2.04..2.50 */}
       <mesh position={[-0.53, 2.27, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.9, 0.46, 0.2]} />
         <meshStandardMaterial color="#89CFF0" roughness={0.6} />
@@ -655,13 +897,11 @@ export function FrontWallWithWindows() {
         <meshStandardMaterial color="#f8fafc" roughness={0.4} />
       </mesh>
 
-      {/* 5. Wall Pillar Right of Front Door: x from -0.08 to 0.86 (width 0.94) */}
       <mesh position={[0.39, 1.25, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.94, 2.5, 0.2]} />
         <meshStandardMaterial color="#89CFF0" roughness={0.6} />
       </mesh>
 
-      {/* 6. Right Panoramic Living Room Window: x from 0.86 to 4.26 (width 3.40), opening y: 0.68..2.04 */}
       <mesh position={[2.56, 0.34, 0]} castShadow receiveShadow>
         <boxGeometry args={[3.4, 0.68, 0.2]} />
         <meshStandardMaterial color="#89CFF0" roughness={0.6} />
@@ -721,7 +961,6 @@ export function FrontWallWithWindows() {
         ))}
       </group>
 
-      {/* 7. Far-Right Front Wall Pillar: x from 4.26 to 5.86 (width 1.60) */}
       <mesh position={[5.06, 1.25, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.6, 2.5, 0.2]} />
         <meshStandardMaterial color="#89CFF0" roughness={0.6} />
@@ -731,8 +970,7 @@ export function FrontWallWithWindows() {
 }
 
 /**
- * Smooth, non-low-poly Atmospheric Sky Dome Shader + Soft Volumetric Moving Clouds
- * + Wind Streamlines & Drifting Breeze Petals.
+ * Smooth Atmospheric Sky Dome Shader + Soft Volumetric Moving Clouds + Wind Streamlines.
  */
 export function AtmosphericSkyAndWind() {
   const cloudPuffTex = useMemo(() => {
@@ -1292,7 +1530,8 @@ export function DeepBlueTiledRoof() {
 }
 
 /**
- * Room 1 — Kitchen Skills Showcase (Fridge Magnets + Oven Skill).
+ * Room 1 — Kitchen Skills Showcase (Fridge Magnets + Oven Skill) with warm gallery spotlights
+ * and clean, borderless diegetic 3D typography.
  */
 export function KitchenSkillsShowcase() {
   const promptMagnetTex = useMagnetFaceTexture('prompt-ai')
@@ -1321,8 +1560,9 @@ export function KitchenSkillsShowcase() {
 
   return (
     <group>
-      <pointLight position={[-1.72, 1.85, 3.25]} intensity={1.15} distance={4.5} color="#fffbeb" />
-      <pointLight position={[-1.82, 1.75, 2.25]} intensity={1.15} distance={4.5} color="#e0f2fe" />
+      {/* Warm Focused Gallery Lights over the Fridge and the Oven */}
+      <pointLight position={[-1.74, 1.95, 3.45]} intensity={1.75} distance={3.8} decay={2} color="#fde68a" />
+      <pointLight position={[-1.82, 1.72, 2.22]} intensity={1.75} distance={3.8} decay={2} color="#fef08a" />
 
       {/* --- AI FRIDGE MAGNET 1 (Screen Left): AGENTIC AI & PROMPT ENGINEERING --- */}
       <group position={[-1.55, 1.36, 4.272]} rotation={[0, Math.PI, 0]}>
@@ -1367,13 +1607,12 @@ export function KitchenSkillsShowcase() {
       </group>
 
       <FloatingLabel3D
-        position={[-1.54, 1.57, 4.22]}
+        position={[-1.54, 1.56, 4.23]}
         rotation={[0, Math.PI, 0]}
-        size={[0.37, 0.155]}
-        badgeBorder="rgba(56, 189, 248, 0.95)"
+        size={[0.38, 0.15]}
         color="#ffffff"
         subColor="#7dd3fc"
-        fontSize={68}
+        fontSize={72}
         subFontSize={42}
         bobPhase={0}
         lines={[
@@ -1417,13 +1656,12 @@ export function KitchenSkillsShowcase() {
       </group>
 
       <FloatingLabel3D
-        position={[-1.95, 1.57, 4.22]}
+        position={[-1.95, 1.56, 4.23]}
         rotation={[0, Math.PI, 0]}
-        size={[0.37, 0.155]}
-        badgeBorder="rgba(52, 211, 153, 0.95)"
+        size={[0.38, 0.15]}
         color="#ffffff"
         subColor="#6ee7b7"
-        fontSize={68}
+        fontSize={72}
         subFontSize={42}
         bobPhase={1.6}
         lines={[
@@ -1476,11 +1714,10 @@ export function KitchenSkillsShowcase() {
         <FloatingLabel3D
           position={[0, 1.21, 0.04]}
           rotation={[0, 0, 0]}
-          size={[0.62, 0.21]}
-          badgeBorder="rgba(56, 189, 248, 0.95)"
+          size={[0.64, 0.21]}
           color="#ffffff"
-          subColor="#bae6fd"
-          fontSize={72}
+          subColor="#fde68a"
+          fontSize={76}
           subFontSize={42}
           bobPhase={0.8}
           lines={[
@@ -1495,7 +1732,6 @@ export function KitchenSkillsShowcase() {
 
 /**
  * Room 2 — Living Room Couch, Side Table, Steaming Coffee Cup & Interactive 3D Page-Flipping Newspaper.
- * Positioned along the solid North interior wall of the Living Room (x: 2.5..5.4, z: 1.5..2.8).
  */
 export function LivingRoomSkillsShowcase({ scrollRef }) {
   const page1FrontTex = useNewspaperPageTexture('page1-front')
@@ -1509,9 +1745,8 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
     ],
     {
       color: '#ffffff',
-      subColor: '#7dd3fc',
-      badgeBorder: 'rgba(56, 189, 248, 0.95)',
-      fontSize: 66,
+      subColor: '#fde047',
+      fontSize: 70,
       subFontSize: 40,
     }
   )
@@ -1524,8 +1759,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
     {
       color: '#ffffff',
       subColor: '#6ee7b7',
-      badgeBorder: 'rgba(52, 211, 153, 0.95)',
-      fontSize: 64,
+      fontSize: 68,
       subFontSize: 38,
     }
   )
@@ -1539,8 +1773,8 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
     const t = clock.getElapsedTime()
     const s = scrollRef ? scrollRef.current : 0
 
-    // Newspaper page flip triggers smoothly after we zoom into Page 1 (between scroll = 0.855 and 0.945)
-    const flipProgress = smoothstep(0.855, 0.945, s)
+    // Newspaper page flip triggers smoothly between scroll = 0.62 and 0.70
+    const flipProgress = smoothstep(0.62, 0.70, s)
     const targetAngle = flipProgress * (Math.PI * 0.96)
 
     if (pageFlipHingeRef.current) {
@@ -1552,7 +1786,6 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
       )
     }
 
-    // Smoothly transition the floating skill badge above the newspaper as the page flips
     if (badge1Ref.current && badge2Ref.current) {
       const p1Scale = 1 - smoothstep(0.35, 0.55, flipProgress)
       const p2Scale = smoothstep(0.45, 0.68, flipProgress)
@@ -1562,7 +1795,6 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
       badge2Ref.current.visible = p2Scale > 0.01
     }
 
-    // Gentle rising steam animation over the coffee cup
     if (coffeeSteamRef.current) {
       coffeeSteamRef.current.position.y = 0.12 + Math.sin(t * 2.5) * 0.012
       coffeeSteamRef.current.rotation.y = t * 0.6
@@ -1571,24 +1803,44 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
 
   return (
     <group>
-      {/* Dedicated Warm Reading Light above the Living Room Couch & Side Table */}
-      <pointLight position={[4.5, 1.85, 2.25]} intensity={1.35} distance={5.5} color="#fffbeb" />
+      {/* Warm Focused Reading Lamp Light over the Side Table & Newspaper */}
+      <pointLight position={[4.8, 1.65, 2.05]} intensity={1.9} distance={4.5} decay={2} color="#fde68a" />
 
-      {/* 1. Cozy Living Room Area Rug on the Floor */}
-      <group position={[3.85, 0.012, 2.35]}>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-          <planeGeometry args={[2.9, 1.85]} />
-          <meshStandardMaterial color="#e0f2fe" roughness={0.9} />
+      {/* Cozy Living Room Floor Lamp standing beside the table */}
+      <group position={[5.35, 0, 1.72]}>
+        <mesh position={[0, 0.03, 0]} castShadow>
+          <cylinderGeometry args={[0.17, 0.2, 0.05, 16]} />
+          <meshStandardMaterial color="#78350f" roughness={0.5} />
         </mesh>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.003, 0]} receiveShadow>
-          <planeGeometry args={[2.55, 1.52]} />
-          <meshStandardMaterial color="#bae6fd" roughness={0.9} />
+        <mesh position={[0, 0.78, 0]} castShadow>
+          <cylinderGeometry args={[0.024, 0.024, 1.5, 12]} />
+          <meshStandardMaterial color="#78350f" roughness={0.5} />
+        </mesh>
+        <mesh position={[0, 1.52, 0]}>
+          <cylinderGeometry args={[0.15, 0.25, 0.3, 18]} />
+          <meshStandardMaterial
+            color="#fef3c7"
+            emissive="#f59e0b"
+            emissiveIntensity={0.85}
+            roughness={0.35}
+          />
         </mesh>
       </group>
 
-      {/* 2. Plush 3-Seater Living Room Couch (along the solid North wall z = 1.46, facing South +z) */}
+      {/* 1. Cozy Living Room Area Rug */}
+      <group position={[3.85, 0.012, 2.35]}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+          <planeGeometry args={[2.9, 1.85]} />
+          <meshStandardMaterial color="#fef3c7" roughness={0.9} />
+        </mesh>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.003, 0]} receiveShadow>
+          <planeGeometry args={[2.55, 1.52]} />
+          <meshStandardMaterial color="#fde68a" roughness={0.9} />
+        </mesh>
+      </group>
+
+      {/* 2. Plush 3-Seater Living Room Couch */}
       <group position={[3.32, 0, 1.92]}>
-        {/* Wooden Couch Legs */}
         {[
           [-0.72, 0.06, -0.3],
           [0.72, 0.06, -0.3],
@@ -1600,24 +1852,20 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
             <meshStandardMaterial color="#78350f" roughness={0.6} />
           </mesh>
         ))}
-        {/* Couch Base Frame */}
         <mesh position={[0, 0.22, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.62, 0.22, 0.76]} />
-          <meshStandardMaterial color="#334155" roughness={0.75} />
+          <meshStandardMaterial color="#1e293b" roughness={0.75} />
         </mesh>
-        {/* 3 Plush Seat Cushions */}
         {[-0.48, 0, 0.48].map((cx, i) => (
           <mesh key={`seat-${i}`} position={[cx, 0.38, 0.04]} castShadow receiveShadow>
             <boxGeometry args={[0.46, 0.14, 0.64]} />
-            <meshStandardMaterial color="#475569" roughness={0.7} />
+            <meshStandardMaterial color="#334155" roughness={0.7} />
           </mesh>
         ))}
-        {/* Backrest Frame */}
         <mesh position={[0, 0.62, -0.3]} castShadow receiveShadow>
           <boxGeometry args={[1.62, 0.58, 0.16]} />
-          <meshStandardMaterial color="#1e293b" roughness={0.75} />
+          <meshStandardMaterial color="#0f172a" roughness={0.75} />
         </mesh>
-        {/* 3 Plush Back Cushions */}
         {[-0.48, 0, 0.48].map((cx, i) => (
           <mesh
             key={`back-${i}`}
@@ -1627,19 +1875,17 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
             receiveShadow
           >
             <boxGeometry args={[0.45, 0.42, 0.12]} />
-            <meshStandardMaterial color="#475569" roughness={0.7} />
+            <meshStandardMaterial color="#334155" roughness={0.7} />
           </mesh>
         ))}
-        {/* Left & Right Armrests */}
         <mesh position={[-0.76, 0.46, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.14, 0.38, 0.78]} />
-          <meshStandardMaterial color="#334155" roughness={0.75} />
+          <meshStandardMaterial color="#1e293b" roughness={0.75} />
         </mesh>
         <mesh position={[0.76, 0.46, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.14, 0.38, 0.78]} />
-          <meshStandardMaterial color="#334155" roughness={0.75} />
+          <meshStandardMaterial color="#1e293b" roughness={0.75} />
         </mesh>
-        {/* Accent Throw Pillows */}
         <mesh position={[-0.56, 0.54, 0.02]} rotation={[0.15, 0.35, -0.22]} castShadow>
           <boxGeometry args={[0.26, 0.26, 0.1]} />
           <meshStandardMaterial color="#89CFF0" roughness={0.55} />
@@ -1650,24 +1896,20 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
         </mesh>
       </group>
 
-      {/* 3. Wooden Table Next to the Couch (x = 4.74, y = 0, z = 1.98, tabletop y = 0.58) */}
+      {/* 3. Wooden Table Next to the Couch */}
       <group position={[4.74, 0, 1.98]}>
-        {/* Tabletop (1.12m wide x 0.68m deep so the flipped newspaper + coffee cup fit with room to spare) */}
         <mesh position={[0, 0.565, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.12, 0.035, 0.68]} />
           <meshStandardMaterial color="#92400e" roughness={0.48} />
         </mesh>
-        {/* Subtle Beveled Rim Trim */}
         <mesh position={[0, 0.54, 0]} castShadow>
           <boxGeometry args={[1.06, 0.025, 0.62]} />
           <meshStandardMaterial color="#78350f" roughness={0.55} />
         </mesh>
-        {/* Lower Magazine Shelf */}
         <mesh position={[0, 0.18, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.98, 0.022, 0.54]} />
           <meshStandardMaterial color="#78350f" roughness={0.6} />
         </mesh>
-        {/* 4 Tapered Wooden Table Legs */}
         {[
           [-0.48, 0.28, -0.26],
           [0.48, 0.28, -0.26],
@@ -1680,21 +1922,16 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           </mesh>
         ))}
 
-        {/* =================================================================
-            A. STEAMING CUP OF COFFEE ON THE TABLE (Right side of tabletop)
-           ================================================================= */}
+        {/* A. Steaming Cup of Coffee */}
         <group position={[0.35, 0.583, -0.06]}>
-          {/* Porcelain Saucer */}
           <mesh position={[0, 0.008, 0]} castShadow receiveShadow>
             <cylinderGeometry args={[0.082, 0.062, 0.016, 24]} />
             <meshStandardMaterial color="#f8fafc" roughness={0.25} />
           </mesh>
-          {/* Coffee Cup Body */}
           <mesh position={[0, 0.056, 0]} castShadow receiveShadow>
             <cylinderGeometry args={[0.052, 0.042, 0.092, 24]} />
             <meshStandardMaterial color="#ffffff" roughness={0.2} />
           </mesh>
-          {/* Rich Espresso + Latte Art Crema Top */}
           <mesh position={[0, 0.099, 0]}>
             <cylinderGeometry args={[0.048, 0.048, 0.004, 24]} />
             <meshStandardMaterial color="#451a03" roughness={0.35} />
@@ -1703,12 +1940,10 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
             <ringGeometry args={[0.012, 0.028, 20]} />
             <meshBasicMaterial color="#fef3c7" />
           </mesh>
-          {/* Cup Handle */}
           <mesh position={[0.056, 0.056, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
             <torusGeometry args={[0.024, 0.006, 10, 20, Math.PI]} />
             <meshStandardMaterial color="#ffffff" roughness={0.25} />
           </mesh>
-          {/* Rising 3D Steam Wisps */}
           <group ref={coffeeSteamRef} position={[0, 0.12, 0]}>
             <mesh position={[-0.01, 0.02, 0]} rotation={[0, 0, 0.12]}>
               <planeGeometry args={[0.016, 0.075]} />
@@ -1733,47 +1968,37 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           </group>
         </group>
 
-        {/* =================================================================
-            B. INTERACTIVE 3D PAGE-FLIPPING NEWSPAPER ON THE TABLE
-               Centered at local x = 0.06 (world x = 4.80, y = 0.585, z = 1.98)
-               Tilted slightly upward at the back so the top headline faces the zoomed-in camera!
-           ================================================================= */}
+        {/* B. Interactive 3D Page-Flipping Newspaper */}
         <group position={[0.06, 0.59, 0.01]} rotation={[0.16, 0, 0]}>
-          {/* Thick Newspaper Stack Base / Underneath Spread */}
           <mesh position={[0, 0.004, 0]} castShadow receiveShadow>
             <boxGeometry args={[0.38, 0.008, 0.31]} />
             <meshStandardMaterial color="#e2dcd0" roughness={0.85} />
           </mesh>
 
-          {/* PAGE 2 (INSIDE PAGE — Revealed when Page 1 flips open to the left!) */}
           <mesh position={[0, 0.009, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
             <planeGeometry args={[0.38, 0.31]} />
             <meshBasicMaterial map={page2InsideTex} />
           </mesh>
 
-          {/* ANIMATED FLIPPING PAGE 1 (Hinged along the left spine edge at x = -0.19) */}
           <group ref={pageFlipHingeRef} position={[-0.19, 0.011, 0]}>
-            {/* Thin 3D Paper Sheet Slab */}
             <mesh position={[0.19, 0, 0]} castShadow>
               <boxGeometry args={[0.38, 0.002, 0.31]} />
               <meshStandardMaterial color="#faf6ee" roughness={0.8} />
             </mesh>
-            {/* Top Face of Page 1: Skill 1 (VLSI & CMOS IC DESIGN) */}
             <mesh position={[0.19, 0.0015, 0]} rotation={[-Math.PI / 2, 0, 0]}>
               <planeGeometry args={[0.38, 0.31]} />
               <meshBasicMaterial map={page1FrontTex} />
             </mesh>
-            {/* Back Face of Page 1 (Visible on the left side once flipped open!) */}
             <mesh position={[0.19, -0.0015, 0]} rotation={[Math.PI / 2, 0, Math.PI]}>
               <planeGeometry args={[0.38, 0.31]} />
               <meshBasicMaterial map={page1BackTex} />
             </mesh>
           </group>
 
-          {/* Floating 3D Skill Header at the Top of the Newspaper (Transitions on Page Flip!) */}
+          {/* Clean Borderless 3D Skill Header at the Top of the Newspaper */}
           <group position={[0, 0.11, -0.155]} rotation={[-0.52, 0, 0]}>
             <mesh ref={badge1Ref}>
-              <planeGeometry args={[0.42, 0.145]} />
+              <planeGeometry args={[0.44, 0.14]} />
               <meshBasicMaterial
                 map={skill1BadgeTex}
                 transparent
@@ -1782,7 +2007,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
               />
             </mesh>
             <mesh ref={badge2Ref} visible={false} scale={[0, 0, 0]}>
-              <planeGeometry args={[0.42, 0.145]} />
+              <planeGeometry args={[0.44, 0.14]} />
               <meshBasicMaterial
                 map={skill2BadgeTex}
                 transparent
@@ -1792,6 +2017,261 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
             </mesh>
           </group>
         </group>
+      </group>
+    </group>
+  )
+}
+
+/**
+ * Room 3 — Akanksha's Hardware & Silicon Lab Bench + Meraki Art & Machaan Theatre Studio
+ * Located in the spacious North Gallery Room (x: 0.15..5.4, z: -1.45..+1.25).
+ * Makes the house 100% uniquely an Engineer + Artist's home!
+ */
+export function EngineerAndArtistStudioShowcase() {
+  const scopeTex = useOscilloscopeScreenTexture()
+  const easelArtTex = useStudioArtworkTexture('easel-masterpiece')
+  const machaanArtTex = useStudioArtworkTexture('machaan-theatre')
+  const merakiArtTex = useStudioArtworkTexture('meraki-botanical')
+
+  const waferRef = useRef(null)
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime()
+    if (waferRef.current) {
+      waferRef.current.rotation.z = t * 0.45
+    }
+  })
+
+  return (
+    <group>
+      {/* =====================================================================
+          1. SILICON & HARDWARE LAB BENCH (North Wall at x = 2.55, z = -1.12, facing South +z)
+         ===================================================================== */}
+      <group position={[2.55, 0, -1.12]}>
+        {/* Focused Warm Lab Spotlight */}
+        <pointLight position={[0, 1.95, 0.65]} intensity={1.85} distance={4.2} decay={2} color="#fde68a" />
+
+        {/* Heavy Oak & Steel Electronics Lab Workbench */}
+        <mesh position={[0, 0.74, 0]} castShadow receiveShadow>
+          <boxGeometry args={[1.75, 0.045, 0.68]} />
+          <meshStandardMaterial color="#b45309" roughness={0.5} />
+        </mesh>
+        {[
+          [-0.8, 0.37, -0.28],
+          [0.8, 0.37, -0.28],
+          [-0.8, 0.37, 0.28],
+          [0.8, 0.37, 0.28],
+        ].map((lpos, i) => (
+          <mesh key={`bleg-${i}`} position={lpos} castShadow>
+            <boxGeometry args={[0.05, 0.74, 0.05]} />
+            <meshStandardMaterial color="#1e293b" metalness={0.6} roughness={0.4} />
+          </mesh>
+        ))}
+
+        {/* A. Digital Oscilloscope (Left side of Lab Bench) */}
+        <group position={[-0.48, 0.765, -0.04]} rotation={[0, 0.22, 0]}>
+          <mesh position={[0, 0.16, 0]} castShadow receiveShadow>
+            <boxGeometry args={[0.42, 0.32, 0.22]} />
+            <meshStandardMaterial color="#1e293b" roughness={0.4} metalness={0.3} />
+          </mesh>
+          <mesh position={[-0.04, 0.17, 0.112]}>
+            <planeGeometry args={[0.28, 0.2]} />
+            <meshBasicMaterial map={scopeTex} />
+          </mesh>
+          {/* Scope Control Knobs */}
+          {[0.08, 0.16, 0.24].map((ky, idx) => (
+            <mesh key={`knob-${idx}`} position={[0.15, ky, 0.115]} rotation={[Math.PI / 2, 0, 0]}>
+              <cylinderGeometry args={[0.018, 0.018, 0.02, 12]} />
+              <meshStandardMaterial color="#94a3b8" metalness={0.7} roughness={0.2} />
+            </mesh>
+          ))}
+        </group>
+
+        {/* B. Glowing 300mm CMOS Silicon Wafer on Inspection Stand (Center of Bench) */}
+        <group position={[0.05, 0.765, 0.04]}>
+          <mesh position={[0, 0.03, 0]} castShadow>
+            <cylinderGeometry args={[0.09, 0.11, 0.06, 20]} />
+            <meshStandardMaterial color="#0f172a" metalness={0.7} roughness={0.3} />
+          </mesh>
+          <group position={[0, 0.21, 0]} rotation={[-0.35, 0, 0]} ref={waferRef}>
+            <mesh castShadow>
+              <cylinderGeometry args={[0.16, 0.16, 0.008, 36]} rotation={[Math.PI / 2, 0, 0]} />
+              <meshStandardMaterial
+                color="#0284c7"
+                emissive="#1e3a8a"
+                emissiveIntensity={0.65}
+                metalness={0.9}
+                roughness={0.12}
+              />
+            </mesh>
+            {/* Golden Die Grid Ring on Wafer */}
+            <mesh position={[0, 0, 0.005]}>
+              <ringGeometry args={[0.04, 0.145, 24]} />
+              <meshStandardMaterial
+                color="#fbbf24"
+                emissive="#d97706"
+                emissiveIntensity={0.5}
+                metalness={0.85}
+                roughness={0.2}
+                wireframe
+              />
+            </mesh>
+          </group>
+        </group>
+
+        {/* C. Biometric Fingerprint Scanner & Green PCB Prototype (Right side of Bench) */}
+        <group position={[0.52, 0.765, 0.02]} rotation={[0, -0.18, 0]}>
+          <mesh position={[0, 0.015, 0]} castShadow>
+            <boxGeometry args={[0.34, 0.02, 0.24]} />
+            <meshStandardMaterial color="#059669" roughness={0.35} />
+          </mesh>
+          <mesh position={[-0.06, 0.035, 0]}>
+            <boxGeometry args={[0.11, 0.025, 0.11]} />
+            <meshStandardMaterial color="#0f172a" metalness={0.5} roughness={0.3} />
+          </mesh>
+          {/* Glowing Optical Fingerprint Sensor Window */}
+          <mesh position={[0.09, 0.035, 0]}>
+            <cylinderGeometry args={[0.045, 0.045, 0.022, 20]} />
+            <meshStandardMaterial color="#38bdf8" emissive="#0284c7" emissiveIntensity={1.2} />
+          </mesh>
+        </group>
+
+        {/* Clean Borderless 3D Wall Typography above the Silicon Lab Bench */}
+        <FloatingLabel3D
+          position={[0, 1.48, -0.25]}
+          rotation={[0, 0, 0]}
+          size={[1.45, 0.42]}
+          color="#ffffff"
+          subColor="#fde047"
+          fontSize={76}
+          subFontSize={40}
+          bobPhase={0.4}
+          lines={[
+            'SILICON & HARDWARE LAB',
+            { text: '59.9 dB CMOS OP-AMP • 21.3 µm² LATCH • BIOMETRIC PCB', sub: true },
+          ]}
+        />
+      </group>
+
+      {/* =====================================================================
+          2. MERAKI ART & MACHAAN THEATRE STUDIO (West Wall at x = 0.14, z = -0.55, facing East +x)
+         ===================================================================== */}
+      <group position={[0.14, 0, -0.55]} rotation={[0, Math.PI / 2, 0]}>
+        {/* Warm Theatrical Amber Spotlight Pool */}
+        <pointLight position={[0, 2.05, 1.15]} intensity={2.1} distance={4.5} decay={2} color="#fbbf24" />
+
+        {/* Cozy Studio Woven Rug */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.014, 0.85]} receiveShadow>
+          <circleGeometry args={[0.92, 32]} />
+          <meshStandardMaterial color="#fef3c7" roughness={0.85} />
+        </mesh>
+
+        {/* Warm Overhead Fairy String Lights draped along the Studio Wall */}
+        {[-0.85, -0.52, -0.18, 0.18, 0.52, 0.85].map((lx, i) => (
+          <mesh key={`bulb-${i}`} position={[lx, 2.12 - Math.cos(lx * 1.4) * 0.08, 0.04]}>
+            <sphereGeometry args={[0.024, 10, 10]} />
+            <meshStandardMaterial
+              color="#fef08a"
+              emissive="#f59e0b"
+              emissiveIntensity={1.6}
+            />
+          </mesh>
+        ))}
+
+        {/* Framed Paintings on the Studio Wall (Machaan Theatre & Meraki Botanical) */}
+        <group position={[-0.52, 1.32, 0.03]}>
+          <mesh castShadow>
+            <boxGeometry args={[0.68, 0.68, 0.035]} />
+            <meshStandardMaterial color="#78350f" roughness={0.55} />
+          </mesh>
+          <mesh position={[0, 0, 0.02]}>
+            <planeGeometry args={[0.6, 0.6]} />
+            <meshStandardMaterial map={machaanArtTex} roughness={0.4} />
+          </mesh>
+        </group>
+
+        <group position={[0.52, 1.32, 0.03]}>
+          <mesh castShadow>
+            <boxGeometry args={[0.68, 0.68, 0.035]} />
+            <meshStandardMaterial color="#78350f" roughness={0.55} />
+          </mesh>
+          <mesh position={[0, 0, 0.02]}>
+            <planeGeometry args={[0.6, 0.6]} />
+            <meshStandardMaterial map={merakiArtTex} roughness={0.4} />
+          </mesh>
+        </group>
+
+        {/* Wooden A-Frame Artist Easel with Hand-Painted Canvas */}
+        <group position={[0.02, 0, 0.72]} rotation={[0, -0.15, 0]}>
+          {/* Easel Legs */}
+          <mesh position={[-0.22, 0.68, 0.08]} rotation={[-0.14, 0, -0.12]} castShadow>
+            <cylinderGeometry args={[0.018, 0.018, 1.42, 8]} />
+            <meshStandardMaterial color="#92400e" roughness={0.6} />
+          </mesh>
+          <mesh position={[0.22, 0.68, 0.08]} rotation={[-0.14, 0, 0.12]} castShadow>
+            <cylinderGeometry args={[0.018, 0.018, 1.42, 8]} />
+            <meshStandardMaterial color="#92400e" roughness={0.6} />
+          </mesh>
+          <mesh position={[0, 0.66, -0.18]} rotation={[0.24, 0, 0]} castShadow>
+            <cylinderGeometry args={[0.018, 0.018, 1.4, 8]} />
+            <meshStandardMaterial color="#78350f" roughness={0.6} />
+          </mesh>
+          {/* Canvas Tray */}
+          <mesh position={[0, 0.72, 0.11]} castShadow>
+            <boxGeometry args={[0.62, 0.03, 0.08]} />
+            <meshStandardMaterial color="#78350f" roughness={0.55} />
+          </mesh>
+          {/* Painted Canvas on the Easel */}
+          <group position={[0, 1.02, 0.09]} rotation={[-0.14, 0, 0]}>
+            <mesh castShadow>
+              <boxGeometry args={[0.58, 0.58, 0.03]} />
+              <meshStandardMaterial color="#fefce8" roughness={0.7} />
+            </mesh>
+            <mesh position={[0, 0, 0.017]}>
+              <planeGeometry args={[0.54, 0.54]} />
+              <meshStandardMaterial map={easelArtTex} roughness={0.35} />
+            </mesh>
+          </group>
+        </group>
+
+        {/* Wooden Painter's Stool & Color Palette beside the Easel */}
+        <group position={[-0.52, 0, 0.82]}>
+          <mesh position={[0, 0.44, 0]} castShadow>
+            <cylinderGeometry args={[0.18, 0.18, 0.035, 16]} />
+            <meshStandardMaterial color="#b45309" roughness={0.55} />
+          </mesh>
+          <mesh position={[0, 0.22, 0]} castShadow>
+            <cylinderGeometry args={[0.035, 0.07, 0.44, 12]} />
+            <meshStandardMaterial color="#78350f" roughness={0.6} />
+          </mesh>
+          {[
+            [-0.06, 0.465, -0.02, '#ef4444'],
+            [0.0, 0.465, -0.05, '#38bdf8'],
+            [0.06, 0.465, 0.01, '#fde047'],
+            [-0.01, 0.465, 0.05, '#10b981'],
+          ].map((dab, idx) => (
+            <mesh key={`pdab-${idx}`} position={[dab[0], dab[1], dab[2]]}>
+              <sphereGeometry args={[0.022, 10, 10]} />
+              <meshStandardMaterial color={dab[3]} roughness={0.3} />
+            </mesh>
+          ))}
+        </group>
+
+        {/* Clean Borderless 3D Typography above the Art & Theatre Studio */}
+        <FloatingLabel3D
+          position={[0, 1.88, 0.06]}
+          rotation={[0, 0, 0]}
+          size={[1.48, 0.42]}
+          color="#ffffff"
+          subColor="#fde047"
+          fontSize={74}
+          subFontSize={38}
+          bobPhase={1.2}
+          lines={[
+            'ART, THEATRE & LEADERSHIP',
+            { text: 'PRESIDENT, MERAKI ART • MACHAAN THEATRE • E-CELL', sub: true },
+          ]}
+        />
       </group>
     </group>
   )

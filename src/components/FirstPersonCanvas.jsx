@@ -5,8 +5,10 @@ import * as THREE from 'three'
 import {
   AtmosphericSkyAndWind,
   DeepBlueTiledRoof,
+  EngineerAndArtistStudioShowcase,
   ExteriorYardFenceAndGrass,
   FrontWallWithWindows,
+  GoldenWindowSunbeams,
   KitchenSkillsShowcase,
   LivingRoomSkillsShowcase,
   useWelcomeSignTexture,
@@ -26,7 +28,7 @@ const TOUR_CHAPTERS = [
   {
     room: 'Front Entrance',
     title: 'Welcome Inside',
-    subtitle: 'The front door opens smoothly as we step into the Kitchen',
+    subtitle: 'Golden sunlight & warm gallery lights inside Akanksha’s residence',
   },
   {
     room: 'Kitchen — Fridge Magnets (AI Skills)',
@@ -41,7 +43,7 @@ const TOUR_CHAPTERS = [
   {
     room: 'Living Room — Couch & Side Table',
     title: 'Morning Coffee & The Silicon Chronicle',
-    subtitle: 'Smoothly panning from the Kitchen to the Living Room side table',
+    subtitle: 'Sunlit lounge with steaming espresso and the portfolio broadsheet',
   },
   {
     room: 'Living Room — Newspaper Front Page',
@@ -53,41 +55,57 @@ const TOUR_CHAPTERS = [
     title: 'Embedded C/C++ & RISC-V Architecture',
     subtitle: '5-Stage Pipelined RISC-V Simulator • Biometric Scanner (100+ IDs) • Audio Equalizer',
   },
+  {
+    room: 'North Wing — Silicon & Hardware Lab Bench',
+    title: 'Oscilloscope, 300mm Wafer & Biometric PCB',
+    subtitle: 'Cadence Virtuoso Analog IC Verification • Custom Soldered Hardware Prototypes',
+  },
+  {
+    room: 'North Wing — Meraki Art & Machaan Studio',
+    title: 'Fine Art, Theatre & Campus Leadership',
+    subtitle: 'President of Meraki Art Society • Events Head of Machaan Theatre • Team Lead at E-Cell',
+  },
 ]
 
 const SPLINE_KEYFRAMES = [
-  // 0. Exterior Overview (showing fence, 3D grass, see-through windows & deep blue tiled roof)
+  // 0. Exterior Overview (u = 0.00, 0.05)
   { cam: [-0.45, 3.8, 14.5], look: [0.2, 1.4, 2.0], chapter: 0 },
   { cam: [-0.5, 2.5, 10.6], look: [-0.3, 1.38, 4.2], chapter: 0 },
 
-  // 1. Approaching Front Door & Smoothly Opening the Door
-  { cam: [-0.53, 1.62, 7.4], look: [-0.53, 1.36, 4.8], chapter: 1 },
-  { cam: [-0.53, 1.56, 5.75], look: [-0.53, 1.36, 4.1], chapter: 1 },
-  { cam: [-0.53, 1.52, 4.15], look: [-0.85, 1.35, 2.65], chapter: 1 },
+  // 1. Approaching Front Door & Smoothly Opening the Door (u = 0.10, 0.15)
+  { cam: [-0.53, 1.62, 7.2], look: [-0.53, 1.36, 4.8], chapter: 1 },
+  { cam: [-0.53, 1.54, 4.65], look: [-0.75, 1.36, 2.95], chapter: 1 },
 
-  // 2. Stepping Slowly into the Kitchen & Turning to the Fridge
-  { cam: [-1.05, 1.48, 2.68], look: [-1.72, 1.38, 3.85], chapter: 2 },
+  // 2. Kitchen Fridge Magnets (u = 0.20, 0.25, 0.30)
+  { cam: [-1.12, 1.46, 2.72], look: [-1.72, 1.38, 3.95], chapter: 2 },
   { cam: [-1.74, 1.43, 3.12], look: [-1.74, 1.43, 4.27], chapter: 2 },
   { cam: [-1.74, 1.43, 3.18], look: [-1.74, 1.43, 4.27], chapter: 2 },
 
-  // 3. Smooth 180° Pan Across the Kitchen to the Opposite Side (The Oven)
+  // 3. Smooth 180° Pan Across the Kitchen to the Oven (u = 0.35, 0.40, 0.45)
   { cam: [-1.65, 1.34, 2.88], look: [-3.1, 1.24, 2.75], chapter: 3 },
-  { cam: [-1.815, 1.14, 2.48], look: [-1.815, 0.98, 1.61], chapter: 3 },
+  { cam: [-1.815, 1.14, 2.46], look: [-1.815, 0.98, 1.61], chapter: 3 },
   { cam: [-1.815, 1.10, 2.38], look: [-1.815, 0.96, 1.61], chapter: 3 },
 
-  // 4. Zooming Out from the Oven & Smoothly Panning East into the Living Room
-  { cam: [-1.15, 1.34, 2.68], look: [0.45, 1.12, 2.25], chapter: 4 },
-  { cam: [1.35, 1.36, 2.82], look: [3.65, 0.86, 1.98], chapter: 4 },
+  // 4. Zooming Out from Oven & Panning East into the Living Room (u = 0.50, 0.55)
+  { cam: [0.65, 1.36, 2.75], look: [3.45, 0.92, 1.98], chapter: 4 },
   { cam: [3.65, 1.22, 2.88], look: [4.55, 0.65, 1.98], chapter: 4 },
 
-  // 5. Zooming Into the Top of the Newspaper (Skill 1 — Before Page Flip)
-  { cam: [4.62, 1.04, 2.42], look: [4.80, 0.64, 1.94], chapter: 5 },
+  // 5. Zooming Into the Top of the Newspaper — Page 1 (u = 0.60)
   { cam: [4.80, 0.96, 2.26], look: [4.80, 0.64, 1.93], chapter: 5 },
-  { cam: [4.80, 0.95, 2.25], look: [4.80, 0.64, 1.93], chapter: 5 },
 
-  // 6. Newspaper Page Flips Open to Reveal Skill 2 (Page 2 Dwell)
+  // 6. Newspaper Page Flips Open to Reveal Skill 2 — Page 2 (u = 0.65, 0.70)
   { cam: [4.80, 0.95, 2.25], look: [4.80, 0.64, 1.93], chapter: 6 },
   { cam: [4.80, 0.94, 2.24], look: [4.80, 0.64, 1.93], chapter: 6 },
+
+  // 7. Gliding North into the Silicon & Hardware Lab Bench (u = 0.75, 0.80, 0.85)
+  { cam: [2.35, 1.34, 1.35], look: [2.55, 1.05, -1.05], chapter: 7 },
+  { cam: [2.55, 1.24, 0.28], look: [2.55, 1.04, -1.12], chapter: 7 },
+  { cam: [2.55, 1.20, 0.08], look: [2.55, 1.02, -1.12], chapter: 7 },
+
+  // 8. Smooth 90° Pan Left to Meraki Art & Machaan Theatre Studio (u = 0.90, 0.95, 1.00)
+  { cam: [2.15, 1.28, -0.45], look: [0.35, 1.18, -0.55], chapter: 8 },
+  { cam: [1.75, 1.26, -0.55], look: [0.18, 1.18, -0.55], chapter: 8 },
+  { cam: [1.55, 1.24, -0.55], look: [0.18, 1.16, -0.55], chapter: 8 },
 ]
 
 function smoothstep(min, max, value) {
@@ -98,8 +116,7 @@ function smoothstep(min, max, value) {
 /**
  * Removes the solid front wall triangles (z > 4.88, y > 0.05) from the base GLB
  * for see-through front windows, and opens the low half-wall partition between
- * the Entry Hall and the Living Room (x in [-0.08, 0.14], z in [1.88, 3.66], y in [0.02, 0.85])
- * into a clean floor-to-ceiling archway.
+ * the Entry Hall and the Living Room into a clean floor-to-ceiling archway.
  */
 function cutFrontWallForWindows(root) {
   root.updateMatrixWorld(true)
@@ -133,12 +150,10 @@ function cutFrontWallForWindows(root) {
       const maxZ = Math.max(vA.z, vB.z, vC.z)
       const maxY = Math.max(vA.y, vB.y, vC.y)
 
-      // 1. Strip the original solid front facade triangles above the floor
       if (minZ > 4.88 && maxY > 0.05) {
         continue
       }
 
-      // 2. Open the low half-wall under the Living Room archway into a full archway
       if (
         minX >= -0.08 &&
         maxX <= 0.14 &&
@@ -162,7 +177,7 @@ function cutFrontWallForWindows(root) {
 
 /**
  * Loads the low-poly house interior GLB model, opens the front facade for windows,
- * and paints the walls Baby Blue (#89CFF0).
+ * and paints the walls Baby Blue (#89CFF0) with warm satin roughness.
  */
 function InteriorModel() {
   const { scene } = useGLTF(MODEL_PATH)
@@ -177,10 +192,16 @@ function InteriorModel() {
 
       const mat = child.material
       if (mat && mat.color) {
-        if (mat.name === 'mat18') mat.color.set('#89CFF0')
-        else if (mat.name === 'mat21') mat.color.set('#d8f0ff')
-        else if (mat.name === 'mat15') mat.color.set('#b3e0ff')
-        else if (mat.name === 'mat16') mat.color.set('#64a8e8')
+        if (mat.name === 'mat18') {
+          mat.color.set('#89CFF0')
+          mat.roughness = 0.72
+        } else if (mat.name === 'mat21') {
+          mat.color.set('#d8f0ff')
+        } else if (mat.name === 'mat15') {
+          mat.color.set('#b3e0ff')
+        } else if (mat.name === 'mat16') {
+          mat.color.set('#64a8e8')
+        }
         mat.needsUpdate = true
       }
     })
@@ -200,8 +221,7 @@ function AnimatedFrontDoor({ scrollRef }) {
   useFrame(({ clock }, delta) => {
     if (!hingeRef.current) return
     const s = scrollRef.current
-    // Smooth, unhurried door swing from scroll = 0.08 to 0.24
-    const openProgress = smoothstep(0.08, 0.24, s)
+    const openProgress = smoothstep(0.06, 0.18, s)
     const targetAngle = openProgress * (Math.PI * 0.58)
     hingeRef.current.rotation.y = THREE.MathUtils.damp(
       hingeRef.current.rotation.y,
@@ -364,15 +384,22 @@ export default function FirstPersonCanvas() {
       <div className="canvas-fixed">
         <Canvas
           shadows
+          gl={{
+            antialias: true,
+            toneMapping: THREE.ACESFilmicToneMapping,
+            toneMappingExposure: 1.05,
+          }}
           camera={{ fov: 56, near: 0.08, far: 220, position: [-0.45, 3.8, 14.5] }}
         >
           <color attach="background" args={['#bae6fd']} />
 
-          <ambientLight intensity={0.92} color="#fffbeb" />
+          {/* Cozy Cinematic Lighting: Lower flat ambient light + warm golden sunlight + focused gallery pools */}
+          <ambientLight intensity={0.46} color="#ffedd5" />
+          <hemisphereLight args={['#e0f2fe', '#78350f', 0.38]} />
           <directionalLight
-            position={[8, 16, 11]}
-            intensity={1.45}
-            color="#fff7ed"
+            position={[9, 14, 12]}
+            intensity={1.55}
+            color="#fef08a"
             castShadow
             shadow-mapSize-width={2048}
             shadow-mapSize-height={2048}
@@ -384,10 +411,6 @@ export default function FirstPersonCanvas() {
             shadow-camera-bottom={-12}
             shadow-bias={-0.0005}
           />
-          {/* Cozy Warm Interior Room Lights */}
-          <pointLight position={[-1.7, 2.25, 3.2]} intensity={1.1} distance={11} color="#fef3c7" />
-          <pointLight position={[2.4, 2.25, 3.2]} intensity={1.1} distance={11} color="#fde68a" />
-          <pointLight position={[3.2, 2.25, -0.8]} intensity={0.9} distance={10} color="#fef3c7" />
 
           <ExteriorGround />
 
@@ -397,9 +420,11 @@ export default function FirstPersonCanvas() {
             <FrontWallWithWindows />
             <DeepBlueTiledRoof />
             <ExteriorYardFenceAndGrass />
+            <GoldenWindowSunbeams />
             <AnimatedFrontDoor scrollRef={scrollRef} />
             <KitchenSkillsShowcase />
             <LivingRoomSkillsShowcase scrollRef={scrollRef} />
+            <EngineerAndArtistStudioShowcase />
           </Suspense>
 
           <ScrollTourCamera

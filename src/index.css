@@ -15,11 +15,11 @@ body {
   scroll-behavior: smooth;
 }
 
-/* Smooth 1350vh scroll container for Exterior -> Kitchen -> Living Room Newspaper Flip tour */
+/* Smooth 1650vh scroll container for Exterior -> Kitchen -> Living Room -> Silicon Lab -> Art Studio tour */
 .scroll-page {
   position: relative;
   width: 100%;
-  height: 1350vh;
+  height: 1650vh;
 }
 
 /* Fixed 3D Viewport */
