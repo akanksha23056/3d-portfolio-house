@@ -27,9 +27,9 @@ const TOUR_CHAPTERS = [
     subtitle: 'B.Tech in Electronics & VLSI @ IIIT-Delhi • Scroll down slowly to enter',
   },
   {
-    room: 'Front Entrance',
+    room: 'Front Entrance & Porch',
     title: 'Welcome Inside',
-    subtitle: 'Golden sunlight & warm gallery lights inside Akanksha’s residence',
+    subtitle: 'Aligned limestone walkway, golden sunlight & warm gallery lights',
   },
   {
     room: 'Kitchen — Fridge Magnets (AI Skills)',
@@ -42,9 +42,9 @@ const TOUR_CHAPTERS = [
     subtitle: 'Interactive 3D & Responsive Web Apps • 60% Faster Load Optimization',
   },
   {
-    room: 'Living Room — Couch, TV & Side Table',
-    title: 'Morning Coffee & The Silicon Chronicle',
-    subtitle: 'Plush bouclé sofa, 4K Smart TV, steaming espresso & portfolio broadsheet',
+    room: 'Dining Nook & Living Room Lounge',
+    title: 'Dining Table, Plush Bouclé Sofa & 4K TV',
+    subtitle: 'Floor plan layout • Plush blue 3-seater couch & accent armchairs',
   },
   {
     room: 'Living Room — Newspaper Front Page',
@@ -57,19 +57,19 @@ const TOUR_CHAPTERS = [
     subtitle: '5-Stage Pipelined RISC-V Simulator • Biometric Scanner (100+ IDs) • Audio Equalizer',
   },
   {
-    room: 'North Wing — Silicon & Hardware Lab Bench',
-    title: 'Oscilloscope, 300mm Wafer & Biometric PCB',
-    subtitle: 'Cadence Virtuoso Analog IC Verification • Custom Soldered Hardware Prototypes',
+    room: 'North Hallway — Bathroom & Locked Bedroom Door',
+    title: 'Floor Plan Suite & Private Bedroom',
+    subtitle: 'Vanity, soaking tub, toilet & elegant locked primary suite door',
   },
   {
-    room: 'Living Room Staircase — Ascending to the Attic',
+    room: 'Central Oak Staircase — Ascending to the Attic',
     title: 'Up the Oak Stairs into the Attic Loft',
-    subtitle: 'Climbing the sunlit timber staircase from the living room to the upstairs art studio',
+    subtitle: 'Climbing the sunlit central staircase northward to the upstairs studio loft',
   },
   {
-    room: 'Upstairs Attic — Meraki Art & Machaan Studio',
-    title: 'The Attic Art Studio & Easel Gallery',
-    subtitle: 'President of Meraki Art Society • Events Head of Machaan Theatre • Impasto & Stagecraft',
+    room: 'Upstairs Attic — Study & Meraki Art Studio',
+    title: 'The Attic Study, Desk & Gallery',
+    subtitle: 'Study desk with computer, woven round rug, easel & Machaan stagecraft',
   },
   {
     room: 'Upstairs Attic — Interactive Artist Sketchbooks',
@@ -79,52 +79,52 @@ const TOUR_CHAPTERS = [
 ]
 
 const SPLINE_KEYFRAMES = [
-  // 0. Exterior Overview
-  { cam: [-0.45, 3.8, 14.5], look: [0.2, 1.4, 2.0], chapter: 0 },
-  { cam: [-0.5, 2.5, 10.6], look: [-0.3, 1.38, 4.2], chapter: 0 },
+  // 0. Exterior Overview — Curved round earth horizon, fence, dog companion & straight driveway
+  { cam: [-0.53, 3.8, 14.8], look: [-0.53, 1.4, 3.5], chapter: 0 },
+  { cam: [-0.53, 2.5, 10.8], look: [-0.53, 1.38, 4.2], chapter: 0 },
 
-  // 1. Approaching Front Door & Smoothly Opening the Door
+  // 1. Approaching Aligned Porch Steps & Front Door
   { cam: [-0.53, 1.62, 7.2], look: [-0.53, 1.36, 4.8], chapter: 1 },
   { cam: [-0.53, 1.54, 4.65], look: [-0.75, 1.36, 2.95], chapter: 1 },
 
-  // 2. Kitchen Fridge Magnets
+  // 2. Kitchen Fridge Magnets (Kept untouched)
   { cam: [-1.12, 1.46, 2.72], look: [-1.72, 1.38, 3.95], chapter: 2 },
   { cam: [-1.74, 1.43, 3.12], look: [-1.74, 1.43, 4.27], chapter: 2 },
   { cam: [-1.74, 1.43, 3.18], look: [-1.74, 1.43, 4.27], chapter: 2 },
 
-  // 3. Smooth 180° Pan Across the Kitchen Sink & Tap to the Oven
+  // 3. Smooth Pan Across Kitchen Sink to Oven
   { cam: [-1.72, 1.32, 2.82], look: [-3.18, 1.04, 2.52], chapter: 3 },
   { cam: [-1.815, 1.14, 2.46], look: [-1.815, 0.98, 1.61], chapter: 3 },
   { cam: [-1.815, 1.10, 2.38], look: [-1.815, 0.96, 1.61], chapter: 3 },
 
-  // 4. Zooming Out from Oven & Panning East into the Living Room
-  { cam: [0.85, 1.32, 2.58], look: [3.32, 0.78, 2.75], chapter: 4 },
-  { cam: [2.35, 1.15, 2.85], look: [3.32, 0.65, 2.88], chapter: 4 },
+  // 4. Gliding East into the Living Room (Floor Plan: North Sofa, Coffee Table, Armchairs, TV)
+  { cam: [0.65, 1.32, 2.65], look: [2.15, 0.95, 2.85], chapter: 4 },
+  { cam: [1.35, 1.25, 2.85], look: [2.15, 0.85, 2.85], chapter: 4 },
 
-  // 5. Zooming Into the Top of the Newspaper on the Coffee Table — Page 1
-  { cam: [3.26, 0.90, 3.22], look: [3.26, 0.52, 2.89], chapter: 5 },
+  // 5. Living Room — Focused View on Coffee Table Broadsheet & Steaming Coffee
+  { cam: [2.15, 1.12, 3.48], look: [2.15, 0.52, 2.85], chapter: 5 },
 
   // 6. Newspaper Page Flips Open to Reveal Skill 2 — Page 2
-  { cam: [3.26, 0.89, 3.21], look: [3.26, 0.52, 2.89], chapter: 6 },
-  { cam: [3.26, 0.88, 3.20], look: [3.26, 0.52, 2.89], chapter: 6 },
+  { cam: [2.15, 1.10, 3.46], look: [2.15, 0.52, 2.85], chapter: 6 },
+  { cam: [2.15, 1.08, 3.45], look: [2.15, 0.52, 2.85], chapter: 6 },
 
-  // 7. Gliding North through the Architectural Portal into the Silicon & Hardware Lab Bench
-  { cam: [1.85, 1.28, 2.05], look: [2.45, 1.05, -1.05], chapter: 7 },
-  { cam: [2.35, 1.22, 0.25], look: [2.55, 1.02, -1.12], chapter: 7 },
+  // 7. Hallway Suite — Viewing the Bathroom (Vanity, Toilet, Tub) & Locked Bedroom Door
+  { cam: [0.55, 1.35, 1.80], look: [2.15, 1.05, 0.85], chapter: 7 },
+  { cam: [0.55, 1.35, 0.40], look: [1.10, 1.32, -0.35], chapter: 7 },
 
-  // 8. Approaching & Climbing Up the Living Room Oak Staircase Northward into the Attic
-  { cam: [0.62, 1.15, 4.35], look: [0.62, 1.65, 2.25], chapter: 8 },
-  { cam: [0.62, 1.85, 3.10], look: [0.62, 2.45, 1.65], chapter: 8 },
-  { cam: [0.62, 2.85, 1.85], look: [0.15, 3.15, 1.85], chapter: 8 },
+  // 8. Approaching & Ascending the Central Oak Staircase Northward into the Attic
+  { cam: [0.55, 1.15, 2.15], look: [0.55, 1.65, 0.60], chapter: 8 },
+  { cam: [0.55, 1.95, 0.95], look: [0.55, 2.45, -0.20], chapter: 8 },
+  { cam: [0.55, 2.95, -0.15], look: [0.10, 3.20, 1.50], chapter: 8 },
 
-  // 9. Entering the Sunlit Attic Art Studio (Easel, Rafters & Gallery Canvases)
-  { cam: [0.12, 3.44, 3.05], look: [-0.12, 3.22, 1.55], chapter: 9 },
-  { cam: [0.10, 3.38, 2.52], look: [-0.02, 3.16, 1.58], chapter: 9 },
+  // 9. Entering the Attic Study / Studio (Desk on West, Round Rug in Center, Rafters)
+  { cam: [0.10, 3.45, 0.65], look: [-0.65, 3.18, 1.65], chapter: 9 },
+  { cam: [0.25, 3.38, 1.85], look: [0.35, 3.10, 3.05], chapter: 9 },
 
-  // 10. Zooming Into the Open Attic Sketchbooks & Flipping Sketch Pages
-  { cam: [0.08, 3.34, 1.98], look: [0.08, 3.04, 1.66], chapter: 10 },
-  { cam: [0.08, 3.31, 1.94], look: [0.08, 3.04, 1.66], chapter: 10 },
-  { cam: [0.08, 3.30, 1.92], look: [0.08, 3.04, 1.66], chapter: 10 },
+  // 10. Zooming Into the Open Sketchbooks on the South Drafting Table
+  { cam: [0.35, 3.32, 2.65], look: [0.35, 3.04, 3.08], chapter: 10 },
+  { cam: [0.35, 3.30, 2.68], look: [0.35, 3.04, 3.08], chapter: 10 },
+  { cam: [0.35, 3.29, 2.69], look: [0.35, 3.04, 3.08], chapter: 10 },
 ]
 
 function smoothstep(min, max, value) {
@@ -404,26 +404,110 @@ function AnimatedFrontDoor({ scrollRef }) {
 
 function ExteriorGround() {
   const { lawnMap, stoneMap, plasterBump } = useMemo(() => getHousePBRTextures(), [])
+
+  // Curved spherical earth dome geometry where the world curves down over the horizon
+  const curvedEarthGeom = useMemo(() => {
+    const geom = new THREE.PlaneGeometry(160, 160, 80, 80)
+    geom.rotateX(-Math.PI / 2)
+    const pos = geom.attributes.position
+    const count = pos.count
+    const v = new THREE.Vector3()
+
+    for (let i = 0; i < count; i++) {
+      v.fromBufferAttribute(pos, i)
+      const r = Math.hypot(v.x, v.z)
+      // Inside radius 10.5m: flat at y = -0.04 so house, yard, fence, and dog sit grounded
+      if (r <= 10.5) {
+        v.y = -0.04
+      } else {
+        // Quadratic spherical curvature dropping smoothly down over the horizon
+        const dist = r - 10.5
+        v.y = -0.04 - Math.pow(dist / 14.0, 2.05) * 4.6
+      }
+      pos.setXYZ(i, v.x, v.y, v.z)
+    }
+
+    geom.computeVertexNormals()
+
+    // Seamlessly map the PBR grass texture across the curved earth
+    const uvs = geom.attributes.uv
+    for (let i = 0; i < count; i++) {
+      v.fromBufferAttribute(pos, i)
+      uvs.setXY(i, v.x * 0.16, v.z * 0.16)
+    }
+
+    return geom
+  }, [])
+
   return (
     <group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[1, -0.04, 0]} receiveShadow>
-        <planeGeometry args={[70, 70]} />
+      {/* 1. Curved Round Earth Horizon Greenery */}
+      <mesh geometry={curvedEarthGeom} receiveShadow>
         <meshStandardMaterial
           map={lawnMap}
           bumpMap={plasterBump}
-          bumpScale={0.03}
+          bumpScale={0.032}
           roughness={0.88}
         />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-0.53, -0.015, 9.6]} receiveShadow>
-        <planeGeometry args={[1.55, 9.2]} />
-        <meshStandardMaterial
-          map={stoneMap}
-          bumpMap={plasterBump}
-          bumpScale={0.02}
-          roughness={0.72}
-        />
-      </mesh>
+
+      {/* 2. Straight, Perfectly Aligned Limestone Driveway & Walkway (x = -0.53) */}
+      <group position={[-0.53, 0, 0]}>
+        {/* Main Limestone Paved Walkway (from porch z = 5.48 all the way out past the fence gate z = 8.2 to z = 18.0) */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.018, 11.74]} receiveShadow>
+          <planeGeometry args={[1.72, 12.52]} />
+          <meshStandardMaterial
+            map={stoneMap}
+            bumpMap={plasterBump}
+            bumpScale={0.024}
+            roughness={0.70}
+          />
+        </mesh>
+
+        {/* Crisp Architectural Stone Curb Pavers flanking the Walkway */}
+        <mesh position={[-0.88, -0.008, 11.74]} castShadow receiveShadow>
+          <boxGeometry args={[0.08, 0.035, 12.52]} />
+          <meshStandardMaterial color="#cbd5e1" roughness={0.65} />
+        </mesh>
+        <mesh position={[0.88, -0.008, 11.74]} castShadow receiveShadow>
+          <boxGeometry args={[0.08, 0.035, 12.52]} />
+          <meshStandardMaterial color="#cbd5e1" roughness={0.65} />
+        </mesh>
+
+        {/* 3. Tiered Front Porch Steps Aligned Directly with the Front Door */}
+        {/* Tier 1 Landing Platform (Top step flush with door threshold) */}
+        <mesh position={[0, 0.012, 5.22]} receiveShadow castShadow>
+          <boxGeometry args={[1.72, 0.045, 0.44]} />
+          <meshStandardMaterial color="#e2e8f0" map={stoneMap} roughness={0.6} />
+        </mesh>
+        {/* Tier 2 Lower Step */}
+        <mesh position={[0, -0.01, 5.46]} receiveShadow castShadow>
+          <boxGeometry args={[1.72, 0.035, 0.28]} />
+          <meshStandardMaterial color="#cbd5e1" map={stoneMap} roughness={0.65} />
+        </mesh>
+
+        {/* Modern Ceramic Planters flanking the front porch */}
+        <group position={[-0.96, 0.14, 5.22]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.15, 0.12, 0.28, 16]} />
+            <meshStandardMaterial color="#475569" roughness={0.4} />
+          </mesh>
+          <mesh position={[0, 0.20, 0]} castShadow>
+            <sphereGeometry args={[0.16, 12, 12]} scale={[1, 1.25, 1]} />
+            <meshStandardMaterial color="#15803d" roughness={0.8} />
+          </mesh>
+        </group>
+        <group position={[0.96, 0.14, 5.22]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.15, 0.12, 0.28, 16]} />
+            <meshStandardMaterial color="#475569" roughness={0.4} />
+          </mesh>
+          <mesh position={[0, 0.20, 0]} castShadow>
+            <sphereGeometry args={[0.16, 12, 12]} scale={[1, 1.25, 1]} />
+            <meshStandardMaterial color="#15803d" roughness={0.8} />
+          </mesh>
+        </group>
+      </group>
     </group>
   )
 }

@@ -1923,7 +1923,8 @@ export function ExteriorYardFenceAndGrass() {
     const pList = []
 
     for (let x = minX; x <= maxX; x += step) {
-      if (x > -1.42 && x < 0.32) continue
+      // Gate opening centered exactly on front door / walkway at x = -0.53
+      if (x > -1.40 && x < 0.34) continue
       pList.push({ pos: [x, 0.42, maxZ], rot: 0 })
     }
     for (let x = minX; x <= maxX; x += step) {
@@ -1938,8 +1939,8 @@ export function ExteriorYardFenceAndGrass() {
 
     const postList = [
       [minX, 0.5, maxZ],
-      [-1.45, 0.55, maxZ],
-      [0.35, 0.55, maxZ],
+      [-1.40, 0.55, maxZ],
+      [0.34, 0.55, maxZ],
       [maxX, 0.5, maxZ],
       [minX, 0.5, minZ],
       [maxX, 0.5, minZ],
@@ -1963,7 +1964,7 @@ export function ExteriorYardFenceAndGrass() {
       const z = -8.0 + rand() * 19.5
 
       if (x > -3.75 && x < 6.05 && z > -5.85 && z < 5.35) continue
-      if (x > -1.45 && x < 0.35 && z > 4.9) continue
+      if (x > -1.48 && x < 0.42 && z > 4.9) continue
       if (Math.hypot(x - 1.15, z - 6.55) < 0.72) continue
 
       const scale = 0.75 + rand() * 0.85
@@ -2005,20 +2006,21 @@ export function ExteriorYardFenceAndGrass() {
           </group>
         ))}
 
-        <mesh position={[-3.52, 0.58, 8.2]} castShadow>
-          <boxGeometry args={[4.15, 0.06, 0.05]} />
+        {/* Front horizontal rails cleanly meeting the gate posts at -1.40 and 0.34 */}
+        <mesh position={[-3.50, 0.58, 8.2]} castShadow>
+          <boxGeometry args={[4.20, 0.06, 0.05]} />
           <meshStandardMaterial color="#f1f5f9" roughness={0.5} />
         </mesh>
-        <mesh position={[-3.52, 0.24, 8.2]} castShadow>
-          <boxGeometry args={[4.15, 0.06, 0.05]} />
+        <mesh position={[-3.50, 0.24, 8.2]} castShadow>
+          <boxGeometry args={[4.20, 0.06, 0.05]} />
           <meshStandardMaterial color="#f1f5f9" roughness={0.5} />
         </mesh>
-        <mesh position={[3.98, 0.58, 8.2]} castShadow>
-          <boxGeometry args={[7.25, 0.06, 0.05]} />
+        <mesh position={[3.97, 0.58, 8.2]} castShadow>
+          <boxGeometry args={[7.26, 0.06, 0.05]} />
           <meshStandardMaterial color="#f1f5f9" roughness={0.5} />
         </mesh>
-        <mesh position={[3.98, 0.24, 8.2]} castShadow>
-          <boxGeometry args={[7.25, 0.06, 0.05]} />
+        <mesh position={[3.97, 0.24, 8.2]} castShadow>
+          <boxGeometry args={[7.26, 0.06, 0.05]} />
           <meshStandardMaterial color="#f1f5f9" roughness={0.5} />
         </mesh>
         <mesh position={[1.0, 0.58, -7.2]} castShadow>
@@ -2092,11 +2094,6 @@ export function ExteriorYardFenceAndGrass() {
           </group>
         ))}
       </group>
-
-      <mesh position={[-0.53, 0.012, 5.55]} receiveShadow>
-        <boxGeometry args={[0.92, 0.02, 0.54]} />
-        <meshStandardMaterial color="#b45309" roughness={0.9} />
-      </mesh>
 
       {/* Stylized 3D Companion Dog in the Front Garden beside the Limestone Walkway */}
       <GardenDogCompanion position={[1.15, 0.0, 6.55]} rotation={[0, -0.35, 0]} />
@@ -2561,10 +2558,14 @@ export function KitchenSkillsShowcase() {
 }
 
 /**
- * Room 2 — Living Room Couch, Side Table, Steaming Coffee Cup & Interactive 3D Page-Flipping Newspaper.
+ * Room 2 — Living Room Couch, Coffee Table, Armchairs, TV, Staircase, Bathroom & Locked Bedroom Door
+ * Strictly according to the architectural Ground Floor Plan.
  */
 export function LivingRoomSkillsShowcase({ scrollRef }) {
-  const { rugMap, boucleBump, oakMap, oakBump } = useMemo(() => getHousePBRTextures(), [])
+  const { rugMap, boucleBump, oakMap, oakBump, marbleMap, marbleBump, plasterBump } = useMemo(
+    () => getHousePBRTextures(),
+    []
+  )
   const page1FrontTex = useNewspaperPageTexture('page1-front')
   const page1BackTex = useNewspaperPageTexture('page1-back')
   const page2InsideTex = useNewspaperPageTexture('page2-inside')
@@ -2592,6 +2593,19 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
       color: '#ffffff',
       subColor: '#6ee7b7',
       fontSize: 68,
+      subFontSize: 38,
+    }
+  )
+
+  const lockedSignTex = useFloatingTextTexture(
+    [
+      'PRIMARY BEDROOM',
+      { text: 'PRIVATE • LOCKED', sub: true },
+    ],
+    {
+      color: '#fbbf24',
+      subColor: '#e2e8f0',
+      fontSize: 64,
       subFontSize: 38,
     }
   )
@@ -2635,17 +2649,23 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
 
   return (
     <group>
-      {/* Warm Focused Reading Lamp Light over the Coffee Table & Newspaper */}
-      <pointLight position={[3.32, 1.85, 2.75]} intensity={1.9} distance={4.5} decay={2} color="#fde68a" />
+      {/* =====================================================================
+          1. LIVING ROOM LOUNGE (Floor Plan Layout)
+          Sofa against North bathroom wall facing South (+z), Coffee Table in center,
+          Two Accent Armchairs facing North + side table, TV on East wall, Floor Lamp in corner
+         ===================================================================== */}
 
-      {/* Cozy Living Room Floor Lamp standing in the East corner */}
-      <group position={[4.95, 0, 1.95]}>
+      {/* Warm Reading Lamp Light over the Coffee Table & Broadsheet */}
+      <pointLight position={[2.15, 1.85, 2.75]} intensity={1.85} distance={4.5} decay={2} color="#fde68a" />
+
+      {/* Tall Floor Lamp standing in the East corner to the right of the sofa */}
+      <group position={[3.45, 0, 2.05]}>
         <mesh position={[0, 0.03, 0]} castShadow>
-          <cylinderGeometry args={[0.17, 0.2, 0.05, 16]} />
+          <cylinderGeometry args={[0.16, 0.19, 0.05, 16]} />
           <meshStandardMaterial color="#78350f" roughness={0.5} />
         </mesh>
         <mesh position={[0, 0.78, 0]} castShadow>
-          <cylinderGeometry args={[0.024, 0.024, 1.5, 12]} />
+          <cylinderGeometry args={[0.022, 0.022, 1.5, 12]} />
           <meshStandardMaterial color="#78350f" roughness={0.5} />
         </mesh>
         <mesh position={[0, 1.52, 0]}>
@@ -2657,18 +2677,19 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
             roughness={0.35}
           />
         </mesh>
+        <pointLight position={[0, 1.50, 0]} intensity={1.2} distance={3.0} decay={2} color="#fef08a" />
       </group>
 
-      {/* 1. Cozy Living Room Woven Moroccan Area Rug (Centered under Couch & Coffee Table) */}
-      <group position={[3.32, 0.012, 2.85]}>
+      {/* Moroccan Woven Area Rug centered under Couch, Coffee Table & Armchairs */}
+      <group position={[2.15, 0.012, 2.85]}>
         <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
           <planeGeometry args={[2.85, 2.25]} />
           <meshStandardMaterial map={rugMap} bumpMap={boucleBump} bumpScale={0.012} roughness={0.92} />
         </mesh>
       </group>
 
-      {/* 2. Soft, Plush Blue 3-Seater Living Room Couch - Back against North wall at z = 2.05, facing South toward sunny window */}
-      <group position={[3.32, 0, 2.08]}>
+      {/* A. Soft, Plush Blue 3-Seater Couch (Back against North bathroom wall at z = 2.05, facing South +z) */}
+      <group position={[2.15, 0, 2.05]}>
         {[
           [-0.72, 0.06, -0.28],
           [0.72, 0.06, -0.28],
@@ -2693,7 +2714,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           <meshStandardMaterial color="#1d4ed8" bumpMap={boucleBump} bumpScale={0.015} roughness={0.86} />
         </RoundedBox>
 
-        {/* Three Plush, Puffy Rounded Seat Cushions */}
+        {/* Three Plush Rounded Seat Cushions */}
         {[-0.50, 0, 0.50].map((cx, i) => (
           <RoundedBox
             key={`seat-${i}`}
@@ -2736,7 +2757,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           </RoundedBox>
         ))}
 
-        {/* Puffy Rolled/Rounded Blue Armrests */}
+        {/* Puffy Rolled Blue Armrests */}
         <RoundedBox
           args={[0.18, 0.40, 0.82]}
           radius={0.085}
@@ -2758,8 +2779,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           <meshStandardMaterial color="#2563eb" bumpMap={boucleBump} bumpScale={0.016} roughness={0.86} />
         </RoundedBox>
 
-        {/* Cozy Plump Throw Cushions / Pillows on the Blue Couch */}
-        {/* Left Baby-Blue & Cream Throw Cushion */}
+        {/* Four Throw Cushions on the Blue Couch */}
         <RoundedBox
           args={[0.28, 0.28, 0.12]}
           radius={0.055}
@@ -2770,7 +2790,6 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
         >
           <meshStandardMaterial color="#bae6fd" bumpMap={boucleBump} bumpScale={0.014} roughness={0.84} />
         </RoundedBox>
-        {/* Left Accent Warm Gold Cushion */}
         <RoundedBox
           args={[0.25, 0.25, 0.11]}
           radius={0.05}
@@ -2781,7 +2800,6 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
         >
           <meshStandardMaterial color="#fde047" bumpMap={boucleBump} bumpScale={0.014} roughness={0.84} />
         </RoundedBox>
-        {/* Center-Right Cozy Cream Cushion */}
         <RoundedBox
           args={[0.26, 0.24, 0.11]}
           radius={0.05}
@@ -2792,7 +2810,6 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
         >
           <meshStandardMaterial color="#fef3c7" bumpMap={boucleBump} bumpScale={0.014} roughness={0.85} />
         </RoundedBox>
-        {/* Right Soft Sky-Blue Throw Cushion */}
         <RoundedBox
           args={[0.28, 0.28, 0.12]}
           radius={0.055}
@@ -2805,90 +2822,8 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
         </RoundedBox>
       </group>
 
-      {/* 2B. Living Room Widescreen Smart TV & Media Console - Placed cleanly against South Wall window sill at z = 4.38, facing North toward Couch */}
-      <group position={[3.32, 0, 4.38]}>
-        {/* Mid-Century Walnut & Slate TV Media Stand */}
-        <RoundedBox
-          args={[1.38, 0.34, 0.38]}
-          radius={0.03}
-          smoothness={4}
-          position={[0, 0.25, 0]}
-          castShadow
-          receiveShadow
-        >
-          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#92400e" roughness={0.46} />
-        </RoundedBox>
-        {/* Console Cabinet Doors & Open Shelf */}
-        <mesh position={[-0.44, 0.25, -0.192]}>
-          <boxGeometry args={[0.42, 0.26, 0.01]} />
-          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.012} color="#b45309" roughness={0.45} />
-        </mesh>
-        <mesh position={[0.44, 0.25, -0.192]}>
-          <boxGeometry args={[0.42, 0.26, 0.01]} />
-          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.012} color="#b45309" roughness={0.45} />
-        </mesh>
-        <mesh position={[0, 0.25, -0.17]}>
-          <boxGeometry args={[0.40, 0.24, 0.04]} />
-          <meshStandardMaterial color="#1e293b" roughness={0.7} />
-        </mesh>
-        {/* Soundbar sitting on top of the TV Media Stand */}
-        <RoundedBox
-          args={[0.68, 0.045, 0.08]}
-          radius={0.015}
-          smoothness={4}
-          position={[0, 0.445, -0.06]}
-          castShadow
-        >
-          <meshStandardMaterial color="#0f172a" metalness={0.5} roughness={0.35} />
-        </RoundedBox>
-        {/* Tapered Wooden Console Legs */}
-        {[
-          [-0.60, 0.05, -0.13],
-          [0.60, 0.05, -0.13],
-          [-0.60, 0.05, 0.13],
-          [0.60, 0.05, 0.13],
-        ].map((lpos, idx) => (
-          <mesh key={`tvleg-${idx}`} position={lpos} castShadow>
-            <cylinderGeometry args={[0.022, 0.015, 0.10, 10]} />
-            <meshStandardMaterial color="#451a03" roughness={0.6} />
-          </mesh>
-        ))}
-
-        {/* Sleek Metallic TV Pedestal Stand */}
-        <mesh position={[0, 0.44, 0.02]} castShadow>
-          <boxGeometry args={[0.42, 0.02, 0.20]} />
-          <meshStandardMaterial color="#334155" metalness={0.75} roughness={0.25} />
-        </mesh>
-        <mesh position={[0, 0.50, 0.03]} castShadow>
-          <cylinderGeometry args={[0.032, 0.038, 0.13, 16]} />
-          <meshStandardMaterial color="#334155" metalness={0.75} roughness={0.25} />
-        </mesh>
-
-        {/* 55-Inch Ultra-Thin 4K Smart TV Panel (Facing North toward Couch at z = 2.08) */}
-        <RoundedBox
-          args={[1.22, 0.70, 0.035]}
-          radius={0.012}
-          smoothness={4}
-          position={[0, 0.88, 0.03]}
-          castShadow
-          receiveShadow
-        >
-          <meshStandardMaterial color="#090d16" metalness={0.65} roughness={0.22} />
-        </RoundedBox>
-        {/* Illuminated 4K Display Screen */}
-        <mesh position={[0, 0.88, -0.001]} rotation={[0, Math.PI, 0]}>
-          <planeGeometry args={[1.16, 0.64]} />
-          <meshBasicMaterial map={tvScreenTex} />
-        </mesh>
-        {/* Power Status LED */}
-        <mesh position={[-0.54, 0.545, -0.002]}>
-          <sphereGeometry args={[0.008, 8, 8]} />
-          <meshBasicMaterial color="#38bdf8" />
-        </mesh>
-      </group>
-
-      {/* 3. Aesthetic Mid-Century Wooden Coffee Table in the Center between Couch & TV */}
-      <group position={[3.32, 0, 2.88]}>
+      {/* B. Rectangular Oak Coffee Table (Directly in front of sofa at z = 2.85) */}
+      <group position={[2.15, 0, 2.85]}>
         <mesh position={[0, 0.45, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.12, 0.035, 0.68]} />
           <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#b45309" roughness={0.44} />
@@ -2913,7 +2848,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           </mesh>
         ))}
 
-        {/* A. Steaming Cup of Coffee */}
+        {/* Steaming Ceramic Espresso Cup */}
         <group position={[0.35, 0.468, -0.06]}>
           <mesh position={[0, 0.008, 0]} castShadow receiveShadow>
             <cylinderGeometry args={[0.082, 0.062, 0.016, 24]} />
@@ -2926,10 +2861,6 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           <mesh position={[0, 0.099, 0]}>
             <cylinderGeometry args={[0.048, 0.048, 0.004, 24]} />
             <meshStandardMaterial color="#451a03" roughness={0.35} />
-          </mesh>
-          <mesh position={[0, 0.102, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <ringGeometry args={[0.012, 0.028, 20]} />
-            <meshBasicMaterial color="#fef3c7" />
           </mesh>
           <mesh position={[0.056, 0.056, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
             <torusGeometry args={[0.024, 0.006, 10, 20, Math.PI]} />
@@ -2946,20 +2877,10 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
                 depthWrite={false}
               />
             </mesh>
-            <mesh position={[0.012, 0.045, 0.006]} rotation={[0, 0.5, -0.14]}>
-              <planeGeometry args={[0.014, 0.068]} />
-              <meshBasicMaterial
-                color="#e0f2fe"
-                transparent
-                opacity={0.3}
-                side={THREE.DoubleSide}
-                depthWrite={false}
-              />
-            </mesh>
           </group>
         </group>
 
-        {/* B. Interactive 3D Page-Flipping Newspaper */}
+        {/* Interactive 3D Page-Flipping Broadsheet Newspaper */}
         <group position={[-0.06, 0.475, 0.01]} rotation={[0.16, 0, 0]}>
           <mesh position={[0, 0.004, 0]} castShadow receiveShadow>
             <boxGeometry args={[0.38, 0.008, 0.31]} />
@@ -2986,7 +2907,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
             </mesh>
           </group>
 
-          {/* Clean Borderless 3D Skill Header at the Top of the Newspaper */}
+          {/* Borderless 3D Skill Badge Header above Newspaper */}
           <group position={[0, 0.11, -0.155]} rotation={[-0.52, 0, 0]}>
             <mesh ref={badge1Ref}>
               <planeGeometry args={[0.44, 0.14]} />
@@ -3010,109 +2931,483 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
         </group>
       </group>
 
-      {/* =====================================================================
-          4. ARCHITECTURAL OAK STAIRCASE TO ATTIC LOFT (Moved to North dividing wall, away from window!)
-          Ascends Northward from Living Room (x: 0.62, z: 3.65) up into Attic Loft (x: 0.62, z: 1.45, y: 2.58)
-         ===================================================================== */}
-      <group position={[0.62, 0, 0]}>
-        {/* Closed/Open Stringers on Left & Right of Staircase */}
-        <mesh position={[-0.45, 1.25, 2.55]} rotation={[0.65, 0, 0]} castShadow>
-          <boxGeometry args={[0.045, 0.22, 3.25]} />
-          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#78350f" roughness={0.48} />
+      {/* C. Two Accent Armchairs Facing North toward Coffee Table & Sofa (Floor Plan) */}
+      {/* Left Accent Armchair */}
+      <group position={[1.42, 0, 3.55]} rotation={[0, -0.28, 0]}>
+        {[
+          [-0.26, 0.06, -0.22],
+          [0.26, 0.06, -0.22],
+          [-0.26, 0.06, 0.22],
+          [0.26, 0.06, 0.22],
+        ].map((lp, idx) => (
+          <mesh key={`armleg1-${idx}`} position={lp} castShadow>
+            <cylinderGeometry args={[0.022, 0.015, 0.12, 10]} />
+            <meshStandardMaterial color="#78350f" roughness={0.5} />
+          </mesh>
+        ))}
+        {/* Armchair Seat */}
+        <RoundedBox args={[0.62, 0.16, 0.58]} radius={0.06} smoothness={4} position={[0, 0.20, 0]} castShadow>
+          <meshStandardMaterial color="#f1f5f9" bumpMap={boucleBump} bumpScale={0.016} roughness={0.88} />
+        </RoundedBox>
+        {/* Armchair Backrest */}
+        <RoundedBox args={[0.62, 0.44, 0.12]} radius={0.05} smoothness={4} position={[0, 0.46, 0.24]} rotation={[-0.12, 0, 0]} castShadow>
+          <meshStandardMaterial color="#e2e8f0" bumpMap={boucleBump} bumpScale={0.016} roughness={0.88} />
+        </RoundedBox>
+        {/* Armchair Armrests */}
+        <RoundedBox args={[0.10, 0.28, 0.54]} radius={0.04} smoothness={4} position={[-0.31, 0.35, 0]} castShadow>
+          <meshStandardMaterial color="#e2e8f0" bumpMap={boucleBump} bumpScale={0.016} roughness={0.88} />
+        </RoundedBox>
+        <RoundedBox args={[0.10, 0.28, 0.54]} radius={0.04} smoothness={4} position={[0.31, 0.35, 0]} castShadow>
+          <meshStandardMaterial color="#e2e8f0" bumpMap={boucleBump} bumpScale={0.016} roughness={0.88} />
+        </RoundedBox>
+      </group>
+
+      {/* Right Accent Armchair */}
+      <group position={[2.88, 0, 3.55]} rotation={[0, 0.28, 0]}>
+        {[
+          [-0.26, 0.06, -0.22],
+          [0.26, 0.06, -0.22],
+          [-0.26, 0.06, 0.22],
+          [0.26, 0.06, 0.22],
+        ].map((lp, idx) => (
+          <mesh key={`armleg2-${idx}`} position={lp} castShadow>
+            <cylinderGeometry args={[0.022, 0.015, 0.12, 10]} />
+            <meshStandardMaterial color="#78350f" roughness={0.5} />
+          </mesh>
+        ))}
+        <RoundedBox args={[0.62, 0.16, 0.58]} radius={0.06} smoothness={4} position={[0, 0.20, 0]} castShadow>
+          <meshStandardMaterial color="#f1f5f9" bumpMap={boucleBump} bumpScale={0.016} roughness={0.88} />
+        </RoundedBox>
+        <RoundedBox args={[0.62, 0.44, 0.12]} radius={0.05} smoothness={4} position={[0, 0.46, 0.24]} rotation={[-0.12, 0, 0]} castShadow>
+          <meshStandardMaterial color="#e2e8f0" bumpMap={boucleBump} bumpScale={0.016} roughness={0.88} />
+        </RoundedBox>
+        <RoundedBox args={[0.10, 0.28, 0.54]} radius={0.04} smoothness={4} position={[-0.31, 0.35, 0]} castShadow>
+          <meshStandardMaterial color="#e2e8f0" bumpMap={boucleBump} bumpScale={0.016} roughness={0.88} />
+        </RoundedBox>
+        <RoundedBox args={[0.10, 0.28, 0.54]} radius={0.04} smoothness={4} position={[0.31, 0.35, 0]} castShadow>
+          <meshStandardMaterial color="#e2e8f0" bumpMap={boucleBump} bumpScale={0.016} roughness={0.88} />
+        </RoundedBox>
+      </group>
+
+      {/* D. Small Wooden Side Table between the two Armchairs (Floor Plan) */}
+      <group position={[2.15, 0, 3.65]}>
+        <mesh position={[0, 0.42, 0]} castShadow receiveShadow>
+          <cylinderGeometry args={[0.22, 0.22, 0.028, 24]} />
+          <meshStandardMaterial map={oakMap} color="#b45309" roughness={0.46} />
         </mesh>
-        <mesh position={[0.45, 1.25, 2.55]} rotation={[0.65, 0, 0]} castShadow>
-          <boxGeometry args={[0.045, 0.22, 3.25]} />
-          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#78350f" roughness={0.48} />
+        {[0, 2.09, 4.18].map((ang, i) => (
+          <mesh key={`stleg-${i}`} position={[Math.cos(ang) * 0.14, 0.21, Math.sin(ang) * 0.14]} rotation={[0.08 * Math.cos(ang), 0, 0.08 * Math.sin(ang)]} castShadow>
+            <cylinderGeometry args={[0.016, 0.012, 0.42, 10]} />
+            <meshStandardMaterial color="#78350f" roughness={0.5} />
+          </mesh>
+        ))}
+        {/* Ceramic vase with succulent */}
+        <mesh position={[0, 0.48, 0]} castShadow>
+          <cylinderGeometry args={[0.048, 0.038, 0.09, 16]} />
+          <meshStandardMaterial color="#f8fafc" roughness={0.3} />
+        </mesh>
+        <mesh position={[0, 0.54, 0]}>
+          <sphereGeometry args={[0.042, 10, 10]} scale={[1, 0.7, 1]} />
+          <meshStandardMaterial color="#10b981" roughness={0.8} />
+        </mesh>
+      </group>
+
+      {/* E. 55-Inch 4K Smart TV & Media Console along the East wall of Living Room */}
+      <group position={[4.10, 0, 2.85]} rotation={[0, -Math.PI / 2, 0]}>
+        <RoundedBox
+          args={[1.38, 0.34, 0.38]}
+          radius={0.03}
+          smoothness={4}
+          position={[0, 0.25, 0]}
+          castShadow
+          receiveShadow
+        >
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#92400e" roughness={0.46} />
+        </RoundedBox>
+        <mesh position={[-0.44, 0.25, -0.192]}>
+          <boxGeometry args={[0.42, 0.26, 0.01]} />
+          <meshStandardMaterial map={oakMap} color="#b45309" roughness={0.45} />
+        </mesh>
+        <mesh position={[0.44, 0.25, -0.192]}>
+          <boxGeometry args={[0.42, 0.26, 0.01]} />
+          <meshStandardMaterial map={oakMap} color="#b45309" roughness={0.45} />
+        </mesh>
+        <RoundedBox
+          args={[0.68, 0.045, 0.08]}
+          radius={0.015}
+          smoothness={4}
+          position={[0, 0.445, -0.06]}
+          castShadow
+        >
+          <meshStandardMaterial color="#0f172a" metalness={0.5} roughness={0.35} />
+        </RoundedBox>
+        {[
+          [-0.60, 0.05, -0.13],
+          [0.60, 0.05, -0.13],
+          [-0.60, 0.05, 0.13],
+          [0.60, 0.05, 0.13],
+        ].map((lpos, idx) => (
+          <mesh key={`tvleg-${idx}`} position={lpos} castShadow>
+            <cylinderGeometry args={[0.022, 0.015, 0.10, 10]} />
+            <meshStandardMaterial color="#451a03" roughness={0.6} />
+          </mesh>
+        ))}
+        {/* Sleek Metallic TV Pedestal */}
+        <mesh position={[0, 0.44, 0.02]} castShadow>
+          <boxGeometry args={[0.42, 0.02, 0.20]} />
+          <meshStandardMaterial color="#334155" metalness={0.75} roughness={0.25} />
+        </mesh>
+        <mesh position={[0, 0.50, 0.03]} castShadow>
+          <cylinderGeometry args={[0.032, 0.038, 0.13, 16]} />
+          <meshStandardMaterial color="#334155" metalness={0.75} roughness={0.25} />
+        </mesh>
+        {/* 55-Inch 4K Display Panel */}
+        <RoundedBox
+          args={[1.22, 0.70, 0.035]}
+          radius={0.012}
+          smoothness={4}
+          position={[0, 0.88, 0.03]}
+          castShadow
+          receiveShadow
+        >
+          <meshStandardMaterial color="#090d16" metalness={0.65} roughness={0.22} />
+        </RoundedBox>
+        <mesh position={[0, 0.88, -0.001]} rotation={[0, Math.PI, 0]}>
+          <planeGeometry args={[1.16, 0.64]} />
+          <meshBasicMaterial map={tvScreenTex} />
+        </mesh>
+        <mesh position={[-0.54, 0.545, -0.002]}>
+          <sphereGeometry args={[0.008, 8, 8]} />
+          <meshBasicMaterial color="#38bdf8" />
+        </mesh>
+      </group>
+
+      {/* =====================================================================
+          2. CENTRAL OAK STAIRCASE & UNDER-STAIR CLOSET (Floor Plan UP Arrow)
+          Positioned along the central spine at x = 0.55, ascending Northward UP from z = 1.70 to -0.30
+         ===================================================================== */}
+      <group position={[0.55, 0, 0]}>
+        {/* Stringers */}
+        <mesh position={[-0.44, 1.25, 0.70]} rotation={[-0.68, 0, 0]} castShadow>
+          <boxGeometry args={[0.045, 0.22, 2.95]} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} color="#78350f" roughness={0.48} />
+        </mesh>
+        <mesh position={[0.44, 1.25, 0.70]} rotation={[-0.68, 0, 0]} castShadow>
+          <boxGeometry args={[0.045, 0.22, 2.95]} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} color="#78350f" roughness={0.48} />
         </mesh>
 
-        {/* 14 Solid Quarter-Sawn Oak Treads and Risers */}
+        {/* 14 Quarter-Sawn Oak Treads and Risers Ascending UP Northward */}
         {[...Array(14)].map((_, i) => {
           const t = (i + 1) / 14
           const y = t * 2.54 - 0.08
-          const z = 3.65 - t * 2.25
+          const z = 1.70 - t * 2.00
           return (
             <group key={`stair-step-${i}`}>
-              {/* Horizontal Oak Step Tread */}
               <mesh position={[0, y, z]} castShadow receiveShadow>
-                <boxGeometry args={[0.88, 0.045, 0.24]} />
+                <boxGeometry args={[0.86, 0.045, 0.22]} />
                 <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.018} color="#b45309" roughness={0.42} />
               </mesh>
-              {/* Vertical Step Riser */}
-              <mesh position={[0, y - 0.08, z - 0.10]} castShadow>
-                <boxGeometry args={[0.86, 0.16, 0.025]} />
+              <mesh position={[0, y - 0.08, z + 0.09]} castShadow>
+                <boxGeometry args={[0.84, 0.16, 0.025]} />
                 <meshStandardMaterial color="#f8fafc" roughness={0.4} />
               </mesh>
-              {/* Brass Step Nosings / Inset LED Accent */}
-              <mesh position={[0, y + 0.022, z + 0.11]}>
-                <boxGeometry args={[0.88, 0.008, 0.015]} />
+              <mesh position={[0, y + 0.022, z - 0.10]}>
+                <boxGeometry args={[0.86, 0.008, 0.015]} />
                 <meshStandardMaterial color="#fbbf24" metalness={0.8} roughness={0.25} />
               </mesh>
             </group>
           )
         })}
 
-        {/* Slanted Oak Handrail and Spindles along outer side (x = +0.45) */}
-        <mesh position={[0.45, 1.70, 2.55]} rotation={[0.65, 0, 0]} castShadow>
-          <boxGeometry args={[0.055, 0.05, 3.25]} />
+        {/* Handrail & Spindles along the West opening (x = -0.44) */}
+        <mesh position={[-0.44, 1.70, 0.70]} rotation={[-0.68, 0, 0]} castShadow>
+          <boxGeometry args={[0.055, 0.05, 2.95]} />
           <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.45} />
         </mesh>
         {[0, 2, 4, 6, 8, 10, 12].map((idx) => {
           const t = (idx + 1) / 14
           const y = t * 2.54 + 0.22
-          const z = 3.65 - t * 2.25
+          const z = 1.70 - t * 2.00
           return (
-            <mesh key={`srail-${idx}`} position={[0.45, y, z]} castShadow>
+            <mesh key={`srail-${idx}`} position={[-0.44, y, z]} castShadow>
               <cylinderGeometry args={[0.012, 0.012, 0.44, 8]} />
               <meshStandardMaterial color="#f8fafc" roughness={0.4} />
             </mesh>
           )
         })}
-        {/* Starting Newel Post at base of stairs */}
-        <mesh position={[0.45, 0.45, 3.65]} castShadow>
-          <boxGeometry args={[0.075, 0.90, 0.075]} />
+
+        {/* Under-Stairs Closet Partition Wall & Door (Floor Plan: CLOSET) */}
+        <group position={[0, 0, -0.32]}>
+          <mesh position={[0, 1.10, 0]} castShadow receiveShadow>
+            <boxGeometry args={[0.86, 2.20, 0.06]} />
+            <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.015} roughness={0.7} />
+          </mesh>
+          {/* Closet Door Frame & Door */}
+          <mesh position={[0, 1.05, 0.035]} castShadow>
+            <boxGeometry args={[0.74, 2.00, 0.03]} />
+            <meshStandardMaterial map={oakMap} color="#f1f5f9" roughness={0.5} />
+          </mesh>
+          {/* Brass Closet Knob */}
+          <mesh position={[0.28, 1.05, 0.06]}>
+            <sphereGeometry args={[0.018, 10, 10]} />
+            <meshStandardMaterial color="#fbbf24" metalness={0.85} roughness={0.25} />
+          </mesh>
+          {/* Subtle Closet Label */}
+          <FloatingLabel3D
+            position={[0, 1.82, 0.05]}
+            rotation={[0, 0, 0]}
+            size={[0.45, 0.12]}
+            color="#94a3b8"
+            subColor="#cbd5e1"
+            fontSize={50}
+            subFontSize={28}
+            lines={['CLOSET']}
+          />
+        </group>
+      </group>
+
+      {/* =====================================================================
+          3. BATHROOM SUITE (9'9" x 10'6" on Floor Plan)
+          North of Living Room sofa (z: [-0.20, 1.95]), East of Hallway (x: [1.10, 3.65])
+          Includes: Vanity Sink, Mirror, Toilet & Soaking Bathtub
+         ===================================================================== */}
+      <group position={[2.38, 0, 0.88]}>
+        {/* Marble Bathroom Floor Tiles */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, 0]} receiveShadow>
+          <planeGeometry args={[2.50, 2.10]} />
+          <meshStandardMaterial
+            map={marbleMap}
+            bumpMap={marbleBump}
+            bumpScale={0.016}
+            roughness={0.35}
+          />
+        </mesh>
+
+        {/* South Wall (separating Bathroom from Living Room Couch) at z = 1.05 */}
+        <mesh position={[0, 1.25, 1.05]} castShadow receiveShadow>
+          <boxGeometry args={[2.50, 2.50, 0.08]} />
+          <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.018} roughness={0.7} />
+        </mesh>
+        {/* North Wall (separating Bathroom from Bedroom) at z = -1.05 */}
+        <mesh position={[0, 1.25, -1.05]} castShadow receiveShadow>
+          <boxGeometry args={[2.50, 2.50, 0.08]} />
+          <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.018} roughness={0.7} />
+        </mesh>
+        {/* West Hallway Partition Wall with Arched Entrance Doorway */}
+        <mesh position={[-1.25, 1.25, -0.45]} castShadow receiveShadow>
+          <boxGeometry args={[0.08, 2.50, 1.20]} />
+          <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.018} roughness={0.7} />
+        </mesh>
+        <mesh position={[-1.25, 2.22, 0.45]} castShadow receiveShadow>
+          <boxGeometry args={[0.08, 0.56, 0.90]} />
+          <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.018} roughness={0.7} />
+        </mesh>
+
+        {/* Warm Bathroom Ceiling Vanity Light */}
+        <pointLight position={[0, 2.30, 0]} intensity={1.4} distance={3.8} decay={2} color="#fffbeb" />
+
+        {/* A. Vanity Unit (West/North-West side of Bathroom) */}
+        <group position={[-0.65, 0, -0.55]}>
+          {/* Walnut Vanity Base Cabinet */}
+          <RoundedBox args={[0.88, 0.82, 0.52]} radius={0.02} smoothness={4} position={[0, 0.41, 0]} castShadow>
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
+          </RoundedBox>
+          {/* White Carrara Quartz Countertop */}
+          <mesh position={[0, 0.83, 0]} castShadow receiveShadow>
+            <boxGeometry args={[0.92, 0.035, 0.54]} />
+            <meshStandardMaterial color="#ffffff" map={marbleMap} roughness={0.2} />
+          </mesh>
+          {/* Undermount Porcelain Sink Basin */}
+          <mesh position={[0, 0.81, 0]}>
+            <boxGeometry args={[0.46, 0.16, 0.34]} />
+            <meshStandardMaterial color="#f8fafc" roughness={0.15} />
+          </mesh>
+          {/* Brushed Brass Gooseneck Faucet */}
+          <mesh position={[0, 0.95, -0.14]} castShadow>
+            <cylinderGeometry args={[0.012, 0.012, 0.22, 12]} />
+            <meshStandardMaterial color="#fbbf24" metalness={0.85} roughness={0.2} />
+          </mesh>
+          {/* Illuminated LED Frameless Vanity Mirror */}
+          <mesh position={[0, 1.48, -0.245]}>
+            <boxGeometry args={[0.78, 0.72, 0.02]} />
+            <meshStandardMaterial color="#e0f2fe" metalness={0.9} roughness={0.1} />
+          </mesh>
+          <mesh position={[0, 1.48, -0.25]}>
+            <planeGeometry args={[0.84, 0.78]} />
+            <meshBasicMaterial color="#fef08a" transparent opacity={0.65} />
+          </mesh>
+        </group>
+
+        {/* B. Modern Glazed Porcelain Toilet (Next to Vanity) */}
+        <group position={[0.25, 0, -0.65]}>
+          {/* Toilet Bowl */}
+          <RoundedBox args={[0.38, 0.42, 0.55]} radius={0.06} smoothness={4} position={[0, 0.21, 0]} castShadow>
+            <meshStandardMaterial color="#ffffff" roughness={0.15} />
+          </RoundedBox>
+          {/* Toilet Seat & Lid */}
+          <RoundedBox args={[0.36, 0.03, 0.50]} radius={0.03} smoothness={4} position={[0, 0.435, 0]} castShadow>
+            <meshStandardMaterial color="#f8fafc" roughness={0.2} />
+          </RoundedBox>
+          {/* Tank & Chrome Flush Button */}
+          <RoundedBox args={[0.36, 0.44, 0.20]} radius={0.03} smoothness={4} position={[0, 0.65, -0.20]} castShadow>
+            <meshStandardMaterial color="#ffffff" roughness={0.15} />
+          </RoundedBox>
+          <mesh position={[0, 0.88, -0.20]}>
+            <cylinderGeometry args={[0.024, 0.024, 0.015, 12]} />
+            <meshStandardMaterial color="#cbd5e1" metalness={0.8} roughness={0.2} />
+          </mesh>
+        </group>
+
+        {/* C. Freestanding Soaking Bathtub (East Wall of Bathroom, Window Above) */}
+        <group position={[0.88, 0, 0.05]} rotation={[0, Math.PI / 2, 0]}>
+          <RoundedBox args={[1.45, 0.58, 0.68]} radius={0.14} smoothness={5} position={[0, 0.29, 0]} castShadow receiveShadow>
+            <meshStandardMaterial color="#ffffff" roughness={0.18} />
+          </RoundedBox>
+          {/* Tub Inner Hollow */}
+          <mesh position={[0, 0.32, 0]}>
+            <boxGeometry args={[1.25, 0.52, 0.50]} />
+            <meshStandardMaterial color="#f1f5f9" roughness={0.2} />
+          </mesh>
+          {/* Chrome Freestanding Tub Filler */}
+          <mesh position={[0.62, 0.62, 0]} castShadow>
+            <cylinderGeometry args={[0.016, 0.016, 0.68, 12]} />
+            <meshStandardMaterial color="#cbd5e1" metalness={0.85} roughness={0.15} />
+          </mesh>
+        </group>
+      </group>
+
+      {/* =====================================================================
+          4. PRIMARY BEDROOM LOCKED DOOR (North Hallway at x = 1.10, z = -0.30)
+          User requirement: "you dont need to contstruct the entire bedroom,
+          just make a bedroom door which is locked."
+         ===================================================================== */}
+      <group position={[1.10, 0, -0.30]}>
+        {/* Oak Door Casing Archway */}
+        <mesh position={[0, 1.10, 0]} castShadow receiveShadow>
+          <boxGeometry args={[0.09, 2.22, 1.02]} />
           <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.45} />
+        </mesh>
+
+        {/* Solid 6-Panel Dark Oak Bedroom Door */}
+        <mesh position={[0.01, 1.08, 0]} castShadow receiveShadow>
+          <boxGeometry args={[0.045, 2.12, 0.88]} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} color="#451a03" roughness={0.42} />
+        </mesh>
+
+        {/* Recessed Molded Door Panels */}
+        {[-0.22, 0.22].map((pz, i) => (
+          <group key={`dpanel-${i}`}>
+            <mesh position={[-0.015, 1.55, pz]}>
+              <boxGeometry args={[0.01, 0.52, 0.30]} />
+              <meshStandardMaterial map={oakMap} color="#3b1502" roughness={0.45} />
+            </mesh>
+            <mesh position={[-0.015, 0.85, pz]}>
+              <boxGeometry args={[0.01, 0.65, 0.30]} />
+              <meshStandardMaterial map={oakMap} color="#3b1502" roughness={0.45} />
+            </mesh>
+          </group>
+        ))}
+
+        {/* Heavy Brushed Brass Door Lever Handle & Keyhole */}
+        <mesh position={[-0.035, 1.02, 0.34]} castShadow>
+          <cylinderGeometry args={[0.012, 0.012, 0.12, 10]} rotation={[0, 0, Math.PI / 2]} />
+          <meshStandardMaterial color="#fbbf24" metalness={0.9} roughness={0.2} />
+        </mesh>
+        <mesh position={[-0.035, 0.96, 0.34]}>
+          <cylinderGeometry args={[0.015, 0.015, 0.008, 12]} rotation={[0, 0, Math.PI / 2]} />
+          <meshStandardMaterial color="#92400e" metalness={0.7} roughness={0.3} />
+        </mesh>
+
+        {/* Solid Polished Brass Engraved Plaque: "PRIMARY BEDROOM • PRIVATE / LOCKED" */}
+        <mesh position={[-0.026, 1.55, 0]} castShadow>
+          <boxGeometry args={[0.008, 0.16, 0.44]} />
+          <meshStandardMaterial color="#fbbf24" metalness={0.88} roughness={0.25} />
+        </mesh>
+        <mesh position={[-0.031, 1.55, 0]} rotation={[0, -Math.PI / 2, 0]}>
+          <planeGeometry args={[0.42, 0.14]} />
+          <meshBasicMaterial map={lockedSignTex} />
         </mesh>
       </group>
 
       {/* =====================================================================
-          5. CLEAN ARCHITECTURAL TRANSITION PORTAL TO THE NORTH ROOM (LAB BENCH)
-          Polished oak jambs, warm LED wash lights, and acoustic oak slat trim
+          5. DINING NOOK (13'8" on Floor Plan behind Kitchen at x = -2.15, z = -3.20)
+          Dining Table + 4 Matching Wooden Dining Chairs + Overhead Pendant Lamp
          ===================================================================== */}
-      <group position={[1.85, 0, 1.40]}>
-        {/* Architectural Archway Header (Oak Casing) */}
-        <mesh position={[0, 2.12, 0]} castShadow receiveShadow>
-          <boxGeometry args={[1.72, 0.08, 0.22]} />
-          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#78350f" roughness={0.45} />
-        </mesh>
-        {/* Left Casing Jamb */}
-        <mesh position={[-0.82, 1.05, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.08, 2.10, 0.22]} />
-          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#78350f" roughness={0.45} />
-        </mesh>
-        {/* Right Casing Jamb */}
-        <mesh position={[0.82, 1.05, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.08, 2.10, 0.22]} />
-          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#78350f" roughness={0.45} />
-        </mesh>
-        {/* Recessed Warm Downlight in the Portal Ceiling */}
-        <pointLight position={[0, 2.05, 0]} intensity={1.5} distance={3.5} decay={2} color="#fef08a" />
-        <mesh position={[0, 2.07, 0]}>
-          <cylinderGeometry args={[0.065, 0.065, 0.018, 16]} />
-          <meshStandardMaterial color="#fef08a" emissive="#f59e0b" emissiveIntensity={1.2} />
-        </mesh>
-
-        {/* Vertical Acoustic Oak Slats flanking the right jamb */}
-        {[0, 1, 2, 3].map((si) => (
-          <mesh key={`slat-${si}`} position={[0.92 + si * 0.07, 1.05, 0]} castShadow>
-            <boxGeometry args={[0.035, 2.10, 0.08]} />
-            <meshStandardMaterial map={oakMap} color="#b45309" roughness={0.48} />
+      <group position={[-2.15, 0, -3.20]}>
+        {/* Solid Quarter-Sawn Oak Dining Table */}
+        <RoundedBox args={[1.38, 0.045, 0.95]} radius={0.014} smoothness={4} position={[0, 0.74, 0]} castShadow receiveShadow>
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.016} color="#b45309" roughness={0.42} />
+        </RoundedBox>
+        {/* Table Legs */}
+        {[
+          [-0.58, 0.37, -0.38],
+          [0.58, 0.37, -0.38],
+          [-0.58, 0.37, 0.38],
+          [0.58, 0.37, 0.38],
+        ].map((lp, idx) => (
+          <mesh key={`dtleg-${idx}`} position={lp} castShadow>
+            <cylinderGeometry args={[0.032, 0.024, 0.74, 12]} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
           </mesh>
         ))}
 
-        {/* Minimalist Floor Threshold Transition Strip (Oak to Slate/Lab Flooring) */}
-        <mesh position={[0, 0.008, 0]} receiveShadow>
-          <boxGeometry args={[1.72, 0.016, 0.16]} />
-          <meshStandardMaterial color="#d97706" metalness={0.4} roughness={0.4} />
+        {/* 4 Dining Chairs (North, South, East, West) around Table */}
+        {[
+          { pos: [0, 0, -0.68], rot: 0 },
+          { pos: [0, 0, 0.68], rot: Math.PI },
+          { pos: [-0.85, 0, 0], rot: Math.PI / 2 },
+          { pos: [0.85, 0, 0], rot: -Math.PI / 2 },
+        ].map((ch, i) => (
+          <group key={`dchair-${i}`} position={ch.pos} rotation={[0, ch.rot, 0]}>
+            {[
+              [-0.18, 0.22, -0.16],
+              [0.18, 0.22, -0.16],
+              [-0.18, 0.22, 0.16],
+              [0.18, 0.22, 0.16],
+            ].map((clp, ci) => (
+              <mesh key={`cl-${ci}`} position={clp} castShadow>
+                <cylinderGeometry args={[0.018, 0.014, 0.44, 10]} />
+                <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
+              </mesh>
+            ))}
+            {/* Padded Seat Cushion */}
+            <RoundedBox args={[0.42, 0.045, 0.40]} radius={0.02} smoothness={4} position={[0, 0.45, 0]} castShadow>
+              <meshStandardMaterial color="#f1f5f9" bumpMap={boucleBump} bumpScale={0.012} roughness={0.85} />
+            </RoundedBox>
+            {/* Curved Backrest */}
+            <mesh position={[0, 0.72, -0.18]} castShadow>
+              <boxGeometry args={[0.40, 0.22, 0.024]} />
+              <meshStandardMaterial map={oakMap} color="#b45309" roughness={0.46} />
+            </mesh>
+            <mesh position={[-0.16, 0.60, -0.18]} castShadow>
+              <cylinderGeometry args={[0.014, 0.014, 0.32, 8]} />
+              <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
+            </mesh>
+            <mesh position={[0.16, 0.60, -0.18]} castShadow>
+              <cylinderGeometry args={[0.014, 0.014, 0.32, 8]} />
+              <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
+            </mesh>
+          </group>
+        ))}
+
+        {/* Modern Overhead Brass 3-Globe Pendant Chandelier */}
+        <mesh position={[0, 2.10, 0]}>
+          <cylinderGeometry args={[0.008, 0.008, 0.68, 8]} />
+          <meshStandardMaterial color="#fbbf24" metalness={0.8} roughness={0.25} />
+        </mesh>
+        <pointLight position={[0, 1.74, 0]} intensity={1.5} distance={3.8} decay={2} color="#fef08a" />
+        {[-0.22, 0, 0.22].map((gx, gi) => (
+          <mesh key={`globe-${gi}`} position={[gx, 1.74, 0]}>
+            <sphereGeometry args={[0.065, 16, 16]} />
+            <meshStandardMaterial color="#fef08a" emissive="#f59e0b" emissiveIntensity={0.8} />
+          </mesh>
+        ))}
+
+        {/* Minimalist Ceramic Centerpiece Vase on Dining Table */}
+        <mesh position={[0, 0.84, 0]} castShadow>
+          <cylinderGeometry args={[0.045, 0.032, 0.15, 16]} />
+          <meshStandardMaterial color="#e2e8f0" roughness={0.3} />
         </mesh>
       </group>
     </group>
@@ -3272,7 +3567,12 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
       </group>
 
       {/* =====================================================================
-          2. UPSTAIRS ATTIC ART STUDIO & SKETCHBOOK TABLE (y = 2.58, accessed via Living Room North Stairs)
+          2. UPSTAIRS ATTIC ART STUDIO & STUDY LOFT (y = 2.58, accessed via Central Stairs)
+          Follows the "ATTIC STUDY / STUDIO" Floor Plan:
+          - West Wall: Study Desk with Computer & Office Chair
+          - Center: Circular Woven Moroccan Rug
+          - South Wall: Drafting Table with Interactive Page-Flipping Sketchbooks
+          - East / North Wall: Oak Bookshelves, Storage Cabinets & A-Frame Artist Easel
          ===================================================================== */}
       <group position={[0, 2.58, 0]}>
         {/* Warm Quarter-Sawn Oak Hardwood Attic Floor Deck (North half z: -5.0 to 1.35) */}
@@ -3309,26 +3609,23 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
           />
         </mesh>
 
-        {/* Architectural Oak Stairwell Balustrade & Safety Railing around Stair Opening (East side of opening at x = 1.25) */}
-        <group position={[1.25, 0, 2.60]}>
-          {/* Handrail along East side of stair opening (z from 1.35 to 3.85) */}
-          <mesh position={[0, 0.48, 0]} castShadow>
-            <boxGeometry args={[0.055, 0.045, 2.50]} />
+        {/* Oak Balustrade around Stairwell Landing Opening (Floor Plan: DN arrow) */}
+        <group position={[0.55, 0, 0.70]}>
+          <mesh position={[0.45, 0.48, 0]} castShadow>
+            <boxGeometry args={[0.055, 0.045, 2.10]} />
             <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.45} />
           </mesh>
-          {/* Vertical Spindles */}
-          {[-1.1, -0.85, -0.6, -0.35, -0.1, 0.15, 0.4, 0.65, 0.9, 1.15].map((rz, idx) => (
-            <mesh key={`bal-${idx}`} position={[0, 0.24, rz]} castShadow>
+          {[-0.9, -0.6, -0.3, 0, 0.3, 0.6, 0.9].map((rz, idx) => (
+            <mesh key={`abal-${idx}`} position={[0.45, 0.24, rz]} castShadow>
               <cylinderGeometry args={[0.014, 0.014, 0.48, 8]} />
               <meshStandardMaterial color="#f8fafc" roughness={0.4} />
             </mesh>
           ))}
-          {/* Corner Newel Posts */}
-          <mesh position={[0, 0.27, -1.24]} castShadow>
+          <mesh position={[0.45, 0.27, -1.05]} castShadow>
             <boxGeometry args={[0.075, 0.54, 0.075]} />
             <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.45} />
           </mesh>
-          <mesh position={[0, 0.27, 1.24]} castShadow>
+          <mesh position={[0.45, 0.27, 1.05]} castShadow>
             <boxGeometry args={[0.075, 0.54, 0.075]} />
             <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.45} />
           </mesh>
@@ -3345,7 +3642,6 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
               <boxGeometry args={[3.5, 0.09, 0.11]} />
               <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.55} />
             </mesh>
-            {/* Collar Tie Beam */}
             <mesh position={[0, 1.12, 0]} castShadow>
               <boxGeometry args={[1.65, 0.07, 0.09]} />
               <meshStandardMaterial map={oakMap} color="#92400e" roughness={0.55} />
@@ -3363,71 +3659,79 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
           </mesh>
         ))}
 
-        {/* Woven Moroccan Circular Area Rug in the Center of the Attic Studio */}
+        {/* Woven Moroccan Circular Area Rug in the Center of the Attic Studio (Floor Plan) */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0.0, 0.032, 1.85]} receiveShadow>
-          <circleGeometry args={[1.45, 36]} />
+          <circleGeometry args={[1.40, 36]} />
           <meshStandardMaterial map={rugMap} bumpMap={boucleBump} bumpScale={0.012} roughness={0.9} />
         </mesh>
 
-        {/* --- A. WOODEN A-FRAME ARTIST EASEL & GALLERY CANVASES (Left / North-West of Attic) --- */}
-        <group position={[-0.78, 0.03, 1.42]} rotation={[0, 0.42, 0]}>
-          {/* Easel Legs */}
-          <mesh position={[-0.18, 0.46, 0.06]} rotation={[-0.14, 0, -0.12]} castShadow>
-            <cylinderGeometry args={[0.015, 0.015, 0.96, 8]} />
-            <meshStandardMaterial map={oakMap} color="#92400e" roughness={0.55} />
-          </mesh>
-          <mesh position={[0.18, 0.46, 0.06]} rotation={[-0.14, 0, 0.12]} castShadow>
-            <cylinderGeometry args={[0.015, 0.015, 0.96, 8]} />
-            <meshStandardMaterial map={oakMap} color="#92400e" roughness={0.55} />
-          </mesh>
-          <mesh position={[0, 0.44, -0.16]} rotation={[0.24, 0, 0]} castShadow>
-            <cylinderGeometry args={[0.015, 0.015, 0.94, 8]} />
-            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.55} />
-          </mesh>
-          {/* Canvas Tray */}
-          <mesh position={[0, 0.44, 0.09]} castShadow>
-            <boxGeometry args={[0.52, 0.025, 0.07]} />
-            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
-          </mesh>
-          {/* Impasto Starry Landscape Masterpiece on the Easel */}
-          <group position={[0, 0.68, 0.07]} rotation={[-0.14, 0, 0]}>
-            <mesh castShadow>
-              <boxGeometry args={[0.48, 0.48, 0.026]} />
-              <meshStandardMaterial color="#fefce8" roughness={0.7} />
+        {/* --- A. STUDY DESK WITH COMPUTER & CHAIR (West Wall on Floor Plan) --- */}
+        <group position={[-1.25, 0.03, 1.65]}>
+          {/* Oak Computer Desk Top */}
+          <RoundedBox args={[0.72, 0.035, 1.25]} radius={0.012} smoothness={4} position={[0, 0.72, 0]} castShadow receiveShadow>
+            <meshStandardMaterial map={oakMap} color="#b45309" roughness={0.45} />
+          </RoundedBox>
+          {/* Desk Legs */}
+          {[
+            [-0.30, 0.36, -0.56],
+            [0.30, 0.36, -0.56],
+            [-0.30, 0.36, 0.56],
+            [0.30, 0.36, 0.56],
+          ].map((dlp, di) => (
+            <mesh key={`dleg-${di}`} position={dlp} castShadow>
+              <cylinderGeometry args={[0.022, 0.016, 0.72, 10]} />
+              <meshStandardMaterial color="#1e293b" roughness={0.4} metalness={0.5} />
             </mesh>
-            <mesh position={[0, 0, 0.015]}>
-              <planeGeometry args={[0.44, 0.44]} />
-              <meshStandardMaterial map={easelArtTex} roughness={0.35} />
+          ))}
+          {/* Ultra-Wide Curved Desktop Monitor */}
+          <group position={[-0.12, 0.74, 0]} rotation={[0, Math.PI / 2, 0]}>
+            <mesh position={[0, 0.01, 0]} castShadow>
+              <cylinderGeometry args={[0.10, 0.12, 0.018, 16]} />
+              <meshStandardMaterial color="#334155" metalness={0.8} roughness={0.2} />
             </mesh>
+            <mesh position={[0, 0.16, -0.04]} castShadow>
+              <cylinderGeometry args={[0.015, 0.015, 0.30, 10]} />
+              <meshStandardMaterial color="#334155" metalness={0.8} roughness={0.2} />
+            </mesh>
+            <mesh position={[0, 0.28, 0]} castShadow>
+              <boxGeometry args={[0.72, 0.34, 0.024]} />
+              <meshStandardMaterial color="#0f172a" metalness={0.7} roughness={0.25} />
+            </mesh>
+            <mesh position={[0, 0.28, 0.013]}>
+              <planeGeometry args={[0.68, 0.30]} />
+              <meshBasicMaterial map={scopeTex} />
+            </mesh>
+          </group>
+          {/* Mechanical Keyboard & Wireless Mouse */}
+          <mesh position={[0.12, 0.745, 0]} castShadow>
+            <boxGeometry args={[0.15, 0.012, 0.38]} />
+            <meshStandardMaterial color="#1e293b" roughness={0.5} />
+          </mesh>
+          <mesh position={[0.12, 0.745, 0.26]} castShadow>
+            <boxGeometry args={[0.09, 0.014, 0.06]} />
+            <meshStandardMaterial color="#0f172a" roughness={0.4} />
+          </mesh>
+          {/* Modern Swivel Office Desk Chair */}
+          <group position={[0.55, 0, 0]}>
+            <mesh position={[0, 0.06, 0]} castShadow>
+              <cylinderGeometry args={[0.24, 0.24, 0.03, 5]} />
+              <meshStandardMaterial color="#334155" metalness={0.7} roughness={0.3} />
+            </mesh>
+            <mesh position={[0, 0.26, 0]} castShadow>
+              <cylinderGeometry args={[0.024, 0.024, 0.40, 12]} />
+              <meshStandardMaterial color="#334155" metalness={0.8} roughness={0.2} />
+            </mesh>
+            <RoundedBox args={[0.44, 0.06, 0.44]} radius={0.02} smoothness={4} position={[0, 0.46, 0]} castShadow>
+              <meshStandardMaterial color="#1e293b" bumpMap={boucleBump} roughness={0.7} />
+            </RoundedBox>
+            <RoundedBox args={[0.10, 0.46, 0.42]} radius={0.02} smoothness={4} position={[0.18, 0.72, 0]} castShadow>
+              <meshStandardMaterial color="#1e293b" bumpMap={boucleBump} roughness={0.7} />
+            </RoundedBox>
           </group>
         </group>
 
-        {/* Framed Paintings leaning & mounted in the Attic Gallery (Machaan Theatre & Meraki Botanical) */}
-        <group position={[-1.32, 0.44, 2.05]} rotation={[-0.1, 0.72, 0.06]}>
-          <mesh castShadow>
-            <boxGeometry args={[0.54, 0.54, 0.03]} />
-            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
-          </mesh>
-          <mesh position={[0, 0, 0.017]}>
-            <planeGeometry args={[0.47, 0.47]} />
-            <meshStandardMaterial map={machaanArtTex} roughness={0.38} />
-          </mesh>
-        </group>
-
-        <group position={[1.18, 0.44, 1.48]} rotation={[-0.12, -0.52, -0.05]}>
-          <mesh castShadow>
-            <boxGeometry args={[0.52, 0.52, 0.03]} />
-            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
-          </mesh>
-          <mesh position={[0, 0, 0.017]}>
-            <planeGeometry args={[0.45, 0.45]} />
-            <meshStandardMaterial map={merakiArtTex} roughness={0.38} />
-          </mesh>
-        </group>
-
-        {/* --- B. ARCHITECT'S DRAFTING & SKETCHBOOK TABLE IN THE CENTER OF THE ATTIC --- */}
-        <group position={[0.12, 0.03, 1.62]}>
-          {/* Solid Oak Drafting Table Top */}
+        {/* --- B. DRAFTING & SKETCHBOOK TABLE ALONG SOUTH WALL (Floor Plan) --- */}
+        <group position={[0.35, 0.03, 3.10]}>
           <RoundedBox
             args={[1.18, 0.036, 0.72]}
             radius={0.012}
@@ -3444,7 +3748,6 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
               roughness={0.44}
             />
           </RoundedBox>
-          {/* Tapered Oak Table Legs */}
           {[
             [-0.50, 0.22, -0.28],
             [0.50, 0.22, -0.28],
@@ -3459,12 +3762,10 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
 
           {/* 1. Primary Open Spiral-Bound Sketchbook with Interactive Flipping Sketch Page! */}
           <group position={[-0.04, 0.464, 0.04]} rotation={[0.14, 0, 0]}>
-            {/* Leather-Bound Hardcover Sketchbook Base */}
             <mesh position={[0, 0.004, 0]} castShadow receiveShadow>
               <boxGeometry args={[0.44, 0.01, 0.35]} />
               <meshStandardMaterial color="#1e293b" roughness={0.65} />
             </mesh>
-            {/* Cream Cartridge Paper Block */}
             <mesh position={[0, 0.01, 0]} castShadow receiveShadow>
               <boxGeometry args={[0.42, 0.008, 0.33]} />
               <meshStandardMaterial color="#faf5e8" roughness={0.82} />
@@ -3493,26 +3794,12 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
             </group>
           </group>
 
-          {/* 2. Second Stacked Field-Notes Sketchbook & Charcoal Pencil Set (Left side of Table) */}
-          <group position={[-0.40, 0.462, -0.06]} rotation={[0, 0.28, 0]}>
-            <mesh position={[0, 0.012, 0]} castShadow>
-              <boxGeometry args={[0.24, 0.024, 0.18]} />
-              <meshStandardMaterial color="#9a3412" roughness={0.6} />
-            </mesh>
-            <mesh position={[0, 0.025, 0]}>
-              <planeGeometry args={[0.21, 0.15]} rotation={[-Math.PI / 2, 0, 0]} />
-              <meshBasicMaterial map={sketchPage1BackTex} />
-            </mesh>
-          </group>
-
-          {/* 3. Ceramic Jar of Paintbrushes, Graphite Pencils & Wooden Palette (Right side of Table) */}
+          {/* 2. Ceramic Jar of Paintbrushes, Graphite Pencils & Wooden Palette */}
           <group position={[0.38, 0.46, -0.08]}>
-            {/* Terracotta Brush Jar */}
             <mesh position={[0, 0.045, 0]} castShadow>
               <cylinderGeometry args={[0.038, 0.032, 0.09, 16]} />
               <meshStandardMaterial color="#c2410c" roughness={0.55} />
             </mesh>
-            {/* Brushes sticking out of jar */}
             {[-0.012, 0.0, 0.014].map((bx, i) => (
               <group key={`brush-${i}`} position={[bx, 0.11, (i - 1) * 0.008]} rotation={[0.12 * (i - 1), 0, -0.15 * (i - 1)]}>
                 <mesh castShadow>
@@ -3526,7 +3813,6 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
               </group>
             ))}
 
-            {/* Artist's Wooden Thumb-Hole Color Palette */}
             <group position={[-0.04, 0.008, 0.16]} rotation={[0, -0.35, 0]}>
               <mesh castShadow>
                 <cylinderGeometry args={[0.11, 0.11, 0.01, 20]} scale={[1.25, 1, 0.9]} />
@@ -3547,6 +3833,70 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
           </group>
         </group>
 
+        {/* --- C. TALL OAK BOOKSHELF & STORAGE CABINETS (East Wall on Floor Plan) --- */}
+        <group position={[1.35, 0.03, 1.85]} rotation={[0, -Math.PI / 2, 0]}>
+          <mesh position={[0, 0.85, 0]} castShadow receiveShadow>
+            <boxGeometry args={[1.65, 1.70, 0.35]} />
+            <meshStandardMaterial map={oakMap} bumpMap={oakBump} color="#78350f" roughness={0.48} />
+          </mesh>
+          {/* Shelves & Books */}
+          {[0.25, 0.65, 1.05, 1.45].map((sy, si) => (
+            <mesh key={`shelf-${si}`} position={[0, sy, 0]}>
+              <boxGeometry args={[1.55, 0.028, 0.32]} />
+              <meshStandardMaterial map={oakMap} color="#92400e" roughness={0.5} />
+            </mesh>
+          ))}
+          {/* Rows of colorful hardcovers & notebooks */}
+          {[-0.55, -0.35, -0.15, 0.05, 0.25, 0.45].map((bx, bi) => (
+            <mesh key={`bgroup-${bi}`} position={[bx, 0.46, 0.02]} castShadow>
+              <boxGeometry args={[0.16, 0.28, 0.24]} />
+              <meshStandardMaterial color={bi % 3 === 0 ? '#1e3a8a' : bi % 3 === 1 ? '#047857' : '#b45309'} roughness={0.6} />
+            </mesh>
+          ))}
+        </group>
+
+        {/* --- D. WOODEN A-FRAME ARTIST EASEL & GALLERY CANVASES (North-West on Floor Plan) --- */}
+        <group position={[-0.85, 0.03, 0.95]} rotation={[0, 0.42, 0]}>
+          <mesh position={[-0.18, 0.46, 0.06]} rotation={[-0.14, 0, -0.12]} castShadow>
+            <cylinderGeometry args={[0.015, 0.015, 0.96, 8]} />
+            <meshStandardMaterial map={oakMap} color="#92400e" roughness={0.55} />
+          </mesh>
+          <mesh position={[0.18, 0.46, 0.06]} rotation={[-0.14, 0, 0.12]} castShadow>
+            <cylinderGeometry args={[0.015, 0.015, 0.96, 8]} />
+            <meshStandardMaterial map={oakMap} color="#92400e" roughness={0.55} />
+          </mesh>
+          <mesh position={[0, 0.44, -0.16]} rotation={[0.24, 0, 0]} castShadow>
+            <cylinderGeometry args={[0.015, 0.015, 0.94, 8]} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.55} />
+          </mesh>
+          <mesh position={[0, 0.44, 0.09]} castShadow>
+            <boxGeometry args={[0.52, 0.025, 0.07]} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
+          </mesh>
+          <group position={[0, 0.68, 0.07]} rotation={[-0.14, 0, 0]}>
+            <mesh castShadow>
+              <boxGeometry args={[0.48, 0.48, 0.026]} />
+              <meshStandardMaterial color="#fefce8" roughness={0.7} />
+            </mesh>
+            <mesh position={[0, 0, 0.015]}>
+              <planeGeometry args={[0.44, 0.44]} />
+              <meshStandardMaterial map={easelArtTex} roughness={0.35} />
+            </mesh>
+          </group>
+        </group>
+
+        {/* Framed Paintings leaning & mounted in the Attic Gallery (Machaan Theatre & Meraki Botanical) */}
+        <group position={[-1.32, 0.44, 2.75]} rotation={[-0.1, 0.72, 0.06]}>
+          <mesh castShadow>
+            <boxGeometry args={[0.54, 0.54, 0.03]} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
+          </mesh>
+          <mesh position={[0, 0, 0.017]}>
+            <planeGeometry args={[0.47, 0.47]} />
+            <meshStandardMaterial map={machaanArtTex} roughness={0.38} />
+          </mesh>
+        </group>
+
         {/* Clean Borderless 3D Floating Typography in the Attic Art Studio */}
         <FloatingLabel3D
           position={[0.08, 0.94, 1.38]}
@@ -3558,8 +3908,8 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
           subFontSize={38}
           bobPhase={1.2}
           lines={[
-            'ATTIC ART STUDIO & SKETCHBOOKS',
-            { text: 'MERAKI FINE ART • MACHAAN STAGE DESIGN • UI WIREFRAMES', sub: true },
+            'ATTIC STUDY & ART STUDIO',
+            { text: 'WORKSTATION • MERAKI FINE ART • MACHAAN STAGECRAFT', sub: true },
           ]}
         />
       </group>
