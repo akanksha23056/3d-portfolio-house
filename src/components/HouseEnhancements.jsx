@@ -2047,44 +2047,51 @@ export function DeepBlueTiledRoof() {
 
   return (
     <group>
-      {/* Ceiling with Stairwell Opening over North Staircase (x in [0.08, 1.25], z in [1.35, 3.85]) */}
-      {/* South Ceiling Slab over Living Room & Front Entry (z: 1.35 to 5.15, x: -3.6 to +3.6, with stair opening cutout) */}
-      <mesh position={[-1.725, 2.51, 4.50]} receiveShadow>
-        <boxGeometry args={[3.75, 0.06, 1.30]} />
+      {/* Ceiling with Precise Stairwell Opening over Central Oak Staircase (x in [0.02, 1.08], z in [-0.40, 1.85]) */}
+      {/* 1. North Ceiling Slab over Bedroom & North Dining (z: -5.65 to -0.40, full width x: -3.6 to +3.6) */}
+      <mesh position={[0.0, 2.51, -3.025]} receiveShadow>
+        <boxGeometry args={[7.2, 0.06, 5.25]} />
         <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.008} roughness={0.82} />
       </mesh>
-      <mesh position={[1.80, 2.51, 4.50]} receiveShadow>
-        <boxGeometry args={[3.60, 0.06, 1.30]} />
+
+      {/* 2. West Ceiling Slab flanking Stairwell (over Kitchen & Corridor: x: -3.6 to 0.02, z: -0.40 to 1.85) */}
+      <mesh position={[-1.79, 2.51, 0.725]} receiveShadow>
+        <boxGeometry args={[3.62, 0.06, 2.25]} />
         <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.008} roughness={0.82} />
       </mesh>
-      {/* Living Room main ceiling slab (East of stairwell: x: 1.25 to 3.60, z: 1.35 to 3.85) */}
-      <mesh position={[2.425, 2.51, 2.60]} receiveShadow>
-        <boxGeometry args={[2.35, 0.06, 2.50]} />
+
+      {/* 3. East Ceiling Slab flanking Stairwell (over Bathroom & Hallway: x: 1.08 to 3.6, z: -0.40 to 1.85) */}
+      <mesh position={[2.34, 2.51, 0.725]} receiveShadow>
+        <boxGeometry args={[2.52, 0.06, 2.25]} />
         <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.008} roughness={0.82} />
       </mesh>
-      {/* West of stairwell ceiling (Kitchen / Hallway: x: -3.6 to 0.08, z: 1.35 to 3.85) */}
-      <mesh position={[-1.76, 2.51, 2.60]} receiveShadow>
-        <boxGeometry args={[3.68, 0.06, 2.50]} />
-        <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.008} roughness={0.82} />
-      </mesh>
-      {/* North Room ceiling slab (z: -5.65 to 1.35, full width x: -3.6 to +3.6) */}
-      <mesh position={[0.0, 2.51, -2.15]} receiveShadow>
-        <boxGeometry args={[7.2, 0.06, 7.0]} />
-        <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.008} roughness={0.82} />
-      </mesh>
-      <mesh position={[4.6, 2.51, 1.62]} receiveShadow>
-        <boxGeometry args={[2.55, 0.06, 7.0]} />
+
+      {/* 4. South Ceiling Slab over Living Room Lounge & Front Entry (z: 1.85 to 5.15, full width x: -3.6 to +3.6) */}
+      <mesh position={[0.0, 2.51, 3.50]} receiveShadow>
+        <boxGeometry args={[7.2, 0.06, 3.30]} />
         <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.008} roughness={0.82} />
       </mesh>
 
       <group position={[0.0, 2.54, -0.25]}>
-        {/* Attic Floor / Roof Trim Perimeter */}
-        <mesh position={[0, 0.04, -0.75]} castShadow receiveShadow>
-          <boxGeometry args={[7.65, 0.10, 9.75]} />
+        {/* Exterior Roof Eave Perimeter Fascia Trim (leaving the interior stairwell & ceiling completely open) */}
+        {/* West Eave Trim */}
+        <mesh position={[-3.725, 0.04, 0]} castShadow receiveShadow>
+          <boxGeometry args={[0.20, 0.10, 11.2]} />
           <meshStandardMaterial color="#f1f5f9" roughness={0.45} />
         </mesh>
-        <mesh position={[0, 0.04, 4.75]} castShadow receiveShadow>
-          <boxGeometry args={[7.65, 0.10, 1.25]} />
+        {/* East Eave Trim */}
+        <mesh position={[3.725, 0.04, 0]} castShadow receiveShadow>
+          <boxGeometry args={[0.20, 0.10, 11.2]} />
+          <meshStandardMaterial color="#f1f5f9" roughness={0.45} />
+        </mesh>
+        {/* South Front Eave Trim */}
+        <mesh position={[0, 0.04, 5.48]} castShadow receiveShadow>
+          <boxGeometry args={[7.65, 0.10, 0.20]} />
+          <meshStandardMaterial color="#f1f5f9" roughness={0.45} />
+        </mesh>
+        {/* North Rear Eave Trim */}
+        <mesh position={[0, 0.04, -5.58]} castShadow receiveShadow>
+          <boxGeometry args={[7.65, 0.10, 0.20]} />
           <meshStandardMaterial color="#f1f5f9" roughness={0.45} />
         </mesh>
 
@@ -3289,9 +3296,10 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
           - East / North Wall: Oak Bookshelves, Storage Cabinets & A-Frame Artist Easel
          ===================================================================== */}
       <group position={[0, 2.58, 0]}>
-        {/* Warm Quarter-Sawn Oak Hardwood Attic Floor Deck (North half z: -5.0 to 1.35) */}
-        <mesh position={[0, 0.01, -1.80]} receiveShadow>
-          <boxGeometry args={[6.8, 0.04, 6.3]} />
+        {/* Warm Quarter-Sawn Oak Hardwood Attic Floor Deck with Open Stairwell Opening */}
+        {/* 1. North Attic Floor Deck (z: -5.0 to -0.35, full width x: -3.4 to +3.4) */}
+        <mesh position={[0, 0.01, -2.675]} receiveShadow>
+          <boxGeometry args={[6.8, 0.04, 4.65]} />
           <meshStandardMaterial
             map={oakMap}
             bumpMap={oakBump}
@@ -3300,9 +3308,10 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
             roughness={0.44}
           />
         </mesh>
-        {/* South Attic Floor Deck over living room (z: 1.35 to 5.0, East of stairwell x in [1.25, 3.4]) */}
-        <mesh position={[2.325, 0.01, 3.175]} receiveShadow>
-          <boxGeometry args={[2.15, 0.04, 3.65]} />
+
+        {/* 2. West Attic Floor Deck flanking Stairwell (under Study Desk & Rug: x: -3.4 to 0.02, z: -0.35 to 1.75) */}
+        <mesh position={[-1.69, 0.01, 0.70]} receiveShadow>
+          <boxGeometry args={[3.42, 0.04, 2.10]} />
           <meshStandardMaterial
             map={oakMap}
             bumpMap={oakBump}
@@ -3311,9 +3320,22 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
             roughness={0.44}
           />
         </mesh>
-        {/* South Attic Floor Deck over kitchen/hall (z: 1.35 to 5.0, West of stairwell x in [-3.4, 0.08]) */}
-        <mesh position={[-1.66, 0.01, 3.175]} receiveShadow>
-          <boxGeometry args={[3.48, 0.04, 3.65]} />
+
+        {/* 3. East Attic Floor Deck flanking Stairwell (East of balustrade: x: 1.08 to 3.4, z: -0.35 to 1.75) */}
+        <mesh position={[2.24, 0.01, 0.70]} receiveShadow>
+          <boxGeometry args={[2.32, 0.04, 2.10]} />
+          <meshStandardMaterial
+            map={oakMap}
+            bumpMap={oakBump}
+            bumpScale={0.018}
+            color="#f8fafc"
+            roughness={0.44}
+          />
+        </mesh>
+
+        {/* 4. South Attic Floor Deck (Drafting Table & Art Corner: z: 1.75 to 5.0, full width x: -3.4 to +3.4) */}
+        <mesh position={[0, 0.01, 3.375]} receiveShadow>
+          <boxGeometry args={[6.8, 0.04, 3.25]} />
           <meshStandardMaterial
             map={oakMap}
             bumpMap={oakBump}
@@ -3373,9 +3395,9 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
           </mesh>
         ))}
 
-        {/* Woven Moroccan Circular Area Rug in the Center of the Attic Studio (Floor Plan) */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0.0, 0.032, 1.85]} receiveShadow>
-          <circleGeometry args={[1.40, 36]} />
+        {/* Woven Moroccan Circular Area Rug in front of the Attic Workstation (Floor Plan Layout) */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-0.95, 0.032, 0.85]} receiveShadow>
+          <circleGeometry args={[0.95, 36]} />
           <meshStandardMaterial map={rugMap} bumpMap={boucleBump} bumpScale={0.012} roughness={0.9} />
         </mesh>
 

@@ -126,10 +126,10 @@ const SPLINE_KEYFRAMES = [
   { cam: [1.70, 1.35, 3.20], look: [0.55, 1.45, 2.1], chapter: 6 },
   { cam: [1.05, 1.45, 2.40], look: [0.55, 1.5, 1.8], chapter: 6 },
   { cam: [0.55, 1.45, 2.05], look: [0.55, 1.95, 0.4], chapter: 6 },
-  { cam: [0.55, 1.72, 1.45], look: [0.55, 2.25, 0.1], chapter: 6 },
-  { cam: [0.55, 2.38, 0.75], look: [0.55, 2.85, -0.4], chapter: 6 },
-  { cam: [0.55, 3.12, 0.05], look: [0.55, 3.45, -0.8], chapter: 6 },
-  { cam: [0.55, 3.55, -0.28], look: [0.15, 3.45, 1.0], chapter: 6 },
+  { cam: [0.55, 1.72, 1.45], look: [0.45, 2.50, 0.40], chapter: 6 },
+  { cam: [0.55, 2.38, 0.75], look: [0.35, 3.20, 0.60], chapter: 6 },
+  { cam: [0.55, 3.12, 0.05], look: [0.15, 3.45, 0.80], chapter: 6 },
+  { cam: [0.55, 3.55, -0.28], look: [-0.20, 3.45, 1.20], chapter: 6 },
 
   // 7. Upstairs Attic Studio — Workstation Desk, Monitor & Circular Rug
   { cam: [0.15, 3.55, 0.70], look: [-1.25, 3.3, 1.65], chapter: 7 },
@@ -152,27 +152,27 @@ const SPLINE_KEYFRAMES = [
   { cam: [0.55, 1.45, 1.95], look: [1.0, 1.4, 1.4], chapter: 9 },
 
   // 10. Bathroom Suite — Hallway, Locked Bedroom Door, Vanity Sink, Toilet & Bathtub
-  { cam: [0.85, 1.45, 1.50], look: [1.5, 1.35, 1.33], chapter: 10 },
-  { cam: [0.90, 1.45, 1.10], look: [1.10, 1.35, -0.30], chapter: 10 },
-  { cam: [1.30, 1.42, 1.25], look: [2.3, 1.3, 0.8], chapter: 10 },
-  { cam: [1.80, 1.42, 0.95], look: [2.5, 1.25, 0.5], chapter: 10 },
-  { cam: [2.05, 1.40, 0.80], look: [2.9, 1.1, 0.4], chapter: 10 },
+  { cam: [0.75, 1.45, 1.65], look: [1.10, 1.35, -0.30], chapter: 10 },
+  { cam: [0.85, 1.45, 1.33], look: [2.00, 1.35, 1.10], chapter: 10 },
+  { cam: [1.35, 1.42, 1.33], look: [2.40, 1.30, 0.90], chapter: 10 },
+  { cam: [1.85, 1.42, 1.10], look: [2.60, 1.25, 0.60], chapter: 10 },
+  { cam: [2.05, 1.40, 0.90], look: [3.10, 1.10, 0.90], chapter: 10 },
 
   // 11. Dining Nook — Oak Table, Upholstered Chairs & 3-Globe Chandelier
-  { cam: [1.30, 1.42, 1.25], look: [0.55, 1.4, 1.8], chapter: 11 },
-  { cam: [0.80, 1.45, 1.80], look: [-0.3, 1.4, 2.1], chapter: 11 },
-  { cam: [0.15, 1.45, 2.10], look: [-1.2, 1.4, 1.2], chapter: 11 },
-  { cam: [-0.60, 1.45, 1.30], look: [-2.15, 1.35, -1.8], chapter: 11 },
-  { cam: [-1.30, 1.45, -0.50], look: [-2.15, 1.25, -2.5], chapter: 11 },
-  { cam: [-2.15, 1.45, -1.85], look: [-2.15, 1.10, -3.20], chapter: 11 },
-  { cam: [-2.15, 1.40, -2.25], look: [-2.15, 0.90, -3.20], chapter: 11 },
+  { cam: [1.35, 1.42, 1.33], look: [0.55, 1.40, 1.80], chapter: 11 },
+  { cam: [0.75, 1.45, 1.65], look: [-0.40, 1.40, 2.00], chapter: 11 },
+  { cam: [-0.30, 1.45, 2.05], look: [-1.00, 1.40, 0.50], chapter: 11 },
+  { cam: [-0.95, 1.45, 1.20], look: [-1.80, 1.40, -1.50], chapter: 11 },
+  { cam: [-1.45, 1.45, -0.30], look: [-2.15, 1.30, -2.50], chapter: 11 },
+  { cam: [-2.15, 1.45, -1.75], look: [-2.15, 1.05, -3.20], chapter: 11 },
+  { cam: [-2.15, 1.40, -2.15], look: [-2.15, 0.85, -3.20], chapter: 11 },
 
   // 12. Living Room Lounge — Returning from Dining to Final Cozy Seating Area
-  { cam: [-2.15, 1.45, -1.90], look: [-1.4, 1.4, 0.5], chapter: 12 },
-  { cam: [-1.55, 1.45, -0.20], look: [-0.8, 1.4, 1.8], chapter: 12 },
-  { cam: [-0.60, 1.45, 1.80], look: [1.2, 1.3, 2.7], chapter: 12 },
-  { cam: [0.50, 1.45, 2.60], look: [2.15, 1.2, 2.85], chapter: 12 },
-  { cam: [1.40, 1.40, 3.35], look: [2.35, 1.1, 2.45], chapter: 12 },
+  { cam: [-2.15, 1.45, -1.75], look: [-1.45, 1.40, 0.50], chapter: 12 },
+  { cam: [-1.45, 1.45, -0.20], look: [-0.80, 1.40, 1.80], chapter: 12 },
+  { cam: [-0.60, 1.45, 1.80], look: [1.20, 1.30, 2.70], chapter: 12 },
+  { cam: [0.50, 1.45, 2.60], look: [2.15, 1.20, 2.85], chapter: 12 },
+  { cam: [1.40, 1.40, 3.35], look: [2.35, 1.10, 2.45], chapter: 12 },
   { cam: [1.80, 1.40, 3.65], look: [2.70, 1.05, 2.30], chapter: 12 },
 ]
 
@@ -243,6 +243,17 @@ function cutFrontWallForWindows(root) {
         minZ >= 3.82 &&
         maxZ <= 5.12 &&
         maxY > 0.04
+      ) {
+        continue
+      }
+
+      // 4. Open stairwell shaft over central oak staircase (x in [-0.05, 1.15], z in [-0.45, 1.85], y > 2.20)
+      if (
+        minX >= -0.05 &&
+        maxX <= 1.15 &&
+        minZ >= -0.45 &&
+        maxZ <= 1.85 &&
+        maxY > 2.20
       ) {
         continue
       }
@@ -322,12 +333,12 @@ function InteriorModel() {
       const mat = child.material
       if (mat && mat.color) {
         if (mat.name === 'mat18') {
-          // Exterior & primary structural walls: Powder-blue clapboard siding + grain bump
-          mat.color.set('#ffffff')
-          mat.map = sidingMap
-          mat.bumpMap = sidingBump
-          mat.bumpScale = 0.022
-          mat.roughness = 0.58
+          // Interior architectural plaster walls & partitions: Soft Venetian limewash plaster
+          mat.color.set('#f8fafc')
+          mat.map = null
+          mat.bumpMap = plasterBump
+          mat.bumpScale = 0.012
+          mat.roughness = 0.68
         } else if (mat.name === 'mat21') {
           // Interior plaster walls, ceilings & window trim: Soft Venetian limewash plaster
           mat.color.set('#e8f4fe')
