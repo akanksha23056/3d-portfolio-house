@@ -80,8 +80,8 @@ const TOUR_CHAPTERS = [
 
 const SPLINE_KEYFRAMES = [
   // 0. Exterior Overview — Curved round earth horizon, fence, dog companion & straight driveway
-  { cam: [-0.53, 3.8, 14.8], look: [-0.53, 1.4, 3.5], chapter: 0 },
-  { cam: [-0.53, 2.5, 10.8], look: [-0.53, 1.38, 4.2], chapter: 0 },
+  { cam: [-0.53, 2.6, 12.6], look: [-0.53, 1.8, 3.2], chapter: 0 },
+  { cam: [-0.53, 2.0, 9.6], look: [-0.53, 1.6, 3.8], chapter: 0 },
 
   // 1. Approaching Aligned Porch Steps & Front Door
   { cam: [-0.53, 1.62, 7.2], look: [-0.53, 1.36, 4.8], chapter: 1 },
@@ -122,9 +122,9 @@ const SPLINE_KEYFRAMES = [
   { cam: [0.25, 3.38, 1.85], look: [0.35, 3.10, 3.05], chapter: 9 },
 
   // 10. Zooming Into the Open Sketchbooks on the South Drafting Table
-  { cam: [0.35, 3.32, 2.65], look: [0.35, 3.04, 3.08], chapter: 10 },
-  { cam: [0.35, 3.30, 2.68], look: [0.35, 3.04, 3.08], chapter: 10 },
-  { cam: [0.35, 3.29, 2.69], look: [0.35, 3.04, 3.08], chapter: 10 },
+  { cam: [0.31, 3.48, 2.76], look: [0.31, 3.06, 3.14], chapter: 10 },
+  { cam: [0.31, 3.44, 2.84], look: [0.31, 3.06, 3.14], chapter: 10 },
+  { cam: [0.31, 3.42, 2.88], look: [0.31, 3.06, 3.14], chapter: 10 },
 ]
 
 function smoothstep(min, max, value) {
