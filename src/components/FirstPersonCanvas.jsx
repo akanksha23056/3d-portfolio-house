@@ -19,112 +19,161 @@ const MODEL_PATH = '/models/interior.glb'
 
 /**
  * Metadata for the single top-left corner box at each stage of the tour.
+ * Follows the user's exact room flow:
+ * enter front door > kitchen[fridge>stove]> living room[table>newspaper]> upstairs> attic> downstairs> bathroom> dining> living room
  */
 const TOUR_CHAPTERS = [
   {
     room: 'Outside the House',
     title: 'Architectural Residence',
-    subtitle: 'Curved earth landscape, garden lawn & front entrance',
+    subtitle: 'Curved earth landscape, garden lawn & limestone walkway',
   },
   {
     room: 'Front Entrance & Porch',
     title: 'Front Porch & Entryway',
-    subtitle: 'Aligned limestone walkway, tiered stone steps & oak threshold',
+    subtitle: 'Tiered stone steps, welcome sign & oak threshold',
   },
   {
-    room: 'Kitchen — Refrigerator & Island',
+    room: 'Kitchen — Refrigerator',
     title: 'Kitchen & Breakfast Counter',
-    subtitle: 'Marble countertops, modern cabinetry & refrigerator',
+    subtitle: 'Modern cabinetry, veined marble & ceramic souvenir magnets',
   },
   {
-    room: 'Kitchen — Range & Cooktop',
+    room: 'Kitchen — Cooktop & Oven',
     title: 'Cooktop & Oven',
-    subtitle: 'Stainless steel range, copper tea kettle & cookware',
+    subtitle: 'Whistling copper tea kettle on cast iron burner grates',
   },
   {
     room: 'Living Room Lounge',
-    title: 'Living Room & Seating Area',
-    subtitle: 'Plush blue bouclé sofa, accent club armchairs & 4K media console',
+    title: 'Living Room Seating Area',
+    subtitle: 'Plush blue bouclé sofa, Moroccan area rug & armchairs',
   },
   {
     room: 'Living Room — Coffee Table',
-    title: 'Coffee Table & Morning Paper',
-    subtitle: 'Quarter-sawn oak table, steaming espresso & daily gazette',
+    title: 'The Daily Architectural Gazette',
+    subtitle: 'Steaming morning espresso & open broadsheet newspaper',
   },
   {
-    room: 'Living Room — Newspaper Feature',
-    title: 'Daily Gazette Page',
-    subtitle: 'Open broadsheet newspaper on the coffee table',
+    room: 'Central Oak Staircase',
+    title: 'Ascending to the Loft',
+    subtitle: 'Quarter-sawn oak treads ascending northward into the sunlit attic',
   },
   {
-    room: 'North Hallway — Bathroom Suite',
-    title: 'Bathroom Suite & Primary Bedroom',
-    subtitle: 'Marble bath, vanity sink, porcelain toilet, soaking tub & locked bedroom',
+    room: 'Upstairs Attic Studio',
+    title: 'Attic Study & Workstation',
+    subtitle: 'Timber A-frame rafters, study desk & circular woven rug',
+  },
+  {
+    room: 'Attic — Drafting Table',
+    title: 'Artist Sketchbooks & Palette',
+    subtitle: 'Open spiral sketchbook with perspective & landscape studies',
   },
   {
     room: 'Central Staircase',
-    title: 'Oak Staircase to Attic',
-    subtitle: 'Ascending the sunlit timber staircase northward into the loft',
+    title: 'Descending to Ground Floor',
+    subtitle: 'Returning down the timber staircase to the central hallway',
   },
   {
-    room: 'Upstairs Attic — Study & Studio',
-    title: 'Attic Loft & Workstation',
-    subtitle: 'Timber A-frame rafters, study desk, circular rug & artist gallery',
+    room: 'Bathroom Suite',
+    title: 'Bathroom Suite & Primary Bedroom',
+    subtitle: 'Vanity sink, toilet, soaking tub & locked bedroom door',
   },
   {
-    room: 'Upstairs Attic — Artist Sketchbooks',
-    title: 'Drafting Table & Sketchbooks',
-    subtitle: 'Open spiral sketchbook, charcoal studies & painter’s palette',
+    room: 'Dining Nook',
+    title: 'Dining Nook & Chandelier',
+    subtitle: 'Oak dining table, upholstered chairs & 3-globe pendant light',
+  },
+  {
+    room: 'Living Room Lounge',
+    title: 'Evening in the Living Room',
+    subtitle: 'Relaxing in the cozy seating area with warm ambient lighting',
   },
 ]
 
 const SPLINE_KEYFRAMES = [
-  // 0. Exterior Overview — Curved round earth horizon, fence, dog companion & straight driveway
-  { cam: [-0.53, 2.6, 12.6], look: [-0.53, 1.8, 3.2], chapter: 0 },
-  { cam: [-0.53, 2.0, 9.6], look: [-0.53, 1.6, 3.8], chapter: 0 },
+  // 0. Exterior Overview — Curved round earth horizon, fence, companion dog & centered limestone walkway
+  { cam: [-0.53, 2.2, 11.2], look: [-0.53, 1.7, 4.0], chapter: 0 },
+  { cam: [-0.53, 1.75, 8.5], look: [-0.53, 1.5, 4.5], chapter: 0 },
 
-  // 1. Approaching Aligned Porch Steps & Front Door
-  { cam: [-0.53, 1.62, 7.2], look: [-0.53, 1.36, 4.8], chapter: 1 },
-  { cam: [-0.53, 1.54, 4.65], look: [-0.75, 1.36, 2.95], chapter: 1 },
+  // 1. Approaching Tiered Porch Steps & Entering Through Front Door
+  { cam: [-0.53, 1.55, 6.2], look: [-0.53, 1.45, 4.5], chapter: 1 },
+  { cam: [-0.53, 1.52, 5.35], look: [-0.53, 1.45, 4.2], chapter: 1 },
+  { cam: [-0.53, 1.46, 4.8], look: [-0.75, 1.4, 3.8], chapter: 1 },
 
-  // 2. Kitchen Fridge Magnets (Kept untouched)
-  { cam: [-1.12, 1.46, 2.72], look: [-1.72, 1.38, 3.95], chapter: 2 },
-  { cam: [-1.74, 1.43, 3.12], look: [-1.74, 1.43, 4.27], chapter: 2 },
-  { cam: [-1.74, 1.43, 3.18], look: [-1.74, 1.43, 4.27], chapter: 2 },
+  // 2. Kitchen — Refrigerator & Breakfast Counter
+  { cam: [-0.75, 1.45, 4.1], look: [-1.4, 1.4, 4.0], chapter: 2 },
+  { cam: [-1.20, 1.45, 3.8], look: [-1.74, 1.36, 4.27], chapter: 2 },
+  { cam: [-1.48, 1.45, 3.7], look: [-1.74, 1.36, 4.27], chapter: 2 },
 
-  // 3. Smooth Pan Across Kitchen Sink to Oven
-  { cam: [-1.72, 1.32, 2.82], look: [-3.18, 1.04, 2.52], chapter: 3 },
-  { cam: [-1.815, 1.14, 2.46], look: [-1.815, 0.98, 1.61], chapter: 3 },
-  { cam: [-1.815, 1.10, 2.38], look: [-1.815, 0.96, 1.61], chapter: 3 },
+  // 3. Kitchen — Range, Cooktop & Copper Tea Kettle
+  { cam: [-1.65, 1.42, 3.1], look: [-1.815, 1.15, 1.8], chapter: 3 },
+  { cam: [-1.815, 1.38, 2.45], look: [-1.815, 1.0, 1.61], chapter: 3 },
+  { cam: [-1.815, 1.32, 2.25], look: [-1.815, 0.95, 1.61], chapter: 3 },
 
-  // 4. Gliding East into the Living Room (Floor Plan: North Sofa, Coffee Table, Armchairs, TV)
-  { cam: [0.65, 1.32, 2.65], look: [2.15, 0.95, 2.85], chapter: 4 },
-  { cam: [1.35, 1.25, 2.85], look: [2.15, 0.85, 2.85], chapter: 4 },
+  // 4. Living Room Lounge — Open Archway Entry & Seating Area
+  { cam: [-1.30, 1.42, 2.4], look: [0.5, 1.25, 2.65], chapter: 4 },
+  { cam: [-0.40, 1.42, 2.55], look: [1.2, 1.25, 2.75], chapter: 4 },
+  { cam: [0.50, 1.40, 2.68], look: [2.15, 1.1, 2.85], chapter: 4 },
+  { cam: [1.35, 1.35, 2.95], look: [2.15, 0.85, 2.85], chapter: 4 },
+  { cam: [2.15, 1.25, 3.45], look: [2.15, 0.55, 2.85], chapter: 4 },
 
-  // 5. Living Room — Focused View on Coffee Table Broadsheet & Steaming Coffee
-  { cam: [2.15, 1.12, 3.48], look: [2.15, 0.52, 2.85], chapter: 5 },
+  // 5. Living Room — Coffee Table, Steaming Espresso & Broadsheet Newspaper
+  { cam: [2.12, 1.10, 3.32], look: [2.12, 0.49, 2.85], chapter: 5 },
+  { cam: [2.10, 1.04, 3.28], look: [2.10, 0.48, 2.85], chapter: 5 },
+  { cam: [2.10, 1.04, 3.28], look: [2.10, 0.48, 2.85], chapter: 5 },
 
-  // 6. Newspaper Page Flips Open to Reveal Daily Gazette Inside Page
-  { cam: [2.15, 1.10, 3.46], look: [2.15, 0.52, 2.85], chapter: 6 },
-  { cam: [2.15, 1.08, 3.45], look: [2.15, 0.52, 2.85], chapter: 6 },
+  // 6. Upstairs — Walking to Central Staircase Base & Ascending to Loft
+  { cam: [1.70, 1.35, 3.20], look: [0.55, 1.45, 2.1], chapter: 6 },
+  { cam: [1.05, 1.45, 2.40], look: [0.55, 1.5, 1.8], chapter: 6 },
+  { cam: [0.55, 1.45, 2.05], look: [0.55, 1.95, 0.4], chapter: 6 },
+  { cam: [0.55, 1.72, 1.45], look: [0.55, 2.25, 0.1], chapter: 6 },
+  { cam: [0.55, 2.38, 0.75], look: [0.55, 2.85, -0.4], chapter: 6 },
+  { cam: [0.55, 3.12, 0.05], look: [0.55, 3.45, -0.8], chapter: 6 },
+  { cam: [0.55, 3.55, -0.28], look: [0.15, 3.45, 1.0], chapter: 6 },
 
-  // 7. Hallway Suite — Viewing the Bathroom (Vanity, Toilet, Tub) & Locked Bedroom Door
-  { cam: [0.55, 1.35, 1.80], look: [2.15, 1.05, 0.85], chapter: 7 },
-  { cam: [0.55, 1.35, 0.40], look: [1.10, 1.32, -0.35], chapter: 7 },
+  // 7. Upstairs Attic Studio — Workstation Desk, Monitor & Circular Rug
+  { cam: [0.15, 3.55, 0.70], look: [-1.25, 3.3, 1.65], chapter: 7 },
+  { cam: [-0.40, 3.50, 1.20], look: [-1.25, 3.35, 1.65], chapter: 7 },
+  { cam: [-0.65, 3.48, 1.65], look: [-1.25, 3.28, 1.65], chapter: 7 },
+  { cam: [0.05, 3.50, 1.85], look: [0.35, 3.2, 3.0], chapter: 7 },
 
-  // 8. Approaching & Ascending the Central Oak Staircase Northward into the Attic
-  { cam: [0.55, 1.15, 2.15], look: [0.55, 1.65, 0.60], chapter: 8 },
-  { cam: [0.55, 1.95, 0.95], look: [0.55, 2.45, -0.20], chapter: 8 },
-  { cam: [0.55, 2.95, -0.15], look: [0.10, 3.20, 1.50], chapter: 8 },
+  // 8. Upstairs Attic — Drafting Table, Artist Sketchbooks & Easel
+  { cam: [0.25, 3.46, 2.45], look: [0.35, 3.1, 3.10], chapter: 8 },
+  { cam: [0.31, 3.42, 2.80], look: [0.31, 3.06, 3.14], chapter: 8 },
+  { cam: [0.31, 3.40, 2.84], look: [0.31, 3.06, 3.14], chapter: 8 },
+  { cam: [-0.15, 3.50, 2.05], look: [-0.85, 3.3, 0.95], chapter: 8 },
 
-  // 9. Entering the Attic Study / Studio (Desk on West, Round Rug in Center, Rafters)
-  { cam: [0.10, 3.45, 0.65], look: [-0.65, 3.18, 1.65], chapter: 9 },
-  { cam: [0.25, 3.38, 1.85], look: [0.35, 3.10, 3.05], chapter: 9 },
+  // 9. Downstairs — Walking to Stairhead & Descending South to Ground Floor
+  { cam: [0.15, 3.55, 0.70], look: [0.55, 3.4, -0.1], chapter: 9 },
+  { cam: [0.55, 3.50, -0.25], look: [0.55, 2.0, 1.6], chapter: 9 },
+  { cam: [0.55, 3.05, 0.15], look: [0.55, 1.75, 1.8], chapter: 9 },
+  { cam: [0.55, 2.30, 0.85], look: [0.55, 1.5, 2.1], chapter: 9 },
+  { cam: [0.55, 1.65, 1.55], look: [0.55, 1.4, 2.3], chapter: 9 },
+  { cam: [0.55, 1.45, 1.95], look: [1.0, 1.4, 1.4], chapter: 9 },
 
-  // 10. Zooming Into the Open Sketchbooks on the South Drafting Table
-  { cam: [0.31, 3.48, 2.76], look: [0.31, 3.06, 3.14], chapter: 10 },
-  { cam: [0.31, 3.44, 2.84], look: [0.31, 3.06, 3.14], chapter: 10 },
-  { cam: [0.31, 3.42, 2.88], look: [0.31, 3.06, 3.14], chapter: 10 },
+  // 10. Bathroom Suite — Hallway, Locked Bedroom Door, Vanity Sink, Toilet & Bathtub
+  { cam: [0.85, 1.45, 1.50], look: [1.5, 1.35, 1.33], chapter: 10 },
+  { cam: [0.90, 1.45, 1.10], look: [1.10, 1.35, -0.30], chapter: 10 },
+  { cam: [1.30, 1.42, 1.25], look: [2.3, 1.3, 0.8], chapter: 10 },
+  { cam: [1.80, 1.42, 0.95], look: [2.5, 1.25, 0.5], chapter: 10 },
+  { cam: [2.05, 1.40, 0.80], look: [2.9, 1.1, 0.4], chapter: 10 },
+
+  // 11. Dining Nook — Oak Table, Upholstered Chairs & 3-Globe Chandelier
+  { cam: [1.30, 1.42, 1.25], look: [0.55, 1.4, 1.8], chapter: 11 },
+  { cam: [0.80, 1.45, 1.80], look: [-0.3, 1.4, 2.1], chapter: 11 },
+  { cam: [0.15, 1.45, 2.10], look: [-1.2, 1.4, 1.2], chapter: 11 },
+  { cam: [-0.60, 1.45, 1.30], look: [-2.15, 1.35, -1.8], chapter: 11 },
+  { cam: [-1.30, 1.45, -0.50], look: [-2.15, 1.25, -2.5], chapter: 11 },
+  { cam: [-2.15, 1.45, -1.85], look: [-2.15, 1.10, -3.20], chapter: 11 },
+  { cam: [-2.15, 1.40, -2.25], look: [-2.15, 0.90, -3.20], chapter: 11 },
+
+  // 12. Living Room Lounge — Returning from Dining to Final Cozy Seating Area
+  { cam: [-2.15, 1.45, -1.90], look: [-1.4, 1.4, 0.5], chapter: 12 },
+  { cam: [-1.55, 1.45, -0.20], look: [-0.8, 1.4, 1.8], chapter: 12 },
+  { cam: [-0.60, 1.45, 1.80], look: [1.2, 1.3, 2.7], chapter: 12 },
+  { cam: [0.50, 1.45, 2.60], look: [2.15, 1.2, 2.85], chapter: 12 },
+  { cam: [1.40, 1.40, 3.35], look: [2.35, 1.1, 2.45], chapter: 12 },
+  { cam: [1.80, 1.40, 3.65], look: [2.70, 1.05, 2.30], chapter: 12 },
 ]
 
 function smoothstep(min, max, value) {
@@ -339,7 +388,7 @@ function AnimatedFrontDoor({ scrollRef }) {
   useFrame(({ clock }, delta) => {
     if (!hingeRef.current) return
     const s = scrollRef.current
-    const openProgress = smoothstep(0.06, 0.18, s)
+    const openProgress = smoothstep(0.035, 0.085, s)
     const targetAngle = openProgress * (Math.PI * 0.58)
     hingeRef.current.rotation.y = THREE.MathUtils.damp(
       hingeRef.current.rotation.y,

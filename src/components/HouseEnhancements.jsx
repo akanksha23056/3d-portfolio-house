@@ -2380,8 +2380,8 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
     const t = clock.getElapsedTime()
     const s = scrollRef ? scrollRef.current : 0
 
-    // Newspaper page flip triggers smoothly between scroll = 0.45 and 0.54
-    const flipProgress = smoothstep(0.45, 0.54, s)
+    // Newspaper page flip triggers smoothly when viewing the coffee table in Chapter 5 (scroll ~ 0.28 to 0.34)
+    const flipProgress = smoothstep(0.28, 0.34, s)
     const targetAngle = flipProgress * (Math.PI * 0.96)
 
     if (pageFlipHingeRef.current) {
@@ -3171,9 +3171,9 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
       waferRef.current.rotation.z = t * 0.45
     }
 
-    // Smoothly flip the Attic Sketchbook page when scrolling from Chapter 9 -> Chapter 10 (u = 0.91 .. 0.97)
+    // Smoothly flip the Attic Sketchbook page when zooming into the drafting table in Chapter 8 (s ~ 0.53 to 0.60)
     const s = scrollRef ? scrollRef.current : 0
-    const flipProgress = smoothstep(0.91, 0.97, s)
+    const flipProgress = smoothstep(0.53, 0.60, s)
     const targetAngle = flipProgress * (Math.PI * 0.95)
     if (sketchFlipHingeRef.current) {
       sketchFlipHingeRef.current.rotation.z = THREE.MathUtils.damp(
