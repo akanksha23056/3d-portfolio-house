@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { RoundedBox } from '@react-three/drei'
+import { RoundedBox, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 
 function smoothstep(min, max, value) {
@@ -1839,6 +1839,78 @@ export function AtmosphericSkyAndWind() {
 }
 
 /**
+ * 3D Garden Companion Dog loaded from `/models/garden_dog.glb` (generated via Hunyuan3D-2
+ * and normalized/optimized with Y_min=0, height=0.65m) with subtle idle breathing & sway.
+ */
+function GardenDogCompanion({ position = [1.15, 0.0, 6.55], rotation = [0, -0.35, 0] }) {
+  const { scene } = useGLTF('/models/garden_dog.glb')
+  const dogRef = useRef(null)
+
+  const clonedDog = useMemo(() => {
+    const root = scene.clone(true)
+    root.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true
+        child.receiveShadow = true
+        if (child.material) {
+          const mat = child.material.clone()
+          mat.vertexColors = Boolean(child.geometry?.attributes?.color)
+          mat.roughness = 0.62
+          mat.metalness = 0.02
+          mat.needsUpdate = true
+          child.material = mat
+        }
+      }
+    })
+    return root
+  }, [scene])
+
+  const bowlGeo = useMemo(() => {
+    const pts = [
+      new THREE.Vector2(0.0, 0.0),
+      new THREE.Vector2(0.115, 0.0),
+      new THREE.Vector2(0.132, 0.015),
+      new THREE.Vector2(0.118, 0.072),
+      new THREE.Vector2(0.104, 0.072),
+      new THREE.Vector2(0.102, 0.022),
+      new THREE.Vector2(0.0, 0.022),
+    ]
+    return new THREE.LatheGeometry(pts, 28)
+  }, [])
+
+  useFrame(({ clock }) => {
+    if (!dogRef.current) return
+    const t = clock.getElapsedTime()
+    // Gentle cheerful breathing pulse and happy idle stance
+    const breath = 1 + Math.sin(t * 2.8) * 0.015
+    dogRef.current.scale.set(1, breath, 1)
+    dogRef.current.position.y = Math.abs(Math.sin(t * 2.8)) * 0.008
+    dogRef.current.rotation.y = Math.sin(t * 1.45) * 0.055
+  })
+
+  return (
+    <group position={position} rotation={rotation}>
+      <group ref={dogRef}>
+        <primitive object={clonedDog} />
+      </group>
+
+      {/* Turned Glazed Ceramic Water Bowl on the Lawn beside the Dog */}
+      <group position={[0.42, 0.0, 0.12]}>
+        <mesh geometry={bowlGeo} castShadow receiveShadow>
+          <meshStandardMaterial color="#c2410c" roughness={0.28} metalness={0.05} />
+        </mesh>
+        <mesh position={[0, 0.056, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+          <circleGeometry args={[0.102, 24]} />
+          <meshStandardMaterial color="#7dd3fc" roughness={0.08} metalness={0.18} />
+        </mesh>
+      </group>
+    </group>
+  )
+}
+
+useGLTF.preload('/models/garden_dog.glb')
+
+/**
  * 3D White Picket Fence surrounding the yard + Wind-Animated 3D Grass Blades & Wildflowers.
  */
 export function ExteriorYardFenceAndGrass() {
@@ -1892,6 +1964,7 @@ export function ExteriorYardFenceAndGrass() {
 
       if (x > -3.75 && x < 6.05 && z > -5.85 && z < 5.35) continue
       if (x > -1.45 && x < 0.35 && z > 4.9) continue
+      if (Math.hypot(x - 1.15, z - 6.55) < 0.72) continue
 
       const scale = 0.75 + rand() * 0.85
       const rotY = rand() * Math.PI * 2
@@ -2024,6 +2097,9 @@ export function ExteriorYardFenceAndGrass() {
         <boxGeometry args={[0.92, 0.02, 0.54]} />
         <meshStandardMaterial color="#b45309" roughness={0.9} />
       </mesh>
+
+      {/* Stylized 3D Companion Dog in the Front Garden beside the Limestone Walkway */}
+      <GardenDogCompanion position={[1.15, 0.0, 6.55]} rotation={[0, -0.35, 0]} />
     </group>
   )
 }
