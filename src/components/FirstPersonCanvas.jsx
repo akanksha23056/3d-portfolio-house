@@ -42,9 +42,9 @@ const TOUR_CHAPTERS = [
     subtitle: 'Interactive 3D & Responsive Web Apps • 60% Faster Load Optimization',
   },
   {
-    room: 'Living Room — Couch & Side Table',
+    room: 'Living Room — Couch, TV & Side Table',
     title: 'Morning Coffee & The Silicon Chronicle',
-    subtitle: 'Sunlit lounge with steaming espresso and the portfolio broadsheet',
+    subtitle: 'Plush bouclé sofa, 4K Smart TV, steaming espresso & portfolio broadsheet',
   },
   {
     room: 'Living Room — Newspaper Front Page',
@@ -62,51 +62,69 @@ const TOUR_CHAPTERS = [
     subtitle: 'Cadence Virtuoso Analog IC Verification • Custom Soldered Hardware Prototypes',
   },
   {
-    room: 'North Wing — Meraki Art & Machaan Studio',
-    title: 'Fine Art, Theatre & Campus Leadership',
-    subtitle: 'President of Meraki Art Society • Events Head of Machaan Theatre • Team Lead at E-Cell',
+    room: 'Living Room Staircase — Ascending to the Attic',
+    title: 'Up the Oak Stairs into the Attic Loft',
+    subtitle: 'Climbing the sunlit timber staircase from the living room to the upstairs art studio',
+  },
+  {
+    room: 'Upstairs Attic — Meraki Art & Machaan Studio',
+    title: 'The Attic Art Studio & Easel Gallery',
+    subtitle: 'President of Meraki Art Society • Events Head of Machaan Theatre • Impasto & Stagecraft',
+  },
+  {
+    room: 'Upstairs Attic — Interactive Artist Sketchbooks',
+    title: 'Inside Akanksha’s Sketchbooks',
+    subtitle: 'Charcoal Architectural Studies, Machaan Stage Blocking & 3D UI/UX Wireframe Sketches',
   },
 ]
 
 const SPLINE_KEYFRAMES = [
-  // 0. Exterior Overview (u = 0.00, 0.05)
+  // 0. Exterior Overview
   { cam: [-0.45, 3.8, 14.5], look: [0.2, 1.4, 2.0], chapter: 0 },
   { cam: [-0.5, 2.5, 10.6], look: [-0.3, 1.38, 4.2], chapter: 0 },
 
-  // 1. Approaching Front Door & Smoothly Opening the Door (u = 0.10, 0.15)
+  // 1. Approaching Front Door & Smoothly Opening the Door
   { cam: [-0.53, 1.62, 7.2], look: [-0.53, 1.36, 4.8], chapter: 1 },
   { cam: [-0.53, 1.54, 4.65], look: [-0.75, 1.36, 2.95], chapter: 1 },
 
-  // 2. Kitchen Fridge Magnets (u = 0.20, 0.25, 0.30)
+  // 2. Kitchen Fridge Magnets
   { cam: [-1.12, 1.46, 2.72], look: [-1.72, 1.38, 3.95], chapter: 2 },
   { cam: [-1.74, 1.43, 3.12], look: [-1.74, 1.43, 4.27], chapter: 2 },
   { cam: [-1.74, 1.43, 3.18], look: [-1.74, 1.43, 4.27], chapter: 2 },
 
-  // 3. Smooth 180° Pan Across the Kitchen Sink & Tap to the Oven (u = 0.35, 0.40, 0.45)
+  // 3. Smooth 180° Pan Across the Kitchen Sink & Tap to the Oven
   { cam: [-1.72, 1.32, 2.82], look: [-3.18, 1.04, 2.52], chapter: 3 },
   { cam: [-1.815, 1.14, 2.46], look: [-1.815, 0.98, 1.61], chapter: 3 },
   { cam: [-1.815, 1.10, 2.38], look: [-1.815, 0.96, 1.61], chapter: 3 },
 
-  // 4. Zooming Out from Oven & Panning East into the Living Room (u = 0.50, 0.55)
+  // 4. Zooming Out from Oven & Panning East into the Living Room
   { cam: [0.85, 1.32, 2.58], look: [3.45, 0.78, 2.42], chapter: 4 },
   { cam: [3.65, 1.22, 2.88], look: [4.55, 0.65, 1.98], chapter: 4 },
 
-  // 5. Zooming Into the Top of the Newspaper — Page 1 (u = 0.60)
+  // 5. Zooming Into the Top of the Newspaper — Page 1
   { cam: [4.80, 0.96, 2.26], look: [4.80, 0.64, 1.93], chapter: 5 },
 
-  // 6. Newspaper Page Flips Open to Reveal Skill 2 — Page 2 (u = 0.65, 0.70)
+  // 6. Newspaper Page Flips Open to Reveal Skill 2 — Page 2
   { cam: [4.80, 0.95, 2.25], look: [4.80, 0.64, 1.93], chapter: 6 },
   { cam: [4.80, 0.94, 2.24], look: [4.80, 0.64, 1.93], chapter: 6 },
 
-  // 7. Gliding North into the Silicon & Hardware Lab Bench (u = 0.75, 0.80, 0.85)
+  // 7. Gliding North into the Silicon & Hardware Lab Bench
   { cam: [2.35, 1.34, 1.35], look: [2.55, 1.05, -1.05], chapter: 7 },
-  { cam: [2.55, 1.24, 0.28], look: [2.55, 1.04, -1.12], chapter: 7 },
-  { cam: [2.55, 1.20, 0.08], look: [2.55, 1.02, -1.12], chapter: 7 },
+  { cam: [2.55, 1.22, 0.14], look: [2.55, 1.02, -1.12], chapter: 7 },
 
-  // 8. Smooth 90° Pan Left to Meraki Art & Machaan Theatre Studio (u = 0.90, 0.95, 1.00)
-  { cam: [2.15, 1.28, -0.45], look: [0.35, 1.18, -0.55], chapter: 8 },
-  { cam: [1.75, 1.26, -0.55], look: [0.18, 1.18, -0.55], chapter: 8 },
-  { cam: [1.55, 1.24, -0.55], look: [0.18, 1.16, -0.55], chapter: 8 },
+  // 8. Approaching & Climbing Up the Living Room Oak Staircase into the Attic
+  { cam: [2.85, 1.25, 3.65], look: [1.45, 1.95, 4.45], chapter: 8 },
+  { cam: [2.05, 1.92, 4.42], look: [0.55, 2.68, 4.35], chapter: 8 },
+  { cam: [0.65, 2.98, 4.32], look: [-0.15, 3.22, 2.45], chapter: 8 },
+
+  // 9. Entering the Sunlit Attic Art Studio (Easel, Rafters & Gallery Canvases)
+  { cam: [0.12, 3.44, 3.05], look: [-0.12, 3.22, 1.55], chapter: 9 },
+  { cam: [0.10, 3.38, 2.52], look: [-0.02, 3.16, 1.58], chapter: 9 },
+
+  // 10. Zooming Into the Open Attic Sketchbooks & Flipping Sketch Pages
+  { cam: [0.08, 3.34, 1.98], look: [0.08, 3.04, 1.66], chapter: 10 },
+  { cam: [0.08, 3.31, 1.94], look: [0.08, 3.04, 1.66], chapter: 10 },
+  { cam: [0.08, 3.30, 1.92], look: [0.08, 3.04, 1.66], chapter: 10 },
 ]
 
 function smoothstep(min, max, value) {
@@ -468,7 +486,7 @@ export default function FirstPersonCanvas() {
 
   const activeChapter = TOUR_CHAPTERS[activeChapterIndex] || TOUR_CHAPTERS[0]
   const totalChapters = TOUR_CHAPTERS.length
-  const chapterIndexFormatted = `0${activeChapterIndex + 1} / 0${totalChapters}`
+  const chapterIndexFormatted = `${String(activeChapterIndex + 1).padStart(2, '0')} / ${String(totalChapters).padStart(2, '0')}`
 
   return (
     <div className="scroll-page">
@@ -540,7 +558,7 @@ export default function FirstPersonCanvas() {
             <AnimatedFrontDoor scrollRef={scrollRef} />
             <KitchenSkillsShowcase />
             <LivingRoomSkillsShowcase scrollRef={scrollRef} />
-            <EngineerAndArtistStudioShowcase />
+            <EngineerAndArtistStudioShowcase scrollRef={scrollRef} />
           </Suspense>
 
           <ScrollTourCamera

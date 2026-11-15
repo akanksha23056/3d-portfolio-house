@@ -51,11 +51,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Smooth 1650vh scroll container for Exterior -> Kitchen -> Living Room -> Silicon Lab -> Art Studio tour */
+/* Smooth 2000vh scroll container for Exterior -> Kitchen -> Living Room -> Silicon Lab -> Stairs -> Attic Art Studio & Sketchbooks */
 .scroll-page {
   position: relative;
   width: 100%;
-  height: 1650vh;
+  height: 2000vh;
 }
 
 /* Fixed 3D Viewport */

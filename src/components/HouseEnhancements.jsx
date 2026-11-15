@@ -743,6 +743,277 @@ function useNewspaperPageTexture(pageType) {
 }
 
 /**
+ * Generates high-DPI illustrated sketchbook page textures for the Attic Art Studio:
+ *  - 'sketch-page1-front': Meraki Fine Art Society & Architectural Charcoal/Graphite Studies
+ *  - 'sketch-page1-back': Graphite cross-hatching & perspective grid notes
+ *  - 'sketch-page2-inside': Machaan Theatre Stage Design & UI/UX Wireframe Storyboards
+ */
+function useSketchbookPageTexture(pageType) {
+  return useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 1024
+    canvas.height = 1024
+    const ctx = canvas.getContext('2d')
+
+    // Warm cream heavy-tooth cartridge sketchbook paper
+    ctx.fillStyle = '#faf5e8'
+    ctx.fillRect(0, 0, 1024, 1024)
+
+    // Subtle paper grain & deckle edge shading
+    for (let i = 0; i < 420; i++) {
+      const gx = (i * 173) % 1024
+      const gy = (i * 251) % 1024
+      ctx.fillStyle = i % 2 === 0 ? 'rgba(180, 165, 140, 0.14)' : 'rgba(255, 255, 255, 0.25)'
+      ctx.fillRect(gx, gy, 8, 3)
+    }
+
+    // Spiral binding rings along the left spine
+    for (let y = 72; y <= 952; y += 64) {
+      ctx.fillStyle = '#334155'
+      ctx.beginPath()
+      ctx.arc(36, y, 12, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.strokeStyle = '#64748b'
+      ctx.lineWidth = 5
+      ctx.beginPath()
+      ctx.moveTo(8, y - 4)
+      ctx.lineTo(42, y - 4)
+      ctx.stroke()
+    }
+
+    // Hand-drawn graphite border frame
+    ctx.strokeStyle = 'rgba(51, 65, 85, 0.45)'
+    ctx.lineWidth = 3
+    ctx.strokeRect(68, 44, 912, 936)
+
+    if (pageType === 'sketch-page1-front') {
+      // Header in editorial serif + handwritten graphite notes
+      ctx.fillStyle = '#1e293b'
+      ctx.font = 'italic 700 42px "Instrument Serif", Georgia, serif'
+      ctx.textAlign = 'left'
+      ctx.fillText('Sketchbook No. 01 — Fine Art & Architectural Studies', 96, 104)
+
+      ctx.fillStyle = '#b45309'
+      ctx.font = '700 22px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('PRESIDENT, MERAKI ART SOCIETY  •  CHARCOAL, GRAPHITE & WATERCOLOR', 96, 142)
+
+      // Divider line
+      ctx.strokeStyle = '#94a3b8'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.moveTo(96, 162)
+      ctx.lineTo(948, 162)
+      ctx.stroke()
+
+      // Left Box: Architectural Perspective Sketch of the 3D House & Classical Arch
+      ctx.fillStyle = '#f3ede0'
+      ctx.fillRect(96, 188, 410, 420)
+      ctx.strokeStyle = '#334155'
+      ctx.lineWidth = 3
+      ctx.strokeRect(96, 188, 410, 420)
+
+      // Perspective vanishing lines
+      ctx.strokeStyle = 'rgba(100, 116, 139, 0.35)'
+      ctx.lineWidth = 1.5
+      for (let i = 0; i < 6; i++) {
+        ctx.beginPath()
+        ctx.moveTo(301, 260)
+        ctx.lineTo(106 + i * 76, 595)
+        ctx.stroke()
+      }
+
+      // Charcoal sketch of pitched roof pavilion & columns
+      ctx.strokeStyle = '#0f172a'
+      ctx.lineWidth = 4
+      ctx.beginPath()
+      ctx.moveTo(145, 360)
+      ctx.lineTo(301, 240)
+      ctx.lineTo(456, 360)
+      ctx.closePath()
+      ctx.stroke()
+      ctx.strokeRect(175, 360, 252, 185)
+      ctx.strokeRect(265, 425, 72, 120)
+
+      // Graphite cross-hatching shading on sketch
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.55)'
+      ctx.lineWidth = 2
+      for (let h = 0; h < 14; h++) {
+        ctx.beginPath()
+        ctx.moveTo(182 + h * 8, 368)
+        ctx.lineTo(175, 375 + h * 8)
+        ctx.stroke()
+      }
+
+      ctx.fillStyle = '#1e293b'
+      ctx.font = 'italic 600 24px Georgia, serif'
+      ctx.fillText('Fig 1. Isometric Diorama Study', 120, 584)
+
+      // Right Box: Anatomical Hand & Botanical Ink Wash Sketch
+      ctx.fillStyle = '#f3ede0'
+      ctx.fillRect(536, 188, 412, 420)
+      ctx.strokeStyle = '#334155'
+      ctx.lineWidth = 3
+      ctx.strokeRect(536, 188, 412, 420)
+
+      // Watercolor wash splashes (warm ochre, cobalt blue, terracotta)
+      ctx.fillStyle = 'rgba(2, 132, 199, 0.22)'
+      ctx.beginPath()
+      ctx.arc(710, 345, 92, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.fillStyle = 'rgba(234, 88, 12, 0.22)'
+      ctx.beginPath()
+      ctx.arc(775, 395, 78, 0, Math.PI * 2)
+      ctx.fill()
+
+      // Fine ink botanical & portrait contour lines
+      ctx.strokeStyle = '#0f172a'
+      ctx.lineWidth = 4
+      ctx.beginPath()
+      ctx.arc(740, 355, 68, 0.2, Math.PI * 1.65)
+      ctx.stroke()
+      for (let leaf = 0; leaf < 5; leaf++) {
+        ctx.beginPath()
+        ctx.ellipse(690 + leaf * 28, 390 - leaf * 22, 34, 14, -0.5 + leaf * 0.2, 0, Math.PI * 2)
+        ctx.stroke()
+      }
+      ctx.fillStyle = '#1e293b'
+      ctx.font = 'italic 600 24px Georgia, serif'
+      ctx.fillText('Fig 2. Charcoal & Watercolor Wash', 562, 584)
+
+      // Bottom Feature Banner inside Sketchbook
+      ctx.fillStyle = '#1e293b'
+      ctx.fillRect(96, 642, 852, 296)
+      ctx.strokeStyle = '#f59e0b'
+      ctx.lineWidth = 4
+      ctx.strokeRect(96, 642, 852, 296)
+
+      ctx.fillStyle = '#fde047'
+      ctx.font = '800 26px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('MERAKI — FINE ART SOCIETY @ IIIT-DELHI', 132, 696)
+
+      ctx.fillStyle = '#ffffff'
+      ctx.font = 'italic 400 54px "Instrument Serif", Georgia, serif'
+      ctx.fillText('Visual Storytelling, Murals & Live Sketching', 132, 762)
+
+      ctx.fillStyle = '#cbd5e1'
+      ctx.font = '600 25px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('• Led 40+ Campus Artists, Exhibitions & Live Painting Festivals', 132, 822)
+      ctx.fillText('• Charcoal Portraiture, Architectural Ink & Acrylic Impasto', 132, 864)
+      ctx.fillStyle = '#38bdf8'
+      ctx.fillText('• Bridging Hardware Engineering Precision with Fine Art Craft', 132, 906)
+    } else if (pageType === 'sketch-page2-inside') {
+      // Page 2 after Flip: Machaan Theatre Stage Design & Creative UI/UX Storyboards
+      ctx.fillStyle = '#0f172a'
+      ctx.font = 'italic 700 42px "Instrument Serif", Georgia, serif'
+      ctx.textAlign = 'left'
+      ctx.fillText('Sketchbook No. 02 — Stagecraft, Storyboards & UI Wireframes', 96, 104)
+
+      ctx.fillStyle = '#be123c'
+      ctx.font = '700 22px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('MACHAAN THEATRE (ASHOKA WINNER)  •  E-CELL LEADERSHIP  •  3D STORYBOARDING', 96, 142)
+
+      ctx.strokeStyle = '#94a3b8'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.moveTo(96, 162)
+      ctx.lineTo(948, 162)
+      ctx.stroke()
+
+      // Top Sketch: Theatrical Stage Lighting Rig & Blocking Diagram ("Machaan")
+      ctx.fillStyle = '#1e1b4b'
+      ctx.fillRect(96, 188, 852, 340)
+      ctx.strokeStyle = '#f59e0b'
+      ctx.lineWidth = 4
+      ctx.strokeRect(96, 188, 852, 340)
+
+      // Three Golden Spotlight Cones on Stage
+      const spots = [260, 522, 784]
+      spots.forEach((sx) => {
+        ctx.fillStyle = 'rgba(253, 224, 71, 0.22)'
+        ctx.beginPath()
+        ctx.moveTo(sx, 204)
+        ctx.lineTo(sx - 115, 508)
+        ctx.lineTo(sx + 115, 508)
+        ctx.closePath()
+        ctx.fill()
+      })
+
+      ctx.fillStyle = '#fef08a'
+      ctx.font = 'italic 400 56px "Instrument Serif", Georgia, serif'
+      ctx.textAlign = 'center'
+      ctx.fillText('Machaan — 1st Place Stage Play Winner @ Ashoka', 522, 295)
+
+      ctx.fillStyle = '#ffffff'
+      ctx.font = '700 26px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('EVENTS HEAD, MACHAAN DRAMATICS  •  SCRIPT, STAGE BLOCKING & LIGHTING', 522, 355)
+
+      ctx.fillStyle = '#fde68a'
+      ctx.font = '600 23px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('Directed & Staged Full-Length Productions • Set Design Sketches & Dramatic Cues', 522, 415)
+
+      // Bottom Two Sketch Boxes: UI/UX Wireframe Sketch + E-Cell Strategy Notes
+      ctx.textAlign = 'left'
+      ctx.fillStyle = '#f3ede0'
+      ctx.fillRect(96, 560, 412, 378)
+      ctx.strokeStyle = '#334155'
+      ctx.lineWidth = 3
+      ctx.strokeRect(96, 560, 412, 378)
+
+      ctx.fillStyle = '#0f172a'
+      ctx.font = '800 26px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('UI/UX & 3D Wireframes', 124, 608)
+      ctx.strokeStyle = '#0284c7'
+      ctx.lineWidth = 3
+      ctx.strokeRect(124, 632, 354, 155)
+      ctx.strokeRect(142, 650, 140, 42)
+      ctx.strokeRect(142, 706, 318, 64)
+      ctx.font = '600 22px "Plus Jakarta Sans", sans-serif'
+      ctx.fillStyle = '#334155'
+      ctx.fillText('• Hand-sketched camera splines', 124, 834)
+      ctx.fillText('• Interactive 3D spatial flows', 124, 872)
+      ctx.fillText('• Design engineering craft', 124, 910)
+
+      ctx.fillStyle = '#f3ede0'
+      ctx.fillRect(536, 560, 412, 378)
+      ctx.strokeStyle = '#334155'
+      ctx.lineWidth = 3
+      ctx.strokeRect(536, 560, 412, 378)
+
+      ctx.fillStyle = '#0f172a'
+      ctx.font = '800 26px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('Creative Direction & E-Cell', 564, 608)
+      ctx.font = '600 23px "Plus Jakarta Sans", sans-serif'
+      ctx.fillStyle = '#1e293b'
+      ctx.fillText('• President — Meraki Art Society', 564, 668)
+      ctx.fillText('• Events Head — Machaan Theatre', 564, 716)
+      ctx.fillText('• Team Lead — E-Cell IIIT-Delhi', 564, 764)
+      ctx.fillText('• Ashoka Stage Play 1st Prize', 564, 812)
+      ctx.fillStyle = '#b45309'
+      ctx.fillText('• Engineer + Artist + Leader', 564, 876)
+    } else {
+      // Back of flipping sketchbook sheet: Graphite anatomy & geometric studies
+      ctx.strokeStyle = '#475569'
+      ctx.lineWidth = 3
+      ctx.strokeRect(110, 110, 804, 804)
+      for (let r = 80; r <= 320; r += 60) {
+        ctx.beginPath()
+        ctx.arc(512, 512, r, 0, Math.PI * 2)
+        ctx.stroke()
+      }
+      ctx.fillStyle = '#334155'
+      ctx.font = 'italic 700 36px Georgia, serif'
+      ctx.textAlign = 'center'
+      ctx.fillText('VITRUVIAN PROPORTION & PERSPECTIVE GRID', 512, 180)
+    }
+
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.anisotropy = 4
+    tex.needsUpdate = true
+    return tex
+  }, [pageType])
+}
+
+/**
  * Generates original artwork textures for Akanksha's Meraki Art & Machaan Theatre Studio.
  */
 function useStudioArtworkTexture(variant) {
@@ -1800,8 +2071,20 @@ export function DeepBlueTiledRoof() {
 
   return (
     <group>
-      <mesh position={[0.0, 2.51, -0.25]} receiveShadow>
-        <boxGeometry args={[7.2, 0.06, 10.8]} />
+      {/* Main Ceiling with Stairwell Opening over Living Room Stairs (x in [0.15, 2.95], z in [3.85, 5.05]) */}
+      {/* North/Main Ceiling Slab (z: -5.65 to +3.85, full width x: -3.6 to +3.6) */}
+      <mesh position={[0.0, 2.51, -0.90]} receiveShadow>
+        <boxGeometry args={[7.2, 0.06, 9.5]} />
+        <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.008} roughness={0.82} />
+      </mesh>
+      {/* South-West Ceiling Slab over Kitchen & Front Entry (x: -3.6 to +0.15, z: 3.85 to 5.15) */}
+      <mesh position={[-1.725, 2.51, 4.50]} receiveShadow>
+        <boxGeometry args={[3.75, 0.06, 1.30]} />
+        <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.008} roughness={0.82} />
+      </mesh>
+      {/* South-East Ceiling Trim Strip beside Stairwell (x: 2.95 to 3.60, z: 3.85 to 5.15) */}
+      <mesh position={[3.275, 2.51, 4.50]} receiveShadow>
+        <boxGeometry args={[0.65, 0.06, 1.30]} />
         <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.008} roughness={0.82} />
       </mesh>
       <mesh position={[4.6, 2.51, 1.62]} receiveShadow>
@@ -1810,8 +2093,13 @@ export function DeepBlueTiledRoof() {
       </mesh>
 
       <group position={[0.0, 2.54, -0.25]}>
-        <mesh position={[0, 0.04, 0]} castShadow receiveShadow>
-          <boxGeometry args={[7.65, 0.14, 11.25]} />
+        {/* Attic Floor / Roof Trim Perimeter (split around stairwell opening z in [4.10, 5.30] local) */}
+        <mesh position={[0, 0.04, -0.75]} castShadow receiveShadow>
+          <boxGeometry args={[7.65, 0.10, 9.75]} />
+          <meshStandardMaterial color="#f1f5f9" roughness={0.45} />
+        </mesh>
+        <mesh position={[-1.84, 0.04, 4.75]} castShadow receiveShadow>
+          <boxGeometry args={[3.95, 0.10, 1.25]} />
           <meshStandardMaterial color="#f1f5f9" roughness={0.45} />
         </mesh>
 
@@ -2232,8 +2520,8 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
     const t = clock.getElapsedTime()
     const s = scrollRef ? scrollRef.current : 0
 
-    // Newspaper page flip triggers smoothly between scroll = 0.62 and 0.70
-    const flipProgress = smoothstep(0.62, 0.70, s)
+    // Newspaper page flip triggers smoothly between scroll = 0.45 and 0.54
+    const flipProgress = smoothstep(0.45, 0.54, s)
     const targetAngle = flipProgress * (Math.PI * 0.96)
 
     if (pageFlipHingeRef.current) {
@@ -2641,23 +2929,43 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
 }
 
 /**
- * Room 3 — Akanksha's Hardware & Silicon Lab Bench + Meraki Art & Machaan Theatre Studio
- * Located in the spacious North Gallery Room (x: 0.15..5.4, z: -1.45..+1.25).
- * Makes the house 100% uniquely an Engineer + Artist's home!
+ * Room 3 (Ground Floor North Wing) — Akanksha's Silicon & Hardware Lab Bench
+ *Room 4 (Upstairs Attic Loft at y = 2.58) — Sunlit Attic Art Studio & Interactive Sketchbooks with Sketches!
  */
-export function EngineerAndArtistStudioShowcase() {
-  const { oakMap, oakBump, rugMap, boucleBump } = useMemo(() => getHousePBRTextures(), [])
+export function EngineerAndArtistStudioShowcase({ scrollRef }) {
+  const { oakMap, oakBump, rugMap, boucleBump, plasterBump } = useMemo(
+    () => getHousePBRTextures(),
+    []
+  )
   const scopeTex = useOscilloscopeScreenTexture()
   const easelArtTex = useStudioArtworkTexture('easel-masterpiece')
   const machaanArtTex = useStudioArtworkTexture('machaan-theatre')
   const merakiArtTex = useStudioArtworkTexture('meraki-botanical')
 
-  const waferRef = useRef(null)
+  const sketchPage1FrontTex = useSketchbookPageTexture('sketch-page1-front')
+  const sketchPage1BackTex = useSketchbookPageTexture('sketch-page1-back')
+  const sketchPage2InsideTex = useSketchbookPageTexture('sketch-page2-inside')
 
-  useFrame(({ clock }) => {
+  const waferRef = useRef(null)
+  const sketchFlipHingeRef = useRef(null)
+
+  useFrame(({ clock }, delta) => {
     const t = clock.getElapsedTime()
     if (waferRef.current) {
       waferRef.current.rotation.z = t * 0.45
+    }
+
+    // Smoothly flip the Attic Sketchbook page when scrolling from Chapter 9 -> Chapter 10 (u = 0.91 .. 0.97)
+    const s = scrollRef ? scrollRef.current : 0
+    const flipProgress = smoothstep(0.91, 0.97, s)
+    const targetAngle = flipProgress * (Math.PI * 0.95)
+    if (sketchFlipHingeRef.current) {
+      sketchFlipHingeRef.current.rotation.z = THREE.MathUtils.damp(
+        sketchFlipHingeRef.current.rotation.z,
+        targetAngle,
+        4.2,
+        delta
+      )
     }
   })
 
@@ -2773,122 +3081,283 @@ export function EngineerAndArtistStudioShowcase() {
       </group>
 
       {/* =====================================================================
-          2. MERAKI ART & MACHAAN THEATRE STUDIO (West Wall at x = 0.14, z = -0.55, facing East +x)
+          2. UPSTAIRS ATTIC ART STUDIO & SKETCHBOOK TABLE (y = 2.58, accessed via Living Room Stairs)
          ===================================================================== */}
-      <group position={[0.14, 0, -0.55]} rotation={[0, Math.PI / 2, 0]}>
-        {/* Warm Theatrical Amber Spotlight Pool */}
-        <pointLight position={[0, 2.05, 1.15]} intensity={2.1} distance={4.5} decay={2} color="#fbbf24" />
-
-        {/* Cozy Studio Woven Rug */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.014, 0.85]} receiveShadow>
-          <circleGeometry args={[0.92, 32]} />
-          <meshStandardMaterial map={rugMap} bumpMap={boucleBump} bumpScale={0.012} roughness={0.88} />
+      <group position={[0, 2.58, 0]}>
+        {/* Warm Quarter-Sawn Oak Hardwood Attic Floor Deck (with stairwell opening at x > 0.15, z > 3.85) */}
+        <mesh position={[0, 0.01, 0.15]} receiveShadow>
+          <boxGeometry args={[6.8, 0.04, 7.4]} />
+          <meshStandardMaterial
+            map={oakMap}
+            bumpMap={oakBump}
+            bumpScale={0.018}
+            color="#f8fafc"
+            roughness={0.44}
+          />
+        </mesh>
+        {/* West Attic Floor Landing beside the top of the stairs (x: -3.2 to +0.18, z: 3.85 to 5.05) */}
+        <mesh position={[-1.51, 0.01, 4.45]} receiveShadow>
+          <boxGeometry args={[3.38, 0.04, 1.2]} />
+          <meshStandardMaterial
+            map={oakMap}
+            bumpMap={oakBump}
+            bumpScale={0.018}
+            color="#f8fafc"
+            roughness={0.44}
+          />
         </mesh>
 
-        {/* Warm Overhead Fairy String Lights draped along the Studio Wall */}
-        {[-0.85, -0.52, -0.18, 0.18, 0.52, 0.85].map((lx, i) => (
-          <mesh key={`bulb-${i}`} position={[lx, 2.12 - Math.cos(lx * 1.4) * 0.08, 0.04]}>
-            <sphereGeometry args={[0.024, 10, 10]} />
-            <meshStandardMaterial
-              color="#fef08a"
-              emissive="#f59e0b"
-              emissiveIntensity={1.6}
-            />
+        {/* Architectural Oak Stairwell Balustrade & Safety Railing around Stair Opening */}
+        <group position={[1.55, 0, 3.84]}>
+          {/* Top Handrail along z = 3.84 (x from 0.18 to 2.85) */}
+          <mesh position={[0, 0.48, 0]} castShadow>
+            <boxGeometry args={[2.72, 0.045, 0.055]} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.45} />
+          </mesh>
+          {/* Vertical Spindles */}
+          {[-1.25, -0.95, -0.65, -0.35, -0.05, 0.25, 0.55, 0.85, 1.15].map((rx, idx) => (
+            <mesh key={`bal-${idx}`} position={[rx, 0.24, 0]} castShadow>
+              <cylinderGeometry args={[0.014, 0.014, 0.48, 8]} />
+              <meshStandardMaterial color="#f8fafc" roughness={0.4} />
+            </mesh>
+          ))}
+          {/* Corner Newel Posts */}
+          <mesh position={[-1.34, 0.27, 0]} castShadow>
+            <boxGeometry args={[0.075, 0.54, 0.075]} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.45} />
+          </mesh>
+          <mesh position={[1.34, 0.27, 0]} castShadow>
+            <boxGeometry args={[0.075, 0.54, 0.075]} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.45} />
+          </mesh>
+        </group>
+
+        {/* Exposed Timber A-Frame Attic Rafter Beams overhead */}
+        {[3.2, 2.0, 0.8, -0.4].map((rz, idx) => (
+          <group key={`rafter-${idx}`} position={[0, 0, rz]}>
+            <mesh position={[-1.65, 0.68, 0]} rotation={[0, 0, 0.36]} castShadow>
+              <boxGeometry args={[3.5, 0.09, 0.11]} />
+              <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.55} />
+            </mesh>
+            <mesh position={[1.65, 0.68, 0]} rotation={[0, 0, -0.36]} castShadow>
+              <boxGeometry args={[3.5, 0.09, 0.11]} />
+              <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.55} />
+            </mesh>
+            {/* Collar Tie Beam */}
+            <mesh position={[0, 1.12, 0]} castShadow>
+              <boxGeometry args={[1.65, 0.07, 0.09]} />
+              <meshStandardMaterial map={oakMap} color="#92400e" roughness={0.55} />
+            </mesh>
+          </group>
+        ))}
+
+        {/* Warm Attic Skylight & Golden Fairy Lights */}
+        <pointLight position={[0.0, 1.22, 2.05]} intensity={2.2} distance={5.5} decay={2} color="#fde68a" />
+        <pointLight position={[-0.95, 1.15, 1.55]} intensity={1.4} distance={4.0} decay={2} color="#fef08a" />
+        {[-0.9, -0.45, 0.0, 0.45, 0.9].map((lx, i) => (
+          <mesh key={`abulb-${i}`} position={[lx, 1.08, 1.4 + (i % 2) * 0.4]}>
+            <sphereGeometry args={[0.022, 10, 10]} />
+            <meshStandardMaterial color="#fef08a" emissive="#f59e0b" emissiveIntensity={1.8} />
           </mesh>
         ))}
 
-        {/* Framed Paintings on the Studio Wall (Machaan Theatre & Meraki Botanical) */}
-        <group position={[-0.52, 1.32, 0.03]}>
-          <mesh castShadow>
-            <boxGeometry args={[0.68, 0.68, 0.035]} />
-            <meshStandardMaterial color="#78350f" roughness={0.55} />
-          </mesh>
-          <mesh position={[0, 0, 0.02]}>
-            <planeGeometry args={[0.6, 0.6]} />
-            <meshStandardMaterial map={machaanArtTex} roughness={0.4} />
-          </mesh>
-        </group>
+        {/* Woven Moroccan Circular Area Rug in the Center of the Attic Studio */}
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0.0, 0.032, 1.85]} receiveShadow>
+          <circleGeometry args={[1.45, 36]} />
+          <meshStandardMaterial map={rugMap} bumpMap={boucleBump} bumpScale={0.012} roughness={0.9} />
+        </mesh>
 
-        <group position={[0.52, 1.32, 0.03]}>
-          <mesh castShadow>
-            <boxGeometry args={[0.68, 0.68, 0.035]} />
-            <meshStandardMaterial color="#78350f" roughness={0.55} />
-          </mesh>
-          <mesh position={[0, 0, 0.02]}>
-            <planeGeometry args={[0.6, 0.6]} />
-            <meshStandardMaterial map={merakiArtTex} roughness={0.4} />
-          </mesh>
-        </group>
-
-        {/* Wooden A-Frame Artist Easel with Hand-Painted Canvas */}
-        <group position={[0.02, 0, 0.72]} rotation={[0, -0.15, 0]}>
+        {/* --- A. WOODEN A-FRAME ARTIST EASEL & GALLERY CANVASES (Left / North-West of Attic) --- */}
+        <group position={[-0.78, 0.03, 1.42]} rotation={[0, 0.42, 0]}>
           {/* Easel Legs */}
-          <mesh position={[-0.22, 0.68, 0.08]} rotation={[-0.14, 0, -0.12]} castShadow>
-            <cylinderGeometry args={[0.018, 0.018, 1.42, 8]} />
-            <meshStandardMaterial color="#92400e" roughness={0.6} />
+          <mesh position={[-0.18, 0.46, 0.06]} rotation={[-0.14, 0, -0.12]} castShadow>
+            <cylinderGeometry args={[0.015, 0.015, 0.96, 8]} />
+            <meshStandardMaterial map={oakMap} color="#92400e" roughness={0.55} />
           </mesh>
-          <mesh position={[0.22, 0.68, 0.08]} rotation={[-0.14, 0, 0.12]} castShadow>
-            <cylinderGeometry args={[0.018, 0.018, 1.42, 8]} />
-            <meshStandardMaterial color="#92400e" roughness={0.6} />
+          <mesh position={[0.18, 0.46, 0.06]} rotation={[-0.14, 0, 0.12]} castShadow>
+            <cylinderGeometry args={[0.015, 0.015, 0.96, 8]} />
+            <meshStandardMaterial map={oakMap} color="#92400e" roughness={0.55} />
           </mesh>
-          <mesh position={[0, 0.66, -0.18]} rotation={[0.24, 0, 0]} castShadow>
-            <cylinderGeometry args={[0.018, 0.018, 1.4, 8]} />
-            <meshStandardMaterial color="#78350f" roughness={0.6} />
+          <mesh position={[0, 0.44, -0.16]} rotation={[0.24, 0, 0]} castShadow>
+            <cylinderGeometry args={[0.015, 0.015, 0.94, 8]} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.55} />
           </mesh>
           {/* Canvas Tray */}
-          <mesh position={[0, 0.72, 0.11]} castShadow>
-            <boxGeometry args={[0.62, 0.03, 0.08]} />
-            <meshStandardMaterial color="#78350f" roughness={0.55} />
+          <mesh position={[0, 0.44, 0.09]} castShadow>
+            <boxGeometry args={[0.52, 0.025, 0.07]} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
           </mesh>
-          {/* Painted Canvas on the Easel */}
-          <group position={[0, 1.02, 0.09]} rotation={[-0.14, 0, 0]}>
+          {/* Impasto Starry Landscape Masterpiece on the Easel */}
+          <group position={[0, 0.68, 0.07]} rotation={[-0.14, 0, 0]}>
             <mesh castShadow>
-              <boxGeometry args={[0.58, 0.58, 0.03]} />
+              <boxGeometry args={[0.48, 0.48, 0.026]} />
               <meshStandardMaterial color="#fefce8" roughness={0.7} />
             </mesh>
-            <mesh position={[0, 0, 0.017]}>
-              <planeGeometry args={[0.54, 0.54]} />
+            <mesh position={[0, 0, 0.015]}>
+              <planeGeometry args={[0.44, 0.44]} />
               <meshStandardMaterial map={easelArtTex} roughness={0.35} />
             </mesh>
           </group>
         </group>
 
-        {/* Wooden Painter's Stool & Color Palette beside the Easel */}
-        <group position={[-0.52, 0, 0.82]}>
-          <mesh position={[0, 0.44, 0]} castShadow>
-            <cylinderGeometry args={[0.18, 0.18, 0.035, 16]} />
-            <meshStandardMaterial color="#b45309" roughness={0.55} />
+        {/* Framed Paintings leaning & mounted in the Attic Gallery (Machaan Theatre & Meraki Botanical) */}
+        <group position={[-1.32, 0.44, 2.05]} rotation={[-0.1, 0.72, 0.06]}>
+          <mesh castShadow>
+            <boxGeometry args={[0.54, 0.54, 0.03]} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
           </mesh>
-          <mesh position={[0, 0.22, 0]} castShadow>
-            <cylinderGeometry args={[0.035, 0.07, 0.44, 12]} />
-            <meshStandardMaterial color="#78350f" roughness={0.6} />
+          <mesh position={[0, 0, 0.017]}>
+            <planeGeometry args={[0.47, 0.47]} />
+            <meshStandardMaterial map={machaanArtTex} roughness={0.38} />
           </mesh>
-          {[
-            [-0.06, 0.465, -0.02, '#ef4444'],
-            [0.0, 0.465, -0.05, '#38bdf8'],
-            [0.06, 0.465, 0.01, '#fde047'],
-            [-0.01, 0.465, 0.05, '#10b981'],
-          ].map((dab, idx) => (
-            <mesh key={`pdab-${idx}`} position={[dab[0], dab[1], dab[2]]}>
-              <sphereGeometry args={[0.022, 10, 10]} />
-              <meshStandardMaterial color={dab[3]} roughness={0.3} />
-            </mesh>
-          ))}
         </group>
 
-        {/* Clean Borderless 3D Typography above the Art & Theatre Studio */}
+        <group position={[1.18, 0.44, 1.48]} rotation={[-0.12, -0.52, -0.05]}>
+          <mesh castShadow>
+            <boxGeometry args={[0.52, 0.52, 0.03]} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
+          </mesh>
+          <mesh position={[0, 0, 0.017]}>
+            <planeGeometry args={[0.45, 0.45]} />
+            <meshStandardMaterial map={merakiArtTex} roughness={0.38} />
+          </mesh>
+        </group>
+
+        {/* --- B. ARCHITECT'S DRAFTING & SKETCHBOOK TABLE IN THE CENTER OF THE ATTIC --- */}
+        <group position={[0.12, 0.03, 1.62]}>
+          {/* Solid Oak Drafting Table Top */}
+          <RoundedBox
+            args={[1.18, 0.036, 0.72]}
+            radius={0.012}
+            smoothness={4}
+            position={[0, 0.44, 0]}
+            castShadow
+            receiveShadow
+          >
+            <meshStandardMaterial
+              map={oakMap}
+              bumpMap={oakBump}
+              bumpScale={0.015}
+              color="#b45309"
+              roughness={0.44}
+            />
+          </RoundedBox>
+          {/* Tapered Oak Table Legs */}
+          {[
+            [-0.50, 0.22, -0.28],
+            [0.50, 0.22, -0.28],
+            [-0.50, 0.22, 0.28],
+            [0.50, 0.22, 0.28],
+          ].map((lpos, idx) => (
+            <mesh key={`aleg-${idx}`} position={lpos} castShadow>
+              <cylinderGeometry args={[0.024, 0.016, 0.44, 10]} />
+              <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
+            </mesh>
+          ))}
+
+          {/* 1. Primary Open Spiral-Bound Sketchbook with Interactive Flipping Sketch Page! */}
+          <group position={[-0.04, 0.464, 0.04]} rotation={[0.14, 0, 0]}>
+            {/* Leather-Bound Hardcover Sketchbook Base */}
+            <mesh position={[0, 0.004, 0]} castShadow receiveShadow>
+              <boxGeometry args={[0.44, 0.01, 0.35]} />
+              <meshStandardMaterial color="#1e293b" roughness={0.65} />
+            </mesh>
+            {/* Cream Cartridge Paper Block */}
+            <mesh position={[0, 0.01, 0]} castShadow receiveShadow>
+              <boxGeometry args={[0.42, 0.008, 0.33]} />
+              <meshStandardMaterial color="#faf5e8" roughness={0.82} />
+            </mesh>
+
+            {/* Revealed Inside Page 2 (Machaan Stage Design & UI/UX Storyboards) */}
+            <mesh position={[0, 0.015, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+              <planeGeometry args={[0.41, 0.32]} />
+              <meshBasicMaterial map={sketchPage2InsideTex} />
+            </mesh>
+
+            {/* Animated Flipping Sketch Page 1 (Meraki Fine Art & Architectural Charcoal Sketches) */}
+            <group ref={sketchFlipHingeRef} position={[-0.205, 0.017, 0]}>
+              <mesh position={[0.205, 0, 0]} castShadow>
+                <boxGeometry args={[0.41, 0.002, 0.32]} />
+                <meshStandardMaterial color="#faf5e8" roughness={0.8} />
+              </mesh>
+              <mesh position={[0.205, 0.0015, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                <planeGeometry args={[0.41, 0.32]} />
+                <meshBasicMaterial map={sketchPage1FrontTex} />
+              </mesh>
+              <mesh position={[0.205, -0.0015, 0]} rotation={[Math.PI / 2, 0, Math.PI]}>
+                <planeGeometry args={[0.41, 0.32]} />
+                <meshBasicMaterial map={sketchPage1BackTex} />
+              </mesh>
+            </group>
+          </group>
+
+          {/* 2. Second Stacked Field-Notes Sketchbook & Charcoal Pencil Set (Left side of Table) */}
+          <group position={[-0.40, 0.462, -0.06]} rotation={[0, 0.28, 0]}>
+            <mesh position={[0, 0.012, 0]} castShadow>
+              <boxGeometry args={[0.24, 0.024, 0.18]} />
+              <meshStandardMaterial color="#9a3412" roughness={0.6} />
+            </mesh>
+            <mesh position={[0, 0.025, 0]}>
+              <planeGeometry args={[0.21, 0.15]} rotation={[-Math.PI / 2, 0, 0]} />
+              <meshBasicMaterial map={sketchPage1BackTex} />
+            </mesh>
+          </group>
+
+          {/* 3. Ceramic Jar of Paintbrushes, Graphite Pencils & Wooden Palette (Right side of Table) */}
+          <group position={[0.38, 0.46, -0.08]}>
+            {/* Terracotta Brush Jar */}
+            <mesh position={[0, 0.045, 0]} castShadow>
+              <cylinderGeometry args={[0.038, 0.032, 0.09, 16]} />
+              <meshStandardMaterial color="#c2410c" roughness={0.55} />
+            </mesh>
+            {/* Brushes sticking out of jar */}
+            {[-0.012, 0.0, 0.014].map((bx, i) => (
+              <group key={`brush-${i}`} position={[bx, 0.11, (i - 1) * 0.008]} rotation={[0.12 * (i - 1), 0, -0.15 * (i - 1)]}>
+                <mesh castShadow>
+                  <cylinderGeometry args={[0.004, 0.003, 0.11, 8]} />
+                  <meshStandardMaterial color="#fde047" roughness={0.4} />
+                </mesh>
+                <mesh position={[0, 0.062, 0]}>
+                  <coneGeometry args={[0.007, 0.022, 8]} />
+                  <meshStandardMaterial color={i === 0 ? '#ef4444' : i === 1 ? '#38bdf8' : '#1e293b'} />
+                </mesh>
+              </group>
+            ))}
+
+            {/* Artist's Wooden Thumb-Hole Color Palette */}
+            <group position={[-0.04, 0.008, 0.16]} rotation={[0, -0.35, 0]}>
+              <mesh castShadow>
+                <cylinderGeometry args={[0.11, 0.11, 0.01, 20]} scale={[1.25, 1, 0.9]} />
+                <meshStandardMaterial map={oakMap} color="#d97706" roughness={0.48} />
+              </mesh>
+              {[
+                [-0.05, 0.008, -0.02, '#ef4444'],
+                [0.01, 0.008, -0.04, '#38bdf8'],
+                [0.06, 0.008, 0.01, '#fde047'],
+                [-0.01, 0.008, 0.04, '#10b981'],
+              ].map((dab, idx) => (
+                <mesh key={`adab-${idx}`} position={[dab[0], dab[1], dab[2]]}>
+                  <sphereGeometry args={[0.016, 10, 10]} />
+                  <meshStandardMaterial color={dab[3]} roughness={0.3} />
+                </mesh>
+              ))}
+            </group>
+          </group>
+        </group>
+
+        {/* Clean Borderless 3D Floating Typography in the Attic Art Studio */}
         <FloatingLabel3D
-          position={[0, 1.88, 0.06]}
+          position={[0.08, 0.94, 1.38]}
           rotation={[0, 0, 0]}
-          size={[1.48, 0.42]}
+          size={[1.38, 0.38]}
           color="#ffffff"
           subColor="#fde047"
           fontSize={74}
           subFontSize={38}
           bobPhase={1.2}
           lines={[
-            'ART, THEATRE & LEADERSHIP',
-            { text: 'PRESIDENT, MERAKI ART • MACHAAN THEATRE • E-CELL', sub: true },
+            'ATTIC ART STUDIO & SKETCHBOOKS',
+            { text: 'MERAKI FINE ART • MACHAAN STAGE DESIGN • UI WIREFRAMES', sub: true },
           ]}
         />
       </group>
