@@ -98,24 +98,24 @@ const SPLINE_KEYFRAMES = [
   { cam: [-1.815, 1.10, 2.38], look: [-1.815, 0.96, 1.61], chapter: 3 },
 
   // 4. Zooming Out from Oven & Panning East into the Living Room
-  { cam: [0.85, 1.32, 2.58], look: [3.45, 0.78, 2.42], chapter: 4 },
-  { cam: [3.65, 1.22, 2.88], look: [4.55, 0.65, 1.98], chapter: 4 },
+  { cam: [0.85, 1.32, 2.58], look: [3.32, 0.78, 2.75], chapter: 4 },
+  { cam: [2.35, 1.15, 2.85], look: [3.32, 0.65, 2.88], chapter: 4 },
 
-  // 5. Zooming Into the Top of the Newspaper — Page 1
-  { cam: [4.80, 0.96, 2.26], look: [4.80, 0.64, 1.93], chapter: 5 },
+  // 5. Zooming Into the Top of the Newspaper on the Coffee Table — Page 1
+  { cam: [3.26, 0.90, 3.22], look: [3.26, 0.52, 2.89], chapter: 5 },
 
   // 6. Newspaper Page Flips Open to Reveal Skill 2 — Page 2
-  { cam: [4.80, 0.95, 2.25], look: [4.80, 0.64, 1.93], chapter: 6 },
-  { cam: [4.80, 0.94, 2.24], look: [4.80, 0.64, 1.93], chapter: 6 },
+  { cam: [3.26, 0.89, 3.21], look: [3.26, 0.52, 2.89], chapter: 6 },
+  { cam: [3.26, 0.88, 3.20], look: [3.26, 0.52, 2.89], chapter: 6 },
 
-  // 7. Gliding North into the Silicon & Hardware Lab Bench
-  { cam: [2.35, 1.34, 1.35], look: [2.55, 1.05, -1.05], chapter: 7 },
-  { cam: [2.55, 1.22, 0.14], look: [2.55, 1.02, -1.12], chapter: 7 },
+  // 7. Gliding North through the Architectural Portal into the Silicon & Hardware Lab Bench
+  { cam: [1.85, 1.28, 2.05], look: [2.45, 1.05, -1.05], chapter: 7 },
+  { cam: [2.35, 1.22, 0.25], look: [2.55, 1.02, -1.12], chapter: 7 },
 
-  // 8. Approaching & Climbing Up the Living Room Oak Staircase into the Attic
-  { cam: [2.85, 1.25, 3.65], look: [1.45, 1.95, 4.45], chapter: 8 },
-  { cam: [2.05, 1.92, 4.42], look: [0.55, 2.68, 4.35], chapter: 8 },
-  { cam: [0.65, 2.98, 4.32], look: [-0.15, 3.22, 2.45], chapter: 8 },
+  // 8. Approaching & Climbing Up the Living Room Oak Staircase Northward into the Attic
+  { cam: [0.62, 1.15, 4.35], look: [0.62, 1.65, 2.25], chapter: 8 },
+  { cam: [0.62, 1.85, 3.10], look: [0.62, 2.45, 1.65], chapter: 8 },
+  { cam: [0.62, 2.85, 1.85], look: [0.15, 3.15, 1.85], chapter: 8 },
 
   // 9. Entering the Sunlit Attic Art Studio (Easel, Rafters & Gallery Canvases)
   { cam: [0.12, 3.44, 3.05], look: [-0.12, 3.22, 1.55], chapter: 9 },
@@ -169,10 +169,12 @@ function cutFrontWallForWindows(root) {
       const maxZ = Math.max(vA.z, vB.z, vC.z)
       const maxY = Math.max(vA.y, vB.y, vC.y)
 
+      // 1. Cut front wall for windows
       if (minZ > 4.88 && maxY > 0.05) {
         continue
       }
 
+      // 2. Open entry hall half-wall partition
       if (
         minX >= -0.08 &&
         maxX <= 0.14 &&
@@ -180,6 +182,18 @@ function cutFrontWallForWindows(root) {
         maxZ <= 3.68 &&
         maxY > 0.02 &&
         maxY <= 0.86
+      ) {
+        continue
+      }
+
+      // 3. Remove original south-facing stairs in front of window (x in [0.05, 3.10], z in [3.85, 5.08], y > 0.05)
+      // Moving staircase away from window over to the North dividing wall
+      if (
+        minX >= 0.05 &&
+        maxX <= 3.15 &&
+        minZ >= 3.82 &&
+        maxZ <= 5.12 &&
+        maxY > 0.04
       ) {
         continue
       }
