@@ -484,25 +484,8 @@ export default function FirstPersonCanvas() {
     }
   }, [])
 
-  const activeChapter = TOUR_CHAPTERS[activeChapterIndex] || TOUR_CHAPTERS[0]
-  const totalChapters = TOUR_CHAPTERS.length
-  const chapterIndexFormatted = `${String(activeChapterIndex + 1).padStart(2, '0')} / ${String(totalChapters).padStart(2, '0')}`
-
   return (
     <div className="scroll-page">
-      {/* ONLY the Top-Left Corner Box — Impeccable & Emil Kowalski Craft Floor */}
-      <div className="top-left-box">
-        <div key={activeChapterIndex} className="hud-chapter-inner">
-          <div className="brand-name">{activeChapter.title}</div>
-          <div className="brand-sub">{activeChapter.subtitle}</div>
-          <div className="brand-meta">
-            <span>{chapterIndexFormatted}</span>
-            <span className="brand-meta-dot" />
-            <span>{activeChapter.room}</span>
-          </div>
-        </div>
-      </div>
-
       {/* Fixed Fullscreen 3D Canvas */}
       <div className="canvas-fixed">
         <Canvas
