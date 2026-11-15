@@ -1,7 +1,42 @@
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --surface-hud: oklch(0.18 0.028 248 / 0.88);
+  --ink-primary: oklch(0.98 0.008 85);
+  --ink-secondary: oklch(0.84 0.038 232);
+  --accent-gold: oklch(0.86 0.14 86);
+  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Themed browser surfaces (Impeccable Craft Floor) */
+::selection {
+  background-color: oklch(0.78 0.11 230 / 0.35);
+  color: var(--ink-primary);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: oklch(0.22 0.03 245);
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.58 0.08 235);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.72 0.11 230);
 }
 
 html,
@@ -9,10 +44,11 @@ body {
   width: 100%;
   min-height: 100%;
   background-color: #bae6fd;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #f8fafc;
+  font-family: var(--font-sans);
+  color: var(--ink-primary);
   overflow-x: hidden;
-  scroll-behavior: smooth;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Smooth 1650vh scroll container for Exterior -> Kitchen -> Living Room -> Silicon Lab -> Art Studio tour */
@@ -31,41 +67,92 @@ body {
   z-index: 1;
 }
 
-/* Single Top-Left Corner Box */
+/* Single Top-Left Corner Box — Impeccable Experience Mode + Emil Kowalski Motion Polish
+   - Single elevation (soft offset shadow, no neon ghost-card border)
+   - No kicker/eyebrow above the heading (Craft Floor rule)
+   - @starting-style + blur(2px) crossfade on chapter swap
+*/
 .top-left-box {
   position: fixed;
-  top: 20px;
-  left: 24px;
+  top: 24px;
+  left: 28px;
   z-index: 20;
-  max-width: 420px;
-  background: rgba(15, 23, 42, 0.84);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(137, 207, 240, 0.45);
+  max-width: 410px;
+  background: var(--surface-hud);
+  backdrop-filter: blur(14px);
   border-radius: 14px;
-  padding: 12px 18px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  padding: 16px 22px 15px;
+  box-shadow: 0 18px 42px -10px rgba(9, 13, 22, 0.52);
   pointer-events: none;
+  transform-origin: top left;
+  transition:
+    transform 180ms var(--ease-out),
+    opacity 180ms var(--ease-out);
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
 }
 
-.brand-room {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #38bdf8;
-  margin-bottom: 3px;
+.hud-chapter-inner {
+  animation: hudChapterSwap 220ms var(--ease-out) both;
+}
+
+@keyframes hudChapterSwap {
+  0% {
+    opacity: 0;
+    transform: scale(0.97) translateY(3px);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
 }
 
 .brand-name {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #89cff0;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--ink-primary);
+  text-wrap: balance;
 }
 
 .brand-sub {
-  font-size: 0.8rem;
-  color: #cbd5e1;
-  margin-top: 3px;
-  line-height: 1.4;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink-secondary);
+  margin-top: 6px;
+  line-height: 1.48;
+  max-width: 65ch;
+}
+
+.brand-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid oklch(0.95 0.01 85 / 0.12);
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--accent-gold);
+  letter-spacing: 0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-left-box,
+  .hud-chapter-inner {
+    animation: none;
+    transition: opacity 150ms ease;
+    filter: none;
+    transform: none;
+  }
 }

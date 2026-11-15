@@ -9,6 +9,308 @@ function smoothstep(min, max, value) {
 }
 
 /**
+ * Generates physical, tileable PBR surface textures (color + bump/roughness maps)
+ * for wood planks, powder-blue clapboard siding, glazed ceramic roof tiles,
+ * Venetian plaster walls, veined marble countertops, woven rugs, and bouclé fabric.
+ */
+let cachedPBRTextures = null
+export function getHousePBRTextures() {
+  if (cachedPBRTextures) return cachedPBRTextures
+
+  const makeTileable = (canvas, repeatX = 1, repeatY = 1, isColor = true) => {
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.wrapS = THREE.RepeatWrapping
+    tex.wrapT = THREE.RepeatWrapping
+    tex.repeat.set(repeatX, repeatY)
+    tex.anisotropy = 8
+    if (isColor && THREE.SRGBColorSpace) {
+      tex.colorSpace = THREE.SRGBColorSpace
+    }
+    tex.needsUpdate = true
+    return tex
+  }
+
+  // 1. Powder-Blue Architectural Clapboard Siding (Color + Bump)
+  const sidingColorCanvas = document.createElement('canvas')
+  sidingColorCanvas.width = 512
+  sidingColorCanvas.height = 512
+  const sCtx = sidingColorCanvas.getContext('2d')
+
+  const sidingBumpCanvas = document.createElement('canvas')
+  sidingBumpCanvas.width = 512
+  sidingBumpCanvas.height = 512
+  const sbCtx = sidingBumpCanvas.getContext('2d')
+
+  const numCourses = 8
+  const courseH = 512 / numCourses
+  for (let i = 0; i < numCourses; i++) {
+    const y0 = i * courseH
+    // Subtle board-to-board tonal variation
+    const grad = sCtx.createLinearGradient(0, y0, 0, y0 + courseH)
+    grad.addColorStop(0, '#93d5f6')
+    grad.addColorStop(0.78, '#7ec4e8')
+    grad.addColorStop(0.94, '#5fa8d3')
+    grad.addColorStop(1, '#3b7ea6')
+    sCtx.fillStyle = grad
+    sCtx.fillRect(0, y0, 512, courseH)
+
+    // Fine horizontal wood grain fibers under the paint
+    for (let g = 0; g < 18; g++) {
+      const gy = y0 + ((g * 13) % (courseH - 4))
+      sCtx.fillStyle = g % 2 === 0 ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.045)'
+      sCtx.fillRect(0, gy, 512, 1.5)
+    }
+
+    // Bump height gradient for lap shadow
+    const bGrad = sbCtx.createLinearGradient(0, y0, 0, y0 + courseH)
+    bGrad.addColorStop(0, '#e2e8f0')
+    bGrad.addColorStop(0.88, '#94a3b8')
+    bGrad.addColorStop(0.95, '#1e293b')
+    bGrad.addColorStop(1, '#0f172a')
+    sbCtx.fillStyle = bGrad
+    sbCtx.fillRect(0, y0, 512, courseH)
+  }
+
+  // 2. Warm Quarter-Sawn Oak Hardwood Planks (Color + Bump)
+  const oakColorCanvas = document.createElement('canvas')
+  oakColorCanvas.width = 512
+  oakColorCanvas.height = 512
+  const oCtx = oakColorCanvas.getContext('2d')
+
+  const oakBumpCanvas = document.createElement('canvas')
+  oakBumpCanvas.width = 512
+  oakBumpCanvas.height = 512
+  const obCtx = oakBumpCanvas.getContext('2d')
+
+  const plankCols = 4
+  const plankW = 512 / plankCols
+  const oakTones = ['#b87333', '#a86528', '#c27d3c', '#9c5a20']
+  for (let col = 0; col < plankCols; col++) {
+    const x0 = col * plankW
+    oCtx.fillStyle = oakTones[col % oakTones.length]
+    oCtx.fillRect(x0, 0, plankW, 512)
+
+    obCtx.fillStyle = '#cbd5e1'
+    obCtx.fillRect(x0, 0, plankW, 512)
+
+    // Wood grain streaks along the plank
+    for (let s = 0; s < 42; s++) {
+      const sx = x0 + 4 + ((s * 17) % (plankW - 8))
+      oCtx.strokeStyle = s % 3 === 0 ? 'rgba(69, 26, 3, 0.22)' : 'rgba(254, 243, 199, 0.10)'
+      oCtx.lineWidth = 1.5
+      oCtx.beginPath()
+      oCtx.moveTo(sx, 0)
+      oCtx.bezierCurveTo(
+        sx + (s % 2 === 0 ? 4 : -4),
+        170,
+        sx + (s % 2 === 0 ? -4 : 4),
+        340,
+        sx,
+        512
+      )
+      oCtx.stroke()
+
+      obCtx.strokeStyle = s % 2 === 0 ? '#94a3b8' : '#e2e8f0'
+      obCtx.lineWidth = 1.2
+      obCtx.beginPath()
+      obCtx.moveTo(sx, 0)
+      obCtx.lineTo(sx, 512)
+      obCtx.stroke()
+    }
+
+    // Plank bevel seam
+    oCtx.fillStyle = '#451a03'
+    oCtx.fillRect(x0, 0, 3, 512)
+    obCtx.fillStyle = '#0f172a'
+    obCtx.fillRect(x0, 0, 4, 512)
+
+    // Horizontal butt-joint staggered per column
+    const jointY = ((col * 173 + 90) % 440) + 36
+    oCtx.fillRect(x0, jointY, plankW, 3)
+    obCtx.fillRect(x0, jointY, plankW, 4)
+  }
+
+  // 3. Interior Venetian Plaster / Warm Limewash Bump & Albedo
+  const plasterCanvas = document.createElement('canvas')
+  plasterCanvas.width = 512
+  plasterCanvas.height = 512
+  const pCtx = plasterCanvas.getContext('2d')
+  pCtx.fillStyle = '#94a3b8'
+  pCtx.fillRect(0, 0, 512, 512)
+  for (let i = 0; i < 380; i++) {
+    const px = (i * 73) % 512
+    const py = (i * 139) % 512
+    const r = 18 + (i % 36)
+    const g = pCtx.createRadialGradient(px, py, 2, px, py, r)
+    g.addColorStop(0, i % 2 === 0 ? 'rgba(255,255,255,0.14)' : 'rgba(15,23,42,0.14)')
+    g.addColorStop(1, 'rgba(148,163,184,0)')
+    pCtx.fillStyle = g
+    pCtx.beginPath()
+    pCtx.arc(px, py, r, 0, Math.PI * 2)
+    pCtx.fill()
+  }
+
+  // 4. Glazed Deep-Cobalt Ceramic Roof Tile Texture (Color + Bump)
+  const roofCanvas = document.createElement('canvas')
+  roofCanvas.width = 512
+  roofCanvas.height = 512
+  const rCtx = roofCanvas.getContext('2d')
+
+  const roofBumpCanvas = document.createElement('canvas')
+  roofBumpCanvas.width = 512
+  roofBumpCanvas.height = 512
+  const rbCtx = roofBumpCanvas.getContext('2d')
+
+  const tileCols = 8
+  const tileW = 512 / tileCols
+  for (let c = 0; c < tileCols; c++) {
+    const x0 = c * tileW
+    const rGrad = rCtx.createLinearGradient(x0, 0, x0 + tileW, 0)
+    rGrad.addColorStop(0, '#0f172a')
+    rGrad.addColorStop(0.28, '#1e3a8a')
+    rGrad.addColorStop(0.55, '#2563eb')
+    rGrad.addColorStop(0.85, '#172554')
+    rGrad.addColorStop(1, '#090d16')
+    rCtx.fillStyle = rGrad
+    rCtx.fillRect(x0, 0, tileW, 512)
+
+    const bGrad = rbCtx.createLinearGradient(x0, 0, x0 + tileW, 0)
+    bGrad.addColorStop(0, '#0f172a')
+    bGrad.addColorStop(0.5, '#f8fafc')
+    bGrad.addColorStop(1, '#0f172a')
+    rbCtx.fillStyle = bGrad
+    rbCtx.fillRect(x0, 0, tileW, 512)
+  }
+  for (let row = 0; row < 6; row++) {
+    const ry = row * (512 / 6)
+    rCtx.fillStyle = 'rgba(2, 6, 23, 0.55)'
+    rCtx.fillRect(0, ry, 512, 5)
+    rbCtx.fillStyle = '#020617'
+    rbCtx.fillRect(0, ry, 512, 6)
+  }
+
+  // 5. Woven Bouclé Upholstery Fabric (for the Plush Blue Sofa & Throw Pillows)
+  const boucleCanvas = document.createElement('canvas')
+  boucleCanvas.width = 256
+  boucleCanvas.height = 256
+  const bCtx = boucleCanvas.getContext('2d')
+  bCtx.fillStyle = '#808080'
+  bCtx.fillRect(0, 0, 256, 256)
+  for (let y = 0; y < 256; y += 4) {
+    for (let x = 0; x < 256; x += 4) {
+      const bright = (x + y) % 8 === 0 ? '#cbd5e1' : '#475569'
+      bCtx.fillStyle = bright
+      bCtx.fillRect(x, y, 3, 2)
+    }
+  }
+
+  // 6. Woven Moroccan Jute & Cream Area Rug Texture
+  const rugCanvas = document.createElement('canvas')
+  rugCanvas.width = 512
+  rugCanvas.height = 512
+  const rgCtx = rugCanvas.getContext('2d')
+  rgCtx.fillStyle = '#f5ebd6'
+  rgCtx.fillRect(0, 0, 512, 512)
+  // Subtle woven warp/weft threads
+  for (let y = 0; y < 512; y += 4) {
+    rgCtx.fillStyle = y % 8 === 0 ? 'rgba(180, 83, 9, 0.08)' : 'rgba(255, 255, 255, 0.25)'
+    rgCtx.fillRect(0, y, 512, 2)
+  }
+  // Double warm terracotta & espresso border frame
+  rgCtx.strokeStyle = '#92400e'
+  rgCtx.lineWidth = 14
+  rgCtx.strokeRect(26, 26, 460, 460)
+  rgCtx.strokeStyle = '#d97706'
+  rgCtx.lineWidth = 4
+  rgCtx.strokeRect(44, 44, 424, 424)
+  // Subtle geometric diamond motif in center
+  rgCtx.strokeStyle = 'rgba(146, 64, 14, 0.28)'
+  rgCtx.lineWidth = 5
+  rgCtx.beginPath()
+  rgCtx.moveTo(256, 96)
+  rgCtx.lineTo(416, 256)
+  rgCtx.lineTo(256, 416)
+  rgCtx.lineTo(96, 256)
+  rgCtx.closePath()
+  rgCtx.stroke()
+
+  // 7. Veined Carrara Marble Texture (for Kitchen Countertops)
+  const marbleCanvas = document.createElement('canvas')
+  marbleCanvas.width = 512
+  marbleCanvas.height = 512
+  const mCtx = marbleCanvas.getContext('2d')
+  mCtx.fillStyle = '#f1f5f9'
+  mCtx.fillRect(0, 0, 512, 512)
+  for (let v = 0; v < 14; v++) {
+    mCtx.strokeStyle = v % 2 === 0 ? 'rgba(100, 116, 139, 0.22)' : 'rgba(148, 163, 184, 0.16)'
+    mCtx.lineWidth = v % 3 === 0 ? 3.5 : 1.8
+    mCtx.beginPath()
+    let vx = (v * 67) % 512
+    let vy = 0
+    mCtx.moveTo(vx, vy)
+    while (vy < 512) {
+      vy += 64
+      vx += Math.sin(vy * 0.03 + v) * 28
+      mCtx.lineTo(vx, vy)
+    }
+    mCtx.stroke()
+  }
+
+  // 8. lush Sunlit Meadow Grass & Soil Texture (for Exterior Yard Ground)
+  const lawnCanvas = document.createElement('canvas')
+  lawnCanvas.width = 512
+  lawnCanvas.height = 512
+  const lCtx = lawnCanvas.getContext('2d')
+  lCtx.fillStyle = '#38a169'
+  lCtx.fillRect(0, 0, 512, 512)
+  for (let i = 0; i < 900; i++) {
+    const gx = (i * 97) % 512
+    const gy = (i * 151) % 512
+    lCtx.fillStyle = i % 3 === 0 ? '#2f855a' : i % 3 === 1 ? '#48bb78' : '#276749'
+    lCtx.fillRect(gx, gy, 4, 9)
+  }
+
+  // 9. Natural Limestone Paver Walkway Texture
+  const stoneCanvas = document.createElement('canvas')
+  stoneCanvas.width = 512
+  stoneCanvas.height = 512
+  const stCtx = stoneCanvas.getContext('2d')
+  stCtx.fillStyle = '#e2e8f0'
+  stCtx.fillRect(0, 0, 512, 512)
+  for (let i = 0; i < 240; i++) {
+    const sx = (i * 53) % 512
+    const sy = (i * 89) % 512
+    stCtx.fillStyle = i % 2 === 0 ? 'rgba(203, 213, 225, 0.5)' : 'rgba(248, 250, 252, 0.6)'
+    stCtx.fillRect(sx, sy, 18, 14)
+  }
+  stCtx.strokeStyle = '#94a3b8'
+  stCtx.lineWidth = 4
+  for (let y = 0; y < 512; y += 128) {
+    stCtx.beginPath()
+    stCtx.moveTo(0, y)
+    stCtx.lineTo(512, y)
+    stCtx.stroke()
+  }
+
+  cachedPBRTextures = {
+    sidingMap: makeTileable(sidingColorCanvas, 3, 2, true),
+    sidingBump: makeTileable(sidingBumpCanvas, 3, 2, false),
+    oakMap: makeTileable(oakColorCanvas, 2, 2, true),
+    oakBump: makeTileable(oakBumpCanvas, 2, 2, false),
+    plasterBump: makeTileable(plasterCanvas, 2, 2, false),
+    roofMap: makeTileable(roofCanvas, 4, 2, true),
+    roofBump: makeTileable(roofBumpCanvas, 4, 2, false),
+    boucleBump: makeTileable(boucleCanvas, 6, 6, false),
+    rugMap: makeTileable(rugCanvas, 1, 1, true),
+    marbleMap: makeTileable(marbleCanvas, 2, 2, true),
+    lawnMap: makeTileable(lawnCanvas, 18, 18, true),
+    stoneMap: makeTileable(stoneCanvas, 1, 6, true),
+  }
+
+  return cachedPBRTextures
+}
+
+/**
  * Generates clean, borderless diegetic 3D editorial/stencil typography (NO neon pill boxes!).
  * Uses rich multi-layer drop shadows and warm subtle glow so it sits naturally in the 3D scene.
  */
@@ -42,8 +344,8 @@ function useFloatingTextTexture(lines, options = {}) {
       const size = isSub ? subFontSize : fontSize
 
       ctx.font = isSub
-        ? `800 ${size}px "Inter", "Segoe UI", sans-serif`
-        : `italic 900 ${size}px "Inter", "Segoe UI", "Arial Black", sans-serif`
+        ? `700 ${size}px "Plus Jakarta Sans", "Segoe UI", sans-serif`
+        : `italic 400 ${Math.round(size * 1.14)}px "Instrument Serif", Georgia, "Times New Roman", serif`
 
       // Deep soft ambient occlusion shadow behind letters
       ctx.shadowColor = 'rgba(2, 6, 23, 0.88)'
@@ -878,20 +1180,21 @@ export function GoldenWindowSunbeams() {
  * Custom Baby-Blue Front Wall (at z = 5.10) with two SEE-THROUGH windows.
  */
 export function FrontWallWithWindows() {
+  const { sidingMap, sidingBump, oakMap, oakBump } = useMemo(() => getHousePBRTextures(), [])
   return (
     <group position={[0, 0, 5.10]}>
       <mesh position={[-3.41, 1.25, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.26, 2.5, 0.2]} />
-        <meshStandardMaterial color="#89CFF0" roughness={0.6} />
+        <meshStandardMaterial map={sidingMap} bumpMap={sidingBump} bumpScale={0.025} roughness={0.58} />
       </mesh>
 
       <mesh position={[-2.74, 0.51, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.08, 1.02, 0.2]} />
-        <meshStandardMaterial color="#89CFF0" roughness={0.6} />
+        <meshStandardMaterial map={sidingMap} bumpMap={sidingBump} bumpScale={0.025} roughness={0.58} />
       </mesh>
       <mesh position={[-2.74, 2.26, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.08, 0.48, 0.2]} />
-        <meshStandardMaterial color="#89CFF0" roughness={0.6} />
+        <meshStandardMaterial map={sidingMap} bumpMap={sidingBump} bumpScale={0.025} roughness={0.58} />
       </mesh>
       <group position={[-2.74, 1.52, 0]}>
         <mesh position={[0, 0.48, 0]} castShadow>
@@ -931,7 +1234,7 @@ export function FrontWallWithWindows() {
         </mesh>
         <mesh position={[0, -0.60, 0.18]} castShadow receiveShadow>
           <boxGeometry args={[1.04, 0.15, 0.2]} />
-          <meshStandardMaterial color="#92400e" roughness={0.6} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#b45309" roughness={0.55} />
         </mesh>
         {[-0.36, -0.12, 0.12, 0.36].map((fx, idx) => (
           <group key={`lfl-${idx}`} position={[fx, -0.49, 0.18]}>
@@ -952,12 +1255,12 @@ export function FrontWallWithWindows() {
 
       <mesh position={[-1.59, 1.25, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.22, 2.5, 0.2]} />
-        <meshStandardMaterial color="#89CFF0" roughness={0.6} />
+        <meshStandardMaterial map={sidingMap} bumpMap={sidingBump} bumpScale={0.025} roughness={0.58} />
       </mesh>
 
       <mesh position={[-0.53, 2.27, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.9, 0.46, 0.2]} />
-        <meshStandardMaterial color="#89CFF0" roughness={0.6} />
+        <meshStandardMaterial map={sidingMap} bumpMap={sidingBump} bumpScale={0.025} roughness={0.58} />
       </mesh>
       <mesh position={[-0.99, 1.02, 0]} castShadow>
         <boxGeometry args={[0.06, 2.08, 0.24]} />
@@ -974,16 +1277,16 @@ export function FrontWallWithWindows() {
 
       <mesh position={[0.39, 1.25, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.94, 2.5, 0.2]} />
-        <meshStandardMaterial color="#89CFF0" roughness={0.6} />
+        <meshStandardMaterial map={sidingMap} bumpMap={sidingBump} bumpScale={0.025} roughness={0.58} />
       </mesh>
 
       <mesh position={[2.56, 0.34, 0]} castShadow receiveShadow>
         <boxGeometry args={[3.4, 0.68, 0.2]} />
-        <meshStandardMaterial color="#89CFF0" roughness={0.6} />
+        <meshStandardMaterial map={sidingMap} bumpMap={sidingBump} bumpScale={0.025} roughness={0.58} />
       </mesh>
       <mesh position={[2.56, 2.27, 0]} castShadow receiveShadow>
         <boxGeometry args={[3.4, 0.46, 0.2]} />
-        <meshStandardMaterial color="#89CFF0" roughness={0.6} />
+        <meshStandardMaterial map={sidingMap} bumpMap={sidingBump} bumpScale={0.025} roughness={0.58} />
       </mesh>
       <group position={[2.56, 1.36, 0]}>
         <mesh position={[0, 0.66, 0]} castShadow>
@@ -1017,7 +1320,7 @@ export function FrontWallWithWindows() {
         </mesh>
         <mesh position={[0, -0.79, 0.18]} castShadow receiveShadow>
           <boxGeometry args={[3.2, 0.16, 0.2]} />
-          <meshStandardMaterial color="#92400e" roughness={0.6} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#b45309" roughness={0.55} />
         </mesh>
         {[-1.3, -0.9, -0.5, -0.1, 0.3, 0.7, 1.1, 1.4].map((fx, idx) => (
           <group key={`rfl-${idx}`} position={[fx, -0.67, 0.18]}>
@@ -1038,7 +1341,7 @@ export function FrontWallWithWindows() {
 
       <mesh position={[5.06, 1.25, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.6, 2.5, 0.2]} />
-        <meshStandardMaterial color="#89CFF0" roughness={0.6} />
+        <meshStandardMaterial map={sidingMap} bumpMap={sidingBump} bumpScale={0.025} roughness={0.58} />
       </mesh>
     </group>
   )
@@ -1458,6 +1761,10 @@ export function ExteriorYardFenceAndGrass() {
  * Deep Blue Tiled Pitched Roof crowning the entire Baby Blue house.
  */
 export function DeepBlueTiledRoof() {
+  const { sidingMap, sidingBump, roofMap, roofBump, plasterBump } = useMemo(
+    () => getHousePBRTextures(),
+    []
+  )
   const mainTileCourses = useMemo(() => {
     const rows = []
     const numRows = 11
@@ -1495,30 +1802,30 @@ export function DeepBlueTiledRoof() {
     <group>
       <mesh position={[0.0, 2.51, -0.25]} receiveShadow>
         <boxGeometry args={[7.2, 0.06, 10.8]} />
-        <meshStandardMaterial color="#f8fafc" roughness={0.85} />
+        <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.008} roughness={0.82} />
       </mesh>
       <mesh position={[4.6, 2.51, 1.62]} receiveShadow>
         <boxGeometry args={[2.55, 0.06, 7.0]} />
-        <meshStandardMaterial color="#f8fafc" roughness={0.85} />
+        <meshStandardMaterial color="#f8fafc" bumpMap={plasterBump} bumpScale={0.008} roughness={0.82} />
       </mesh>
 
       <group position={[0.0, 2.54, -0.25]}>
         <mesh position={[0, 0.04, 0]} castShadow receiveShadow>
           <boxGeometry args={[7.65, 0.14, 11.25]} />
-          <meshStandardMaterial color="#e0f2fe" roughness={0.5} />
+          <meshStandardMaterial color="#f1f5f9" roughness={0.45} />
         </mesh>
 
         <mesh geometry={gableGeometry} position={[0, 0.06, 5.38]} castShadow receiveShadow>
-          <meshStandardMaterial color="#bae6fd" roughness={0.6} />
+          <meshStandardMaterial map={sidingMap} bumpMap={sidingBump} bumpScale={0.02} roughness={0.58} />
         </mesh>
         <mesh geometry={gableGeometry} position={[0, 0.06, -5.52]} castShadow receiveShadow>
-          <meshStandardMaterial color="#bae6fd" roughness={0.6} />
+          <meshStandardMaterial map={sidingMap} bumpMap={sidingBump} bumpScale={0.02} roughness={0.58} />
         </mesh>
 
         <group position={[-1.92, 0.72, 0]} rotation={[0, 0, slopeAngle]}>
           <mesh castShadow receiveShadow>
             <boxGeometry args={[4.15, 0.1, 11.35]} />
-            <meshStandardMaterial color="#172554" roughness={0.55} />
+            <meshStandardMaterial map={roofMap} bumpMap={roofBump} bumpScale={0.03} roughness={0.35} metalness={0.18} />
           </mesh>
           {mainTileCourses.map((r) => (
             <mesh
@@ -1528,13 +1835,13 @@ export function DeepBlueTiledRoof() {
               receiveShadow
             >
               <boxGeometry args={[0.31, 0.05, 11.42]} />
-              <meshStandardMaterial color={r.color} roughness={0.42} metalness={0.15} />
+              <meshStandardMaterial map={roofMap} bumpMap={roofBump} bumpScale={0.028} color={r.color} roughness={0.32} metalness={0.22} />
             </mesh>
           ))}
           {zRibs.map((zPos, idx) => (
             <mesh key={`west-rib-${idx}`} position={[0, 0.08, zPos]} castShadow>
               <boxGeometry args={[4.05, 0.045, 0.07]} />
-              <meshStandardMaterial color="#1e40af" roughness={0.45} metalness={0.15} />
+              <meshStandardMaterial color="#1e40af" roughness={0.35} metalness={0.22} />
             </mesh>
           ))}
         </group>
@@ -1542,7 +1849,7 @@ export function DeepBlueTiledRoof() {
         <group position={[1.92, 0.72, 0]} rotation={[0, 0, -slopeAngle]}>
           <mesh castShadow receiveShadow>
             <boxGeometry args={[4.15, 0.1, 11.35]} />
-            <meshStandardMaterial color="#172554" roughness={0.55} />
+            <meshStandardMaterial map={roofMap} bumpMap={roofBump} bumpScale={0.03} roughness={0.35} metalness={0.18} />
           </mesh>
           {mainTileCourses.map((r) => (
             <mesh
@@ -1552,36 +1859,36 @@ export function DeepBlueTiledRoof() {
               receiveShadow
             >
               <boxGeometry args={[0.31, 0.05, 11.42]} />
-              <meshStandardMaterial color={r.color} roughness={0.42} metalness={0.15} />
+              <meshStandardMaterial map={roofMap} bumpMap={roofBump} bumpScale={0.028} color={r.color} roughness={0.32} metalness={0.22} />
             </mesh>
           ))}
           {zRibs.map((zPos, idx) => (
             <mesh key={`east-rib-${idx}`} position={[0, 0.08, zPos]} castShadow>
               <boxGeometry args={[4.05, 0.045, 0.07]} />
-              <meshStandardMaterial color="#1e40af" roughness={0.45} metalness={0.15} />
+              <meshStandardMaterial color="#1e40af" roughness={0.35} metalness={0.22} />
             </mesh>
           ))}
         </group>
 
         <mesh position={[0, 1.44, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow>
           <cylinderGeometry args={[0.14, 0.14, 11.45, 8]} />
-          <meshStandardMaterial color="#1d4ed8" roughness={0.38} metalness={0.18} />
+          <meshStandardMaterial color="#1d4ed8" roughness={0.32} metalness={0.24} />
         </mesh>
         <mesh position={[0, 1.42, 0]} castShadow>
           <boxGeometry args={[0.38, 0.12, 11.48]} />
-          <meshStandardMaterial color="#172554" roughness={0.45} />
+          <meshStandardMaterial color="#172554" roughness={0.38} />
         </mesh>
       </group>
 
       <group position={[4.55, 2.54, 1.62]}>
         <mesh position={[0, 0.04, 0]} castShadow receiveShadow>
           <boxGeometry args={[2.85, 0.14, 7.35]} />
-          <meshStandardMaterial color="#e0f2fe" roughness={0.5} />
+          <meshStandardMaterial color="#f1f5f9" roughness={0.45} />
         </mesh>
         <group position={[0, 0.42, 0]} rotation={[0, 0, -0.26]}>
           <mesh castShadow receiveShadow>
             <boxGeometry args={[2.95, 0.1, 7.4]} />
-            <meshStandardMaterial color="#172554" roughness={0.5} />
+            <meshStandardMaterial map={roofMap} bumpMap={roofBump} bumpScale={0.03} roughness={0.35} metalness={0.18} />
           </mesh>
           {[0, 1, 2, 3, 4, 5, 6].map((idx) => (
             <mesh
@@ -1592,9 +1899,12 @@ export function DeepBlueTiledRoof() {
             >
               <boxGeometry args={[0.34, 0.05, 7.45]} />
               <meshStandardMaterial
+                map={roofMap}
+                bumpMap={roofBump}
+                bumpScale={0.028}
                 color={idx % 2 === 0 ? '#1e3a8a' : '#172554'}
-                roughness={0.42}
-                metalness={0.15}
+                roughness={0.32}
+                metalness={0.22}
               />
             </mesh>
           ))}
@@ -1881,6 +2191,7 @@ export function KitchenSkillsShowcase() {
  * Room 2 — Living Room Couch, Side Table, Steaming Coffee Cup & Interactive 3D Page-Flipping Newspaper.
  */
 export function LivingRoomSkillsShowcase({ scrollRef }) {
+  const { rugMap, boucleBump, oakMap, oakBump } = useMemo(() => getHousePBRTextures(), [])
   const page1FrontTex = useNewspaperPageTexture('page1-front')
   const page1BackTex = useNewspaperPageTexture('page1-back')
   const page2InsideTex = useNewspaperPageTexture('page2-inside')
@@ -1975,19 +2286,15 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
         </mesh>
       </group>
 
-      {/* 1. Cozy Living Room Area Rug */}
+      {/* 1. Cozy Living Room Woven Moroccan Area Rug */}
       <group position={[3.85, 0.012, 2.35]}>
         <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
           <planeGeometry args={[2.9, 1.85]} />
-          <meshStandardMaterial color="#fef3c7" roughness={0.9} />
-        </mesh>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.003, 0]} receiveShadow>
-          <planeGeometry args={[2.55, 1.52]} />
-          <meshStandardMaterial color="#fde68a" roughness={0.9} />
+          <meshStandardMaterial map={rugMap} bumpMap={boucleBump} bumpScale={0.012} roughness={0.92} />
         </mesh>
       </group>
 
-      {/* 2. Soft, Plush Blue 3-Seater Living Room Couch with Puffy Cushions */}
+      {/* 2. Soft, Plush Blue 3-Seater Living Room Couch with Puffy Bouclé Cushions */}
       <group position={[3.32, 0, 1.92]}>
         {[
           [-0.72, 0.06, -0.28],
@@ -1997,7 +2304,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
         ].map((leg, i) => (
           <mesh key={`cleg-${i}`} position={leg} castShadow>
             <cylinderGeometry args={[0.032, 0.022, 0.12, 12]} />
-            <meshStandardMaterial color="#78350f" roughness={0.55} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
           </mesh>
         ))}
 
@@ -2010,7 +2317,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           castShadow
           receiveShadow
         >
-          <meshStandardMaterial color="#1d4ed8" roughness={0.85} />
+          <meshStandardMaterial color="#1d4ed8" bumpMap={boucleBump} bumpScale={0.015} roughness={0.86} />
         </RoundedBox>
 
         {/* Three Plush, Puffy Rounded Seat Cushions */}
@@ -2024,7 +2331,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
             castShadow
             receiveShadow
           >
-            <meshStandardMaterial color="#3b82f6" roughness={0.88} />
+            <meshStandardMaterial color="#3b82f6" bumpMap={boucleBump} bumpScale={0.018} roughness={0.88} />
           </RoundedBox>
         ))}
 
@@ -2037,7 +2344,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           castShadow
           receiveShadow
         >
-          <meshStandardMaterial color="#1e40af" roughness={0.85} />
+          <meshStandardMaterial color="#1e40af" bumpMap={boucleBump} bumpScale={0.015} roughness={0.86} />
         </RoundedBox>
 
         {/* Three Overstuffed Blue Backrest Cushions */}
@@ -2052,7 +2359,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
             castShadow
             receiveShadow
           >
-            <meshStandardMaterial color="#60a5fa" roughness={0.88} />
+            <meshStandardMaterial color="#60a5fa" bumpMap={boucleBump} bumpScale={0.018} roughness={0.88} />
           </RoundedBox>
         ))}
 
@@ -2065,7 +2372,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           castShadow
           receiveShadow
         >
-          <meshStandardMaterial color="#2563eb" roughness={0.85} />
+          <meshStandardMaterial color="#2563eb" bumpMap={boucleBump} bumpScale={0.016} roughness={0.86} />
         </RoundedBox>
         <RoundedBox
           args={[0.18, 0.40, 0.82]}
@@ -2075,7 +2382,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           castShadow
           receiveShadow
         >
-          <meshStandardMaterial color="#2563eb" roughness={0.85} />
+          <meshStandardMaterial color="#2563eb" bumpMap={boucleBump} bumpScale={0.016} roughness={0.86} />
         </RoundedBox>
 
         {/* Cozy Plump Throw Cushions / Pillows on the Blue Couch */}
@@ -2088,7 +2395,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           rotation={[0.18, 0.38, -0.20]}
           castShadow
         >
-          <meshStandardMaterial color="#bae6fd" roughness={0.82} />
+          <meshStandardMaterial color="#bae6fd" bumpMap={boucleBump} bumpScale={0.014} roughness={0.84} />
         </RoundedBox>
         {/* Left Accent Warm Gold Cushion */}
         <RoundedBox
@@ -2099,7 +2406,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           rotation={[0.14, 0.22, -0.12]}
           castShadow
         >
-          <meshStandardMaterial color="#fde047" roughness={0.82} />
+          <meshStandardMaterial color="#fde047" bumpMap={boucleBump} bumpScale={0.014} roughness={0.84} />
         </RoundedBox>
         {/* Center-Right Cozy Cream Cushion */}
         <RoundedBox
@@ -2110,7 +2417,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           rotation={[0.20, -0.15, 0.08]}
           castShadow
         >
-          <meshStandardMaterial color="#fef3c7" roughness={0.84} />
+          <meshStandardMaterial color="#fef3c7" bumpMap={boucleBump} bumpScale={0.014} roughness={0.85} />
         </RoundedBox>
         {/* Right Soft Sky-Blue Throw Cushion */}
         <RoundedBox
@@ -2121,7 +2428,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           rotation={[0.18, -0.38, 0.20]}
           castShadow
         >
-          <meshStandardMaterial color="#93c5fd" roughness={0.82} />
+          <meshStandardMaterial color="#93c5fd" bumpMap={boucleBump} bumpScale={0.014} roughness={0.84} />
         </RoundedBox>
       </group>
 
@@ -2136,16 +2443,16 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
           castShadow
           receiveShadow
         >
-          <meshStandardMaterial color="#78350f" roughness={0.5} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#92400e" roughness={0.46} />
         </RoundedBox>
         {/* Console Cabinet Doors & Open Shelf */}
         <mesh position={[-0.44, 0.26, 0.202]}>
           <boxGeometry args={[0.42, 0.28, 0.01]} />
-          <meshStandardMaterial color="#92400e" roughness={0.48} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.012} color="#b45309" roughness={0.45} />
         </mesh>
         <mesh position={[0.44, 0.26, 0.202]}>
           <boxGeometry args={[0.42, 0.28, 0.01]} />
-          <meshStandardMaterial color="#92400e" roughness={0.48} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.012} color="#b45309" roughness={0.45} />
         </mesh>
         <mesh position={[0, 0.26, 0.18]}>
           <boxGeometry args={[0.40, 0.26, 0.04]} />
@@ -2211,15 +2518,15 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
       <group position={[4.74, 0, 1.98]}>
         <mesh position={[0, 0.565, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.12, 0.035, 0.68]} />
-          <meshStandardMaterial color="#92400e" roughness={0.48} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#b45309" roughness={0.44} />
         </mesh>
         <mesh position={[0, 0.54, 0]} castShadow>
           <boxGeometry args={[1.06, 0.025, 0.62]} />
-          <meshStandardMaterial color="#78350f" roughness={0.55} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.012} color="#92400e" roughness={0.5} />
         </mesh>
         <mesh position={[0, 0.18, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.98, 0.022, 0.54]} />
-          <meshStandardMaterial color="#78350f" roughness={0.6} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.012} color="#92400e" roughness={0.55} />
         </mesh>
         {[
           [-0.48, 0.28, -0.26],
@@ -2229,7 +2536,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
         ].map((legPos, idx) => (
           <mesh key={`tleg-${idx}`} position={legPos} castShadow>
             <cylinderGeometry args={[0.026, 0.018, 0.56, 12]} />
-            <meshStandardMaterial color="#78350f" roughness={0.55} />
+            <meshStandardMaterial map={oakMap} color="#78350f" roughness={0.5} />
           </mesh>
         ))}
 
@@ -2339,6 +2646,7 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
  * Makes the house 100% uniquely an Engineer + Artist's home!
  */
 export function EngineerAndArtistStudioShowcase() {
+  const { oakMap, oakBump, rugMap, boucleBump } = useMemo(() => getHousePBRTextures(), [])
   const scopeTex = useOscilloscopeScreenTexture()
   const easelArtTex = useStudioArtworkTexture('easel-masterpiece')
   const machaanArtTex = useStudioArtworkTexture('machaan-theatre')
@@ -2365,7 +2673,7 @@ export function EngineerAndArtistStudioShowcase() {
         {/* Heavy Oak & Steel Electronics Lab Workbench */}
         <mesh position={[0, 0.74, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.75, 0.045, 0.68]} />
-          <meshStandardMaterial color="#b45309" roughness={0.5} />
+          <meshStandardMaterial map={oakMap} bumpMap={oakBump} bumpScale={0.015} color="#d97706" roughness={0.46} />
         </mesh>
         {[
           [-0.8, 0.37, -0.28],
@@ -2474,7 +2782,7 @@ export function EngineerAndArtistStudioShowcase() {
         {/* Cozy Studio Woven Rug */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.014, 0.85]} receiveShadow>
           <circleGeometry args={[0.92, 32]} />
-          <meshStandardMaterial color="#fef3c7" roughness={0.85} />
+          <meshStandardMaterial map={rugMap} bumpMap={boucleBump} bumpScale={0.012} roughness={0.88} />
         </mesh>
 
         {/* Warm Overhead Fairy String Lights draped along the Studio Wall */}

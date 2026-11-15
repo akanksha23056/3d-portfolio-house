@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { ContactShadows, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import {
   AtmosphericSkyAndWind,
@@ -8,6 +8,7 @@ import {
   EngineerAndArtistStudioShowcase,
   ExteriorYardFenceAndGrass,
   FrontWallWithWindows,
+  getHousePBRTextures,
   GoldenWindowSunbeams,
   KitchenSkillsShowcase,
   LivingRoomSkillsShowcase,
@@ -170,20 +171,67 @@ function cutFrontWallForWindows(root) {
 
     geom.setIndex(newIndices)
     geom.computeVertexNormals()
+
+    // Generate world-space triplanar UV coordinates so PBR wood, clapboard siding,
+    // Venetian plaster, and Carrara marble textures map seamlessly onto interior.glb
+    const normAttr = geom.attributes.normal
+    const vCount = posAttr.count
+    const uvs = new Float32Array(vCount * 2)
+    const vPos = new THREE.Vector3()
+    const vNorm = new THREE.Vector3()
+    const normalMatrix = new THREE.Matrix3().getNormalMatrix(matrix)
+
+    for (let vi = 0; vi < vCount; vi++) {
+      vPos.fromBufferAttribute(posAttr, vi).applyMatrix4(matrix)
+      if (normAttr) {
+        vNorm.fromBufferAttribute(normAttr, vi).applyMatrix3(normalMatrix).normalize()
+      } else {
+        vNorm.set(0, 1, 0)
+      }
+
+      const ax = Math.abs(vNorm.x)
+      const ay = Math.abs(vNorm.y)
+      const az = Math.abs(vNorm.z)
+
+      if (ay > ax && ay > az) {
+        // Horizontal surface (hardwood floors, stairs, countertops, ceilings)
+        uvs[vi * 2] = vPos.x * 0.45
+        uvs[vi * 2 + 1] = vPos.z * 0.45
+      } else if (ax > az) {
+        // East/West wall or cabinet side
+        uvs[vi * 2] = vPos.z * 0.48
+        uvs[vi * 2 + 1] = vPos.y * 0.48
+      } else {
+        // North/South wall or cabinet face
+        uvs[vi * 2] = vPos.x * 0.48
+        uvs[vi * 2 + 1] = vPos.y * 0.48
+      }
+    }
+    geom.setAttribute('uv', new THREE.BufferAttribute(uvs, 2))
+
     child.geometry = geom
     child.userData.frontWallCut = true
   })
 }
 
 /**
- * Loads the low-poly house interior GLB model, opens the front facade for windows,
- * and paints the walls Baby Blue (#89CFF0) with warm satin roughness.
+ * Loads the house interior GLB model, opens the front facade for windows,
+ * generates triplanar UVs, and applies real tactile PBR textures (clapboard siding,
+ * quarter-sawn oak hardwood planks, Venetian limewash plaster, Carrara marble, and brushed steel).
  */
 function InteriorModel() {
   const { scene } = useGLTF(MODEL_PATH)
 
   useEffect(() => {
     cutFrontWallForWindows(scene)
+    const {
+      sidingMap,
+      sidingBump,
+      oakMap,
+      oakBump,
+      plasterBump,
+      marbleMap,
+    } = getHousePBRTextures()
 
     scene.traverse((child) => {
       if (!child.isMesh) return
@@ -193,14 +241,52 @@ function InteriorModel() {
       const mat = child.material
       if (mat && mat.color) {
         if (mat.name === 'mat18') {
-          mat.color.set('#89CFF0')
-          mat.roughness = 0.72
+          // Exterior & primary structural walls: Powder-blue clapboard siding + grain bump
+          mat.color.set('#ffffff')
+          mat.map = sidingMap
+          mat.bumpMap = sidingBump
+          mat.bumpScale = 0.022
+          mat.roughness = 0.58
         } else if (mat.name === 'mat21') {
-          mat.color.set('#d8f0ff')
+          // Interior plaster walls, ceilings & window trim: Soft Venetian limewash plaster
+          mat.color.set('#e8f4fe')
+          mat.bumpMap = plasterBump
+          mat.bumpScale = 0.012
+          mat.roughness = 0.68
+        } else if (mat.name === 'mat19') {
+          // Hardwood floors, stairs, kitchen cabinetry & wood furniture: Quarter-sawn oak planks
+          mat.color.set('#f8fafc')
+          mat.map = oakMap
+          mat.bumpMap = oakBump
+          mat.bumpScale = 0.018
+          mat.roughness = 0.44
+        } else if (mat.name === 'mat20') {
+          // Darker walnut trim, shelves & counter accents: Rich walnut grain
+          mat.color.set('#b45309')
+          mat.map = oakMap
+          mat.bumpMap = oakBump
+          mat.bumpScale = 0.016
+          mat.roughness = 0.48
         } else if (mat.name === 'mat15') {
-          mat.color.set('#b3e0ff')
+          // Kitchen countertops & fridge body: Veined Carrara marble surface
+          mat.color.set('#f8fafc')
+          mat.map = marbleMap
+          mat.roughness = 0.24
+          mat.metalness = 0.06
+        } else if (mat.name === 'mat22') {
+          // Sink basin, stove & metallic appliances: Brushed stainless steel
+          mat.color.set('#cbd5e1')
+          mat.metalness = 0.78
+          mat.roughness = 0.24
+        } else if (mat.name === 'mat17') {
+          // Dark slate frames & hardware: Anodized architectural slate
+          mat.color.set('#1e293b')
+          mat.metalness = 0.52
+          mat.roughness = 0.34
         } else if (mat.name === 'mat16') {
           mat.color.set('#64a8e8')
+          mat.bumpMap = plasterBump
+          mat.bumpScale = 0.01
         }
         mat.needsUpdate = true
       }
@@ -285,15 +371,26 @@ function AnimatedFrontDoor({ scrollRef }) {
 }
 
 function ExteriorGround() {
+  const { lawnMap, stoneMap, plasterBump } = useMemo(() => getHousePBRTextures(), [])
   return (
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[1, -0.04, 0]} receiveShadow>
         <planeGeometry args={[70, 70]} />
-        <meshStandardMaterial color="#4ade80" roughness={0.9} />
+        <meshStandardMaterial
+          map={lawnMap}
+          bumpMap={plasterBump}
+          bumpScale={0.03}
+          roughness={0.88}
+        />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-0.53, -0.015, 9.6]} receiveShadow>
         <planeGeometry args={[1.55, 9.2]} />
-        <meshStandardMaterial color="#e2e8f0" roughness={0.75} />
+        <meshStandardMaterial
+          map={stoneMap}
+          bumpMap={plasterBump}
+          bumpScale={0.02}
+          roughness={0.72}
+        />
       </mesh>
     </group>
   )
@@ -370,14 +467,22 @@ export default function FirstPersonCanvas() {
   }, [])
 
   const activeChapter = TOUR_CHAPTERS[activeChapterIndex] || TOUR_CHAPTERS[0]
+  const totalChapters = TOUR_CHAPTERS.length
+  const chapterIndexFormatted = `0${activeChapterIndex + 1} / 0${totalChapters}`
 
   return (
     <div className="scroll-page">
-      {/* ONLY the Top-Left Corner Box */}
+      {/* ONLY the Top-Left Corner Box — Impeccable & Emil Kowalski Craft Floor */}
       <div className="top-left-box">
-        <div className="brand-room">{activeChapter.room}</div>
-        <div className="brand-name">{activeChapter.title}</div>
-        <div className="brand-sub">{activeChapter.subtitle}</div>
+        <div key={activeChapterIndex} className="hud-chapter-inner">
+          <div className="brand-name">{activeChapter.title}</div>
+          <div className="brand-sub">{activeChapter.subtitle}</div>
+          <div className="brand-meta">
+            <span>{chapterIndexFormatted}</span>
+            <span className="brand-meta-dot" />
+            <span>{activeChapter.room}</span>
+          </div>
+        </div>
       </div>
 
       {/* Fixed Fullscreen 3D Canvas */}
@@ -387,18 +492,18 @@ export default function FirstPersonCanvas() {
           gl={{
             antialias: true,
             toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 1.05,
+            toneMappingExposure: 1.06,
           }}
           camera={{ fov: 56, near: 0.08, far: 220, position: [-0.45, 3.8, 14.5] }}
         >
           <color attach="background" args={['#bae6fd']} />
 
           {/* Cozy Cinematic Lighting: Lower flat ambient light + warm golden sunlight + focused gallery pools */}
-          <ambientLight intensity={0.46} color="#ffedd5" />
-          <hemisphereLight args={['#e0f2fe', '#78350f', 0.38]} />
+          <ambientLight intensity={0.44} color="#ffedd5" />
+          <hemisphereLight args={['#e0f2fe', '#78350f', 0.36]} />
           <directionalLight
             position={[9, 14, 12]}
-            intensity={1.55}
+            intensity={1.58}
             color="#fef08a"
             castShadow
             shadow-mapSize-width={2048}
@@ -413,6 +518,17 @@ export default function FirstPersonCanvas() {
           />
 
           <ExteriorGround />
+
+          {/* Physical Ambient-Occlusion Contact Shadows so furniture & walls sit grounded */}
+          <ContactShadows
+            position={[1.0, 0.006, 1.2]}
+            opacity={0.42}
+            scale={20}
+            blur={1.85}
+            far={4.0}
+            resolution={512}
+            color="#0f172a"
+          />
 
           <Suspense fallback={null}>
             <AtmosphericSkyAndWind />
