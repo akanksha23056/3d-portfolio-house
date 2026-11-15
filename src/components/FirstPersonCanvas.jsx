@@ -23,58 +23,58 @@ const MODEL_PATH = '/models/interior.glb'
 const TOUR_CHAPTERS = [
   {
     room: 'Outside the House',
-    title: 'Akanksha Ray — 3D Portfolio House',
-    subtitle: 'B.Tech in Electronics & VLSI @ IIIT-Delhi • Scroll down slowly to enter',
+    title: 'Architectural Residence',
+    subtitle: 'Curved earth landscape, garden lawn & front entrance',
   },
   {
     room: 'Front Entrance & Porch',
-    title: 'Welcome Inside',
-    subtitle: 'Aligned limestone walkway, golden sunlight & warm gallery lights',
+    title: 'Front Porch & Entryway',
+    subtitle: 'Aligned limestone walkway, tiered stone steps & oak threshold',
   },
   {
-    room: 'Kitchen — Fridge Magnets (AI Skills)',
-    title: 'Prompt Engineering & Multilingual NLP',
-    subtitle: 'LLM Agents & RAG Workflows • Sarkari Sahayak Hindi & Dialect AI',
+    room: 'Kitchen — Refrigerator & Island',
+    title: 'Kitchen & Breakfast Counter',
+    subtitle: 'Marble countertops, modern cabinetry & refrigerator',
   },
   {
-    room: 'Kitchen — The Oven',
-    title: 'React, Three.js & Full-Stack Web',
-    subtitle: 'Interactive 3D & Responsive Web Apps • 60% Faster Load Optimization',
+    room: 'Kitchen — Range & Cooktop',
+    title: 'Cooktop & Oven',
+    subtitle: 'Stainless steel range, copper tea kettle & cookware',
   },
   {
-    room: 'Dining Nook & Living Room Lounge',
-    title: 'Dining Table, Plush Bouclé Sofa & 4K TV',
-    subtitle: 'Floor plan layout • Plush blue 3-seater couch & accent armchairs',
+    room: 'Living Room Lounge',
+    title: 'Living Room & Seating Area',
+    subtitle: 'Plush blue bouclé sofa, accent club armchairs & 4K media console',
   },
   {
-    room: 'Living Room — Newspaper Front Page',
-    title: 'VLSI & Analog CMOS IC Design',
-    subtitle: '2-Stage CMOS Op-Amp (59.9 dB Gain, 76.7° PM) & 21.3 µm² 4-Bit CMOS Latch',
+    room: 'Living Room — Coffee Table',
+    title: 'Coffee Table & Morning Paper',
+    subtitle: 'Quarter-sawn oak table, steaming espresso & daily gazette',
   },
   {
-    room: 'Living Room — Newspaper Page Flip',
-    title: 'Embedded C/C++ & RISC-V Architecture',
-    subtitle: '5-Stage Pipelined RISC-V Simulator • Biometric Scanner (100+ IDs) • Audio Equalizer',
+    room: 'Living Room — Newspaper Feature',
+    title: 'Daily Gazette Page',
+    subtitle: 'Open broadsheet newspaper on the coffee table',
   },
   {
-    room: 'North Hallway — Bathroom & Locked Bedroom Door',
-    title: 'Floor Plan Suite & Private Bedroom',
-    subtitle: 'Vanity, soaking tub, toilet & elegant locked primary suite door',
+    room: 'North Hallway — Bathroom Suite',
+    title: 'Bathroom Suite & Primary Bedroom',
+    subtitle: 'Marble bath, vanity sink, porcelain toilet, soaking tub & locked bedroom',
   },
   {
-    room: 'Central Oak Staircase — Ascending to the Attic',
-    title: 'Up the Oak Stairs into the Attic Loft',
-    subtitle: 'Climbing the sunlit central staircase northward to the upstairs studio loft',
+    room: 'Central Staircase',
+    title: 'Oak Staircase to Attic',
+    subtitle: 'Ascending the sunlit timber staircase northward into the loft',
   },
   {
-    room: 'Upstairs Attic — Study & Meraki Art Studio',
-    title: 'The Attic Study, Desk & Gallery',
-    subtitle: 'Study desk with computer, woven round rug, easel & Machaan stagecraft',
+    room: 'Upstairs Attic — Study & Studio',
+    title: 'Attic Loft & Workstation',
+    subtitle: 'Timber A-frame rafters, study desk, circular rug & artist gallery',
   },
   {
-    room: 'Upstairs Attic — Interactive Artist Sketchbooks',
-    title: 'Inside Akanksha’s Sketchbooks',
-    subtitle: 'Charcoal Architectural Studies, Machaan Stage Blocking & 3D UI/UX Wireframe Sketches',
+    room: 'Upstairs Attic — Artist Sketchbooks',
+    title: 'Drafting Table & Sketchbooks',
+    subtitle: 'Open spiral sketchbook, charcoal studies & painter’s palette',
   },
 ]
 
@@ -104,7 +104,7 @@ const SPLINE_KEYFRAMES = [
   // 5. Living Room — Focused View on Coffee Table Broadsheet & Steaming Coffee
   { cam: [2.15, 1.12, 3.48], look: [2.15, 0.52, 2.85], chapter: 5 },
 
-  // 6. Newspaper Page Flips Open to Reveal Skill 2 — Page 2
+  // 6. Newspaper Page Flips Open to Reveal Daily Gazette Inside Page
   { cam: [2.15, 1.10, 3.46], look: [2.15, 0.52, 2.85], chapter: 6 },
   { cam: [2.15, 1.08, 3.45], look: [2.15, 0.52, 2.85], chapter: 6 },
 

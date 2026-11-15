@@ -373,7 +373,44 @@ function useFloatingTextTexture(lines, options = {}) {
 }
 
 /**
- * Generates high-DPI circular icon face textures for the 3D Fridge Magnets and Oven Badge.
+ * Hanging wooden "WELCOME" sign on the front door.
+ */
+export function useWelcomeSignTexture() {
+  return useMemo(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 512
+    canvas.height = 256
+    const ctx = canvas.getContext('2d')
+
+    ctx.fillStyle = '#fef3c7'
+    ctx.fillRect(0, 0, 512, 256)
+
+    ctx.strokeStyle = '#92400e'
+    ctx.lineWidth = 14
+    ctx.strokeRect(14, 14, 484, 228)
+
+    ctx.strokeStyle = '#d97706'
+    ctx.lineWidth = 4
+    ctx.strokeRect(28, 28, 456, 200)
+
+    ctx.fillStyle = '#78350f'
+    ctx.font = '900 68px Georgia, "Times New Roman", serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText('WELCOME', 256, 108)
+
+    ctx.fillStyle = '#b45309'
+    ctx.font = 'italic 700 26px "Inter", sans-serif'
+    ctx.fillText('ARCHITECTURAL RESIDENCE', 256, 168)
+
+    const tex = new THREE.CanvasTexture(canvas)
+    tex.needsUpdate = true
+    return tex
+  }, [])
+}
+
+/**
+ * Generates decorative souvenir & botanical magnet textures for the refrigerator door.
  */
 function useMagnetFaceTexture(variant) {
   return useMemo(() => {
@@ -384,123 +421,55 @@ function useMagnetFaceTexture(variant) {
     ctx.clearRect(0, 0, 512, 512)
 
     if (variant === 'prompt-ai') {
-      const grad = ctx.createRadialGradient(256, 256, 20, 256, 256, 248)
-      grad.addColorStop(0, '#1e3a8a')
-      grad.addColorStop(0.7, '#0f172a')
-      grad.addColorStop(1, '#020617')
+      // Decorative Ceramic Coastal Sun Magnet
+      const grad = ctx.createRadialGradient(256, 256, 20, 256, 256, 240)
+      grad.addColorStop(0, '#fdba74')
+      grad.addColorStop(0.7, '#ea580c')
+      grad.addColorStop(1, '#9a3412')
       ctx.fillStyle = grad
       ctx.beginPath()
-      ctx.arc(256, 256, 244, 0, Math.PI * 2)
+      ctx.arc(256, 256, 240, 0, Math.PI * 2)
       ctx.fill()
 
-      ctx.strokeStyle = '#38bdf8'
-      ctx.lineWidth = 14
-      ctx.stroke()
-
-      ctx.strokeStyle = 'rgba(129, 140, 248, 0.45)'
-      ctx.lineWidth = 6
+      // Stylized Golden Sun
+      ctx.fillStyle = '#fef08a'
       ctx.beginPath()
-      ctx.arc(256, 256, 205, 0, Math.PI * 2)
-      ctx.stroke()
+      ctx.arc(256, 190, 75, 0, Math.PI * 2)
+      ctx.fill()
 
-      ctx.strokeStyle = '#38bdf8'
-      ctx.lineWidth = 22
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
+      // Ocean Waves
+      ctx.fillStyle = '#0284c7'
       ctx.beginPath()
-      ctx.moveTo(118, 205)
-      ctx.lineTo(182, 256)
-      ctx.lineTo(118, 307)
-      ctx.stroke()
-
-      ctx.beginPath()
-      ctx.moveTo(205, 312)
-      ctx.lineTo(278, 312)
-      ctx.stroke()
-
-      const drawSparkle = (cx, cy, outerR, innerR, col) => {
-        ctx.fillStyle = col
-        ctx.beginPath()
-        for (let i = 0; i < 8; i++) {
-          const r = i % 2 === 0 ? outerR : innerR
-          const angle = (i * Math.PI) / 4 - Math.PI / 2
-          const x = cx + Math.cos(angle) * r
-          const y = cy + Math.sin(angle) * r
-          if (i === 0) ctx.moveTo(x, y)
-          else ctx.lineTo(x, y)
-        }
-        ctx.closePath()
-        ctx.fill()
-      }
-      drawSparkle(342, 186, 68, 20, '#facc15')
-      drawSparkle(242, 146, 32, 10, '#a855f7')
+      ctx.arc(256, 330, 150, Math.PI, 0, false)
+      ctx.fill()
     } else if (variant === 'nlp-ai') {
-      const grad = ctx.createRadialGradient(256, 256, 20, 256, 256, 248)
-      grad.addColorStop(0, '#065f46')
-      grad.addColorStop(0.7, '#0f172a')
-      grad.addColorStop(1, '#020617')
-      ctx.fillStyle = grad
+      // Decorative Botanical Fern Magnet
+      ctx.fillStyle = '#064e3b'
       ctx.beginPath()
-      ctx.arc(256, 256, 244, 0, Math.PI * 2)
+      ctx.arc(256, 256, 240, 0, Math.PI * 2)
       ctx.fill()
-
-      ctx.strokeStyle = '#34d399'
-      ctx.lineWidth = 14
-      ctx.stroke()
 
       ctx.strokeStyle = '#6ee7b7'
       ctx.lineWidth = 14
-      ctx.lineJoin = 'round'
       ctx.beginPath()
-      ctx.arc(256, 240, 135, 0.35, Math.PI * 2 - 0.15)
-      ctx.lineTo(340, 355)
-      ctx.closePath()
+      ctx.arc(256, 256, 215, 0, Math.PI * 2)
       ctx.stroke()
 
-      ctx.fillStyle = '#fde047'
-      ctx.font = '900 98px "Inter", "Segoe UI", sans-serif'
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.fillText('अ•A', 256, 224)
-
-      const bars = [-60, -30, 0, 30, 60]
-      const heights = [22, 42, 56, 38, 24]
-      ctx.fillStyle = '#38bdf8'
-      bars.forEach((bx, idx) => {
-        const bh = heights[idx]
-        ctx.fillRect(256 + bx - 7, 305 - bh / 2, 14, bh)
-      })
-    } else if (variant === 'oven-react') {
-      const grad = ctx.createRadialGradient(256, 256, 20, 256, 256, 248)
-      grad.addColorStop(0, '#0c4a6e')
-      grad.addColorStop(0.75, '#0f172a')
-      grad.addColorStop(1, '#020617')
-      ctx.fillStyle = grad
+      ctx.fillStyle = '#34d399'
       ctx.beginPath()
-      ctx.arc(256, 256, 244, 0, Math.PI * 2)
+      ctx.ellipse(256, 256, 65, 140, Math.PI / 6, 0, Math.PI * 2)
+      ctx.fill()
+    } else {
+      ctx.fillStyle = '#1e293b'
+      ctx.beginPath()
+      ctx.arc(256, 256, 240, 0, Math.PI * 2)
       ctx.fill()
 
-      ctx.strokeStyle = '#38bdf8'
+      ctx.strokeStyle = '#d97706'
       ctx.lineWidth = 14
+      ctx.beginPath()
+      ctx.arc(256, 256, 215, 0, Math.PI * 2)
       ctx.stroke()
-
-      ctx.save()
-      ctx.translate(256, 256)
-      ctx.strokeStyle = '#38bdf8'
-      ctx.lineWidth = 14
-      for (let i = 0; i < 3; i++) {
-        ctx.save()
-        ctx.rotate((i * Math.PI) / 3)
-        ctx.beginPath()
-        ctx.ellipse(0, 0, 148, 56, 0, 0, Math.PI * 2)
-        ctx.stroke()
-        ctx.restore()
-      }
-      ctx.fillStyle = '#facc15'
-      ctx.beginPath()
-      ctx.arc(0, 0, 28, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.restore()
     }
 
     const tex = new THREE.CanvasTexture(canvas)
@@ -511,7 +480,7 @@ function useMagnetFaceTexture(variant) {
 }
 
 /**
- * High-resolution 1024x1024 CanvasTexture generator for the 3D Flipping Newspaper pages.
+ * Generates an authentic architectural newspaper broadsheet texture for the Living Room coffee table.
  */
 function useNewspaperPageTexture(pageType) {
   return useMemo(() => {
@@ -530,209 +499,140 @@ function useNewspaperPageTexture(pageType) {
     ctx.strokeRect(36, 36, 952, 952)
 
     if (pageType === 'page1-front') {
+      // Masthead
       ctx.fillStyle = '#0f172a'
-      ctx.font = '900 44px Georgia, "Times New Roman", serif'
+      ctx.font = '900 48px Georgia, "Times New Roman", serif'
       ctx.textAlign = 'center'
-      ctx.fillText('✦ THE SILICON CHRONICLE ✦', 512, 86)
+      ctx.fillText('✦ THE DAILY ARCHITECTURAL GAZETTE ✦', 512, 92)
 
       ctx.strokeStyle = '#334155'
       ctx.lineWidth = 3
       ctx.beginPath()
-      ctx.moveTo(52, 112)
-      ctx.lineTo(972, 112)
-      ctx.moveTo(52, 146)
-      ctx.lineTo(972, 146)
+      ctx.moveTo(52, 116)
+      ctx.lineTo(972, 116)
+      ctx.moveTo(52, 148)
+      ctx.lineTo(972, 148)
       ctx.stroke()
 
       ctx.fillStyle = '#475569'
-      ctx.font = '700 22px "Inter", sans-serif'
-      ctx.fillText('IIIT-DELHI EDITION  •  FRONT PAGE FEATURE  •  SCROLL TO FLIP PAGE ➔', 512, 134)
+      ctx.font = '600 20px "Inter", sans-serif'
+      ctx.fillText('RESIDENTIAL EDITION  •  CONTEMPORARY INTERIORS & FORMS  •  ISSUE NO. 142', 512, 136)
 
+      // Main Story Headline
       ctx.fillStyle = '#0f172a'
-      ctx.fillRect(52, 166, 920, 215)
-      ctx.strokeStyle = '#0284c7'
-      ctx.lineWidth = 6
-      ctx.strokeRect(52, 166, 920, 215)
+      ctx.font = '900 42px Georgia, serif'
+      ctx.fillText('Contemporary Timber & Siding Residence Completed', 512, 204)
 
-      ctx.fillStyle = '#38bdf8'
-      ctx.font = '900 28px "Inter", sans-serif'
-      ctx.fillText('FEATURED SKILL #1  •  HARDWARE & SILICON ENGINEERING', 512, 206)
+      ctx.fillStyle = '#64748b'
+      ctx.font = 'italic 20px Georgia, serif'
+      ctx.fillText('A study in balanced proportions, natural daylight, and crafted materials', 512, 238)
 
-      ctx.fillStyle = '#ffffff'
-      ctx.font = 'italic 900 68px "Inter", "Arial Black", sans-serif'
-      ctx.fillText('VLSI & CMOS IC DESIGN', 512, 278)
+      // Architectural Illustration Frame
+      ctx.fillStyle = '#f1f5f9'
+      ctx.fillRect(56, 260, 440, 310)
+      ctx.strokeStyle = '#334155'
+      ctx.lineWidth = 3
+      ctx.strokeRect(56, 260, 440, 310)
 
-      ctx.fillStyle = '#fde047'
-      ctx.font = '800 32px "Inter", sans-serif'
-      ctx.fillText('CADENCE VIRTUOSO  •  VERILOG  •  VHDL  •  RTL', 512, 344)
-
-      ctx.fillStyle = '#0f172a'
-      ctx.font = '900 36px Georgia, serif'
-      ctx.fillText('2-Stage CMOS Op-Amp Hits 59.9 dB Gain & 76.7° PM', 512, 434)
-
-      ctx.fillStyle = '#e0f2fe'
-      ctx.fillRect(56, 468, 435, 310)
-      ctx.strokeStyle = '#0284c7'
+      ctx.strokeStyle = '#1e293b'
       ctx.lineWidth = 4
-      ctx.strokeRect(56, 468, 435, 310)
-
-      ctx.strokeStyle = '#0f172a'
-      ctx.lineWidth = 6
       ctx.beginPath()
-      ctx.moveTo(110, 520)
-      ctx.lineTo(110, 650)
-      ctx.lineTo(230, 585)
+      ctx.moveTo(76, 540)
+      ctx.lineTo(476, 540)
+      ctx.strokeRect(110, 360, 300, 180)
+      ctx.moveTo(90, 360)
+      ctx.lineTo(260, 280)
+      ctx.lineTo(430, 360)
       ctx.closePath()
       ctx.stroke()
-
-      ctx.strokeStyle = '#0284c7'
-      ctx.lineWidth = 7
-      ctx.beginPath()
-      ctx.moveTo(260, 535)
-      ctx.lineTo(360, 535)
-      ctx.quadraticCurveTo(410, 540, 455, 675)
+      ctx.strokeRect(140, 390, 70, 70)
+      ctx.strokeRect(310, 390, 70, 70)
+      ctx.strokeRect(235, 430, 50, 110)
       ctx.stroke()
 
-      ctx.fillStyle = '#0f172a'
-      ctx.font = '800 26px "Inter", sans-serif'
-      ctx.fillText('59.9 dB DC GAIN | 76.7° PM', 274, 738)
-
-      ctx.fillStyle = '#f1f5f9'
-      ctx.fillRect(520, 468, 452, 310)
-      ctx.strokeStyle = '#475569'
-      ctx.lineWidth = 3
-      ctx.strokeRect(520, 468, 452, 310)
-
+      ctx.fillStyle = '#64748b'
+      ctx.font = 'italic 16px Georgia, serif'
       ctx.textAlign = 'left'
+      ctx.fillText('Fig 1. Front elevation & pitched roof profile.', 64, 595)
+
+      // Column Text
+      const colText = [
+        'The newly constructed residence combines classical craft with modern clarity. Approaching along the centered limestone pathway, the house presents a harmonious rhythm of materials: powder-blue clapboard siding, quarter-sawn oak flooring, and deep navy glazed roof tiles.',
+        'Natural light streams through expansive front picture windows, bathing the plush bouclé living room in warm morning sun. An open architectural flow seamlessly connects the kitchen island, dining nook, and tranquil garden exterior.',
+        'Ascending the central oak staircase reveals a private loft with exposed timber A-frame rafters, providing a dedicated sanctuary for architectural study, hand sketching, and creative craft.',
+      ]
+      colText.forEach((p, idx) => {
+        const py = 275 + idx * 115
+        ctx.fillStyle = '#334155'
+        ctx.font = '15px/22px Georgia, serif'
+        ctx.fillText(p.slice(0, 68), 520, py)
+        ctx.fillText(p.slice(68, 138), 520, py + 24)
+        ctx.fillText(p.slice(138, 208), 520, py + 48)
+        ctx.fillText(p.slice(208), 520, py + 72)
+      })
+
+      ctx.strokeStyle = '#cbd5e1'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.moveTo(56, 620)
+      ctx.lineTo(968, 620)
+      ctx.stroke()
+
+      const bottomCols = [
+        { h: 'MATERIAL INTEGRITY', b: 'Real timber, honest joinery, and durable stone create a home that patinas gracefully over decades.' },
+        { h: 'DAYLIGHT & VENTILATION', b: 'Expansive windows and high vaulted ceilings ensure ample cross-ventilation and golden morning rays.' },
+        { h: 'CRAFT & DETAIL', b: 'Every transition strip, balustrade spindle, and door casing reflects intentional architectural care.' },
+      ]
+      bottomCols.forEach((bc, bIdx) => {
+        const bx = 56 + bIdx * 310
+        ctx.fillStyle = '#0f172a'
+        ctx.font = '700 18px "Inter", sans-serif'
+        ctx.fillText(bc.h, bx, 660)
+        ctx.fillStyle = '#475569'
+        ctx.font = '15px/22px Georgia, serif'
+        ctx.fillText(bc.b.slice(0, 42), bx, 692)
+        ctx.fillText(bc.b.slice(42, 85), bx, 716)
+        ctx.fillText(bc.b.slice(85), bx, 740)
+      })
+    } else {
+      // Inside Page 2
       ctx.fillStyle = '#0f172a'
-      ctx.font = '900 30px Georgia, serif'
-      ctx.fillText('4-Bit CMOS D-Latch', 548, 518)
-      ctx.font = '700 25px "Inter", sans-serif'
-      ctx.fillStyle = '#1e293b'
-      ctx.fillText('• Compact 21.3 µm² Area', 548, 568)
-      ctx.fillText('• DRC & LVS Clean Layout', 548, 612)
-      ctx.fillText('• Parasitic RC Extraction', 548, 656)
-      ctx.fillText('• Digital RTL in Verilog', 548, 700)
-      ctx.fillStyle = '#0284c7'
-      ctx.fillText('• Low-Power 180nm Node', 548, 744)
+      ctx.font = '900 38px Georgia, serif'
+      ctx.textAlign = 'center'
+      ctx.fillText('✦ ARCHITECTURAL PLANS & INTERIOR DETAILS ✦', 512, 86)
+
+      ctx.strokeStyle = '#334155'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.moveTo(52, 110)
+      ctx.lineTo(972, 110)
+      ctx.stroke()
+
+      ctx.fillStyle = '#f8fafc'
+      ctx.fillRect(56, 140, 912, 420)
+      ctx.strokeStyle = '#64748b'
+      ctx.lineWidth = 3
+      ctx.strokeRect(56, 140, 912, 420)
+
+      ctx.strokeStyle = '#0f172a'
+      ctx.lineWidth = 4
+      ctx.strokeRect(100, 180, 240, 320)
+      ctx.strokeRect(340, 280, 360, 220)
+      ctx.strokeRect(340, 180, 180, 100)
+      ctx.strokeRect(520, 180, 180, 100)
+
+      ctx.fillStyle = '#0f172a'
+      ctx.font = '700 20px "Inter", sans-serif'
+      ctx.fillText('KITCHEN & DINING', 220, 340)
+      ctx.fillText('LIVING ROOM', 520, 390)
+      ctx.fillText('BATH', 430, 235)
+      ctx.fillText('BEDROOM', 610, 235)
 
       ctx.fillStyle = '#334155'
-      for (let y = 815; y <= 945; y += 26) {
-        ctx.fillRect(56, y, 435, 10)
-        ctx.fillRect(520, y, 452, 10)
-      }
-    } else if (pageType === 'page2-inside') {
-      ctx.fillStyle = '#0f172a'
-      ctx.font = '900 40px Georgia, "Times New Roman", serif'
-      ctx.textAlign = 'center'
-      ctx.fillText('✦ THE SILICON CHRONICLE — PAGE 2 ✦', 512, 86)
-
-      ctx.strokeStyle = '#059669'
-      ctx.lineWidth = 3
-      ctx.beginPath()
-      ctx.moveTo(52, 112)
-      ctx.lineTo(972, 112)
-      ctx.moveTo(52, 146)
-      ctx.lineTo(972, 146)
-      ctx.stroke()
-
-      ctx.fillStyle = '#065f46'
-      ctx.font = '700 22px "Inter", sans-serif'
-      ctx.fillText('SYSTEMS ARCHITECTURE  •  INSIDE FEATURE  •  PAGE FLIPPED', 512, 134)
-
-      ctx.fillStyle = '#064e3b'
-      ctx.fillRect(52, 166, 920, 215)
-      ctx.strokeStyle = '#34d399'
-      ctx.lineWidth = 6
-      ctx.strokeRect(52, 166, 920, 215)
-
-      ctx.fillStyle = '#6ee7b7'
-      ctx.font = '900 28px "Inter", sans-serif'
-      ctx.fillText('FEATURED SKILL #2  •  FIRMWARE & COMPUTER ARCHITECTURE', 512, 206)
-
-      ctx.fillStyle = '#ffffff'
-      ctx.font = 'italic 900 64px "Inter", "Arial Black", sans-serif'
-      ctx.fillText('EMBEDDED C/C++ & RISC-V', 512, 278)
-
-      ctx.fillStyle = '#fde047'
-      ctx.font = '800 31px "Inter", sans-serif'
-      ctx.fillText('5-STAGE PIPELINE  •  BIOMETRIC SCANNER  •  AUDIO AMP', 512, 344)
-
-      ctx.fillStyle = '#0f172a'
-      ctx.font = '900 35px Georgia, serif'
-      ctx.fillText('5-Stage Pipelined RISC-V Simulator & Biometric System', 512, 434)
-
-      ctx.fillStyle = '#ecfdf5'
-      ctx.fillRect(56, 468, 916, 150)
-      ctx.strokeStyle = '#059669'
-      ctx.lineWidth = 4
-      ctx.strokeRect(56, 468, 916, 150)
-
-      const stages = ['IF', 'ID', 'EX', 'MEM', 'WB']
-      stages.forEach((st, idx) => {
-        const bx = 92 + idx * 172
-        ctx.fillStyle = '#0f172a'
-        ctx.fillRect(bx, 496, 132, 92)
-        ctx.strokeStyle = '#34d399'
-        ctx.lineWidth = 4
-        ctx.strokeRect(bx, 496, 132, 92)
-        ctx.fillStyle = '#fde047'
-        ctx.font = '900 36px "Inter", sans-serif'
-        ctx.textAlign = 'center'
-        ctx.fillText(st, bx + 66, 554)
-      })
-
+      ctx.font = '16px/26px Georgia, serif'
       ctx.textAlign = 'left'
-      ctx.fillStyle = '#f1f5f9'
-      ctx.fillRect(56, 642, 440, 290)
-      ctx.strokeStyle = '#334155'
-      ctx.lineWidth = 3
-      ctx.strokeRect(56, 642, 440, 290)
-
-      ctx.fillStyle = '#0f172a'
-      ctx.font = '900 28px Georgia, serif'
-      ctx.fillText('Biometric Security', 82, 688)
-      ctx.font = '700 24px "Inter", sans-serif'
-      ctx.fillStyle = '#1e293b'
-      ctx.fillText('• 100+ Fingerprint IDs', 82, 736)
-      ctx.fillText('• <1 Sec Fast Matching', 82, 778)
-      ctx.fillText('• Embedded C/C++ UART', 82, 820)
-      ctx.fillText('• Real-Time Access Log', 82, 862)
-
-      ctx.fillStyle = '#f1f5f9'
-      ctx.fillRect(524, 642, 448, 290)
-      ctx.strokeRect(524, 642, 448, 290)
-
-      ctx.fillStyle = '#0f172a'
-      ctx.font = '900 28px Georgia, serif'
-      ctx.fillText('RISC-V & Analog Audio', 550, 688)
-      ctx.font = '700 24px "Inter", sans-serif'
-      ctx.fillStyle = '#1e293b'
-      ctx.fillText('• Data Hazard Forwarding', 550, 736)
-      ctx.fillText('• Branch Stall Predictor', 550, 778)
-      ctx.fillText('• 3-Band Op-Amp Equalizer', 550, 820)
-      ctx.fillText('• Zero-Distortion Bass/Treble', 550, 862)
-    } else {
-      ctx.fillStyle = '#0f172a'
-      ctx.font = '900 34px Georgia, serif'
-      ctx.textAlign = 'center'
-      ctx.fillText('SEMICONDUCTOR MARKET ANALYTICS', 512, 95)
-
-      ctx.fillStyle = '#1e3a8a'
-      ctx.fillRect(64, 130, 896, 130)
-      ctx.fillStyle = '#ffffff'
-      ctx.font = '900 42px "Inter", sans-serif'
-      ctx.fillText('$689.56B GLOBAL CHIP KPI REPORT', 512, 208)
-
-      const barH = [180, 260, 220, 340, 410, 470]
-      barH.forEach((h, i) => {
-        ctx.fillStyle = i % 2 === 0 ? '#0284c7' : '#059669'
-        ctx.fillRect(110 + i * 138, 760 - h, 88, h)
-      })
-      ctx.fillStyle = '#475569'
-      for (let y = 800; y <= 930; y += 28) {
-        ctx.fillRect(64, y, 896, 12)
-      }
+      ctx.fillText('The plan emphasizes generous living proportions and dedicated functional zones.', 60, 600)
+      ctx.fillText('A continuous spatial flow guides movement effortlessly from the front entrance through to the private loft.', 60, 630)
     }
 
     const tex = new THREE.CanvasTexture(canvas)
@@ -787,56 +687,56 @@ function useSketchbookPageTexture(pageType) {
     ctx.strokeRect(68, 44, 912, 936)
 
     if (pageType === 'sketch-page1-front') {
-      // Header in editorial serif + handwritten graphite notes
+      // Header in classical architectural serif
       ctx.fillStyle = '#1e293b'
-      ctx.font = 'italic 700 42px "Instrument Serif", Georgia, serif'
+      ctx.font = 'italic 700 38px "Instrument Serif", Georgia, serif'
       ctx.textAlign = 'left'
-      ctx.fillText('Sketchbook No. 01 — Fine Art & Architectural Studies', 96, 104)
+      ctx.fillText('STUDIO SKETCHBOOK VOL. I — PERSPECTIVE & BOTANICAL STUDIES', 96, 104)
 
-      ctx.fillStyle = '#b45309'
-      ctx.font = '700 22px "Plus Jakarta Sans", sans-serif'
-      ctx.fillText('PRESIDENT, MERAKI ART SOCIETY  •  CHARCOAL, GRAPHITE & WATERCOLOR', 96, 142)
+      ctx.fillStyle = '#64748b'
+      ctx.font = '600 20px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('CHARCOAL, GRAPHITE 4B & RAW UMBER WATERCOLOR WASH ON ROUGH COTTON', 96, 140)
 
       // Divider line
-      ctx.strokeStyle = '#94a3b8'
-      ctx.lineWidth = 2
+      ctx.strokeStyle = '#cbd5e1'
+      ctx.lineWidth = 1.5
       ctx.beginPath()
-      ctx.moveTo(96, 162)
-      ctx.lineTo(948, 162)
+      ctx.moveTo(96, 160)
+      ctx.lineTo(948, 160)
       ctx.stroke()
 
-      // Left Box: Architectural Perspective Sketch of the 3D House & Classical Arch
-      ctx.fillStyle = '#f3ede0'
-      ctx.fillRect(96, 188, 410, 420)
-      ctx.strokeStyle = '#334155'
-      ctx.lineWidth = 3
-      ctx.strokeRect(96, 188, 410, 420)
+      // Left Box: Architectural Perspective Sketch of the 3D House & Portico
+      ctx.fillStyle = '#f8f4eb'
+      ctx.fillRect(96, 185, 412, 420)
+      ctx.strokeStyle = '#475569'
+      ctx.lineWidth = 2.5
+      ctx.strokeRect(96, 185, 412, 420)
 
       // Perspective vanishing lines
-      ctx.strokeStyle = 'rgba(100, 116, 139, 0.35)'
-      ctx.lineWidth = 1.5
-      for (let i = 0; i < 6; i++) {
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.45)'
+      ctx.lineWidth = 1.2
+      for (let i = 0; i < 7; i++) {
         ctx.beginPath()
-        ctx.moveTo(301, 260)
-        ctx.lineTo(106 + i * 76, 595)
+        ctx.moveTo(302, 260)
+        ctx.lineTo(106 + i * 65, 590)
         ctx.stroke()
       }
 
       // Charcoal sketch of pitched roof pavilion & columns
       ctx.strokeStyle = '#0f172a'
-      ctx.lineWidth = 4
+      ctx.lineWidth = 3.5
       ctx.beginPath()
       ctx.moveTo(145, 360)
-      ctx.lineTo(301, 240)
-      ctx.lineTo(456, 360)
+      ctx.lineTo(302, 240)
+      ctx.lineTo(458, 360)
       ctx.closePath()
       ctx.stroke()
-      ctx.strokeRect(175, 360, 252, 185)
-      ctx.strokeRect(265, 425, 72, 120)
+      ctx.strokeRect(175, 360, 254, 185)
+      ctx.strokeRect(266, 425, 72, 120)
 
       // Graphite cross-hatching shading on sketch
-      ctx.strokeStyle = 'rgba(15, 23, 42, 0.55)'
-      ctx.lineWidth = 2
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.45)'
+      ctx.lineWidth = 1.8
       for (let h = 0; h < 14; h++) {
         ctx.beginPath()
         ctx.moveTo(182 + h * 8, 368)
@@ -844,152 +744,207 @@ function useSketchbookPageTexture(pageType) {
         ctx.stroke()
       }
 
-      ctx.fillStyle = '#1e293b'
-      ctx.font = 'italic 600 24px Georgia, serif'
-      ctx.fillText('Fig 1. Isometric Diorama Study', 120, 584)
+      ctx.fillStyle = '#334155'
+      ctx.font = 'italic 600 22px Georgia, serif'
+      ctx.fillText('Plate 1. Two-Point Horizon & Roof Geometry', 120, 582)
 
-      // Right Box: Anatomical Hand & Botanical Ink Wash Sketch
-      ctx.fillStyle = '#f3ede0'
-      ctx.fillRect(536, 188, 412, 420)
-      ctx.strokeStyle = '#334155'
-      ctx.lineWidth = 3
-      ctx.strokeRect(536, 188, 412, 420)
+      // Right Box: Botanical Ink Wash Sketch
+      ctx.fillStyle = '#f8f4eb'
+      ctx.fillRect(536, 185, 412, 420)
+      ctx.strokeStyle = '#475569'
+      ctx.lineWidth = 2.5
+      ctx.strokeRect(536, 185, 412, 420)
 
       // Watercolor wash splashes (warm ochre, cobalt blue, terracotta)
-      ctx.fillStyle = 'rgba(2, 132, 199, 0.22)'
+      ctx.fillStyle = 'rgba(2, 132, 199, 0.18)'
       ctx.beginPath()
       ctx.arc(710, 345, 92, 0, Math.PI * 2)
       ctx.fill()
-      ctx.fillStyle = 'rgba(234, 88, 12, 0.22)'
+      ctx.fillStyle = 'rgba(234, 88, 12, 0.18)'
       ctx.beginPath()
       ctx.arc(775, 395, 78, 0, Math.PI * 2)
       ctx.fill()
 
-      // Fine ink botanical & portrait contour lines
+      // Fine ink botanical contour lines
       ctx.strokeStyle = '#0f172a'
-      ctx.lineWidth = 4
+      ctx.lineWidth = 3.2
       ctx.beginPath()
       ctx.arc(740, 355, 68, 0.2, Math.PI * 1.65)
       ctx.stroke()
-      for (let leaf = 0; leaf < 5; leaf++) {
+      for (let leaf = 0; leaf < 6; leaf++) {
         ctx.beginPath()
-        ctx.ellipse(690 + leaf * 28, 390 - leaf * 22, 34, 14, -0.5 + leaf * 0.2, 0, Math.PI * 2)
+        ctx.ellipse(688 + leaf * 26, 392 - leaf * 20, 34, 14, -0.5 + leaf * 0.2, 0, Math.PI * 2)
         ctx.stroke()
       }
-      ctx.fillStyle = '#1e293b'
-      ctx.font = 'italic 600 24px Georgia, serif'
-      ctx.fillText('Fig 2. Charcoal & Watercolor Wash', 562, 584)
+      ctx.fillStyle = '#334155'
+      ctx.font = 'italic 600 22px Georgia, serif'
+      ctx.fillText('Plate 2. Fern Silhouette & Mineral Pigment Wash', 562, 582)
 
-      // Bottom Feature Banner inside Sketchbook
-      ctx.fillStyle = '#1e293b'
-      ctx.fillRect(96, 642, 852, 296)
-      ctx.strokeStyle = '#f59e0b'
-      ctx.lineWidth = 4
-      ctx.strokeRect(96, 642, 852, 296)
+      // Bottom Feature Banner: Classical Figure Study & Light Plane Geometry
+      ctx.fillStyle = '#f1ece1'
+      ctx.fillRect(96, 635, 852, 305)
+      ctx.strokeStyle = '#475569'
+      ctx.lineWidth = 2.5
+      ctx.strokeRect(96, 635, 852, 305)
 
-      ctx.fillStyle = '#fde047'
-      ctx.font = '800 26px "Plus Jakarta Sans", sans-serif'
-      ctx.fillText('MERAKI — FINE ART SOCIETY @ IIIT-DELHI', 132, 696)
-
-      ctx.fillStyle = '#ffffff'
-      ctx.font = 'italic 400 54px "Instrument Serif", Georgia, serif'
-      ctx.fillText('Visual Storytelling, Murals & Live Sketching', 132, 762)
-
-      ctx.fillStyle = '#cbd5e1'
-      ctx.font = '600 25px "Plus Jakarta Sans", sans-serif'
-      ctx.fillText('• Led 40+ Campus Artists, Exhibitions & Live Painting Festivals', 132, 822)
-      ctx.fillText('• Charcoal Portraiture, Architectural Ink & Acrylic Impasto', 132, 864)
-      ctx.fillStyle = '#38bdf8'
-      ctx.fillText('• Bridging Hardware Engineering Precision with Fine Art Craft', 132, 906)
-    } else if (pageType === 'sketch-page2-inside') {
-      // Page 2 after Flip: Machaan Theatre Stage Design & Creative UI/UX Storyboards
-      ctx.fillStyle = '#0f172a'
-      ctx.font = 'italic 700 42px "Instrument Serif", Georgia, serif'
-      ctx.textAlign = 'left'
-      ctx.fillText('Sketchbook No. 02 — Stagecraft, Storyboards & UI Wireframes', 96, 104)
-
-      ctx.fillStyle = '#be123c'
-      ctx.font = '700 22px "Plus Jakarta Sans", sans-serif'
-      ctx.fillText('MACHAAN THEATRE (ASHOKA WINNER)  •  E-CELL LEADERSHIP  •  3D STORYBOARDING', 96, 142)
-
-      ctx.strokeStyle = '#94a3b8'
-      ctx.lineWidth = 2
-      ctx.beginPath()
-      ctx.moveTo(96, 162)
-      ctx.lineTo(948, 162)
-      ctx.stroke()
-
-      // Top Sketch: Theatrical Stage Lighting Rig & Blocking Diagram ("Machaan")
-      ctx.fillStyle = '#1e1b4b'
-      ctx.fillRect(96, 188, 852, 340)
-      ctx.strokeStyle = '#f59e0b'
-      ctx.lineWidth = 4
-      ctx.strokeRect(96, 188, 852, 340)
-
-      // Three Golden Spotlight Cones on Stage
-      const spots = [260, 522, 784]
-      spots.forEach((sx) => {
-        ctx.fillStyle = 'rgba(253, 224, 71, 0.22)'
+      // Three shaded figure gesture studies
+      const gestureX = [240, 522, 800]
+      gestureX.forEach((gx, idx) => {
+        ctx.strokeStyle = '#334155'
+        ctx.lineWidth = 2.5
+        // Head oval
         ctx.beginPath()
-        ctx.moveTo(sx, 204)
-        ctx.lineTo(sx - 115, 508)
-        ctx.lineTo(sx + 115, 508)
-        ctx.closePath()
-        ctx.fill()
+        ctx.ellipse(gx, 695, 20, 26, idx === 0 ? -0.15 : idx === 1 ? 0 : 0.2, 0, Math.PI * 2)
+        ctx.stroke()
+        // Torso / spine curve
+        ctx.beginPath()
+        ctx.moveTo(gx, 722)
+        ctx.quadraticCurveTo(gx + (idx - 1) * 22, 790, gx + (idx === 1 ? 0 : 18), 855)
+        ctx.stroke()
+        // Arms / balance lines
+        ctx.beginPath()
+        ctx.moveTo(gx - 36, 755)
+        ctx.lineTo(gx + 36, 745)
+        ctx.stroke()
+        // Shading hatch lines
+        ctx.strokeStyle = 'rgba(71, 85, 105, 0.4)'
+        ctx.lineWidth = 1.5
+        for (let s = 0; s < 6; s++) {
+          ctx.beginPath()
+          ctx.moveTo(gx - 18 + s * 7, 765)
+          ctx.lineTo(gx - 8 + s * 7, 815)
+          ctx.stroke()
+        }
       })
 
-      ctx.fillStyle = '#fef08a'
-      ctx.font = 'italic 400 56px "Instrument Serif", Georgia, serif'
-      ctx.textAlign = 'center'
-      ctx.fillText('Machaan — 1st Place Stage Play Winner @ Ashoka', 522, 295)
-
-      ctx.fillStyle = '#ffffff'
-      ctx.font = '700 26px "Plus Jakarta Sans", sans-serif'
-      ctx.fillText('EVENTS HEAD, MACHAAN DRAMATICS  •  SCRIPT, STAGE BLOCKING & LIGHTING', 522, 355)
-
-      ctx.fillStyle = '#fde68a'
-      ctx.font = '600 23px "Plus Jakarta Sans", sans-serif'
-      ctx.fillText('Directed & Staged Full-Length Productions • Set Design Sketches & Dramatic Cues', 522, 415)
-
-      // Bottom Two Sketch Boxes: UI/UX Wireframe Sketch + E-Cell Strategy Notes
-      ctx.textAlign = 'left'
-      ctx.fillStyle = '#f3ede0'
-      ctx.fillRect(96, 560, 412, 378)
-      ctx.strokeStyle = '#334155'
-      ctx.lineWidth = 3
-      ctx.strokeRect(96, 560, 412, 378)
-
-      ctx.fillStyle = '#0f172a'
-      ctx.font = '800 26px "Plus Jakarta Sans", sans-serif'
-      ctx.fillText('UI/UX & 3D Wireframes', 124, 608)
-      ctx.strokeStyle = '#0284c7'
-      ctx.lineWidth = 3
-      ctx.strokeRect(124, 632, 354, 155)
-      ctx.strokeRect(142, 650, 140, 42)
-      ctx.strokeRect(142, 706, 318, 64)
-      ctx.font = '600 22px "Plus Jakarta Sans", sans-serif'
-      ctx.fillStyle = '#334155'
-      ctx.fillText('• Hand-sketched camera splines', 124, 834)
-      ctx.fillText('• Interactive 3D spatial flows', 124, 872)
-      ctx.fillText('• Design engineering craft', 124, 910)
-
-      ctx.fillStyle = '#f3ede0'
-      ctx.fillRect(536, 560, 412, 378)
-      ctx.strokeStyle = '#334155'
-      ctx.lineWidth = 3
-      ctx.strokeRect(536, 560, 412, 378)
-
-      ctx.fillStyle = '#0f172a'
-      ctx.font = '800 26px "Plus Jakarta Sans", sans-serif'
-      ctx.fillText('Creative Direction & E-Cell', 564, 608)
-      ctx.font = '600 23px "Plus Jakarta Sans", sans-serif'
       ctx.fillStyle = '#1e293b'
-      ctx.fillText('• President — Meraki Art Society', 564, 668)
-      ctx.fillText('• Events Head — Machaan Theatre', 564, 716)
-      ctx.fillText('• Team Lead — E-Cell IIIT-Delhi', 564, 764)
-      ctx.fillText('• Ashoka Stage Play 1st Prize', 564, 812)
-      ctx.fillStyle = '#b45309'
-      ctx.fillText('• Engineer + Artist + Leader', 564, 876)
+      ctx.font = 'italic 600 24px Georgia, serif'
+      ctx.textAlign = 'center'
+      ctx.fillText('Plate 3. Dynamic Human Figure Gestures & Foreshortening Studies (Charcoal 2B)', 522, 905)
+    } else if (pageType === 'sketch-page2-inside') {
+      // Page 2 after Flip: Alpine Landscape & Architectural Elevations
+      ctx.fillStyle = '#0f172a'
+      ctx.font = 'italic 700 38px "Instrument Serif", Georgia, serif'
+      ctx.textAlign = 'left'
+      ctx.fillText('STUDIO SKETCHBOOK VOL. II — LANDSCAPE & ATMOSPHERIC LIGHT', 96, 104)
+
+      ctx.fillStyle = '#64748b'
+      ctx.font = '600 20px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('FIELD DRAWINGS • PENCIL HATCHING • VALUATION & TONAL CONTRASTS', 96, 140)
+
+      ctx.strokeStyle = '#cbd5e1'
+      ctx.lineWidth = 1.5
+      ctx.beginPath()
+      ctx.moveTo(96, 160)
+      ctx.lineTo(948, 160)
+      ctx.stroke()
+
+      // Top Sketch: Mountain Valley Panorama
+      ctx.fillStyle = '#0f172a'
+      ctx.fillRect(96, 185, 852, 345)
+      ctx.strokeStyle = '#cbd5e1'
+      ctx.lineWidth = 2
+      ctx.strokeRect(96, 185, 852, 345)
+
+      // Mountain Ridges with hatching
+      ctx.strokeStyle = 'rgba(254, 240, 138, 0.7)'
+      ctx.lineWidth = 3
+      ctx.beginPath()
+      ctx.moveTo(96, 420)
+      ctx.lineTo(260, 270)
+      ctx.lineTo(440, 360)
+      ctx.lineTo(620, 240)
+      ctx.lineTo(790, 340)
+      ctx.lineTo(948, 280)
+      ctx.stroke()
+
+      // Atmospheric ridge shading
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.75)'
+      ctx.beginPath()
+      ctx.moveTo(96, 530)
+      ctx.lineTo(96, 420)
+      ctx.lineTo(260, 270)
+      ctx.lineTo(440, 360)
+      ctx.lineTo(620, 240)
+      ctx.lineTo(790, 340)
+      ctx.lineTo(948, 280)
+      ctx.lineTo(948, 530)
+      ctx.closePath()
+      ctx.fill()
+
+      // Pine tree silhouettes
+      for (let tx = 135; tx < 920; tx += 48) {
+        ctx.fillStyle = '#022c22'
+        ctx.beginPath()
+        ctx.moveTo(tx, 450)
+        ctx.lineTo(tx + 12, 515)
+        ctx.lineTo(tx - 12, 515)
+        ctx.closePath()
+        ctx.fill()
+      }
+
+      ctx.fillStyle = '#fef08a'
+      ctx.font = 'italic 600 24px Georgia, serif'
+      ctx.textAlign = 'center'
+      ctx.fillText('Study I. High Altitude Ridge & Timberline Silhouette', 522, 235)
+
+      // Bottom Two Sketch Boxes: Architectural Cross-Section + Tonal Still Life
+      ctx.textAlign = 'left'
+      ctx.fillStyle = '#f8f4eb'
+      ctx.fillRect(96, 560, 412, 380)
+      ctx.strokeStyle = '#475569'
+      ctx.lineWidth = 2.5
+      ctx.strokeRect(96, 560, 412, 380)
+
+      ctx.fillStyle = '#0f172a'
+      ctx.font = 'italic 700 24px Georgia, serif'
+      ctx.fillText('Study II. Architectural Section', 124, 604)
+
+      // Section drawing
+      ctx.strokeStyle = '#334155'
+      ctx.lineWidth = 2.5
+      ctx.strokeRect(132, 632, 340, 240)
+      ctx.strokeRect(175, 715, 120, 157)
+      ctx.strokeRect(335, 665, 110, 80)
+      ctx.beginPath()
+      ctx.moveTo(115, 632)
+      ctx.lineTo(302, 595)
+      ctx.lineTo(488, 632)
+      ctx.stroke()
+
+      ctx.fillStyle = '#64748b'
+      ctx.font = '500 18px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('• 1:50 Timber Truss Rafter Detail', 124, 905)
+
+      ctx.fillStyle = '#f8f4eb'
+      ctx.fillRect(536, 560, 412, 380)
+      ctx.strokeStyle = '#475569'
+      ctx.lineWidth = 2.5
+      ctx.strokeRect(536, 560, 412, 380)
+
+      ctx.fillStyle = '#0f172a'
+      ctx.font = 'italic 700 24px Georgia, serif'
+      ctx.fillText('Study III. Shaded Spheres & Drapery', 564, 604)
+
+      // Spheres with core shadow & reflected light
+      const sphereGrad = ctx.createRadialGradient(710, 715, 15, 742, 750, 70)
+      sphereGrad.addColorStop(0, '#ffffff')
+      sphereGrad.addColorStop(0.5, '#94a3b8')
+      sphereGrad.addColorStop(1, '#0f172a')
+      ctx.fillStyle = sphereGrad
+      ctx.beginPath()
+      ctx.arc(742, 750, 68, 0, Math.PI * 2)
+      ctx.fill()
+
+      // Cast shadow under sphere
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.45)'
+      ctx.beginPath()
+      ctx.ellipse(755, 832, 78, 18, 0, 0, Math.PI * 2)
+      ctx.fill()
+
+      ctx.fillStyle = '#64748b'
+      ctx.font = '500 18px "Plus Jakarta Sans", sans-serif'
+      ctx.fillText('• Cast Shadow & Ambient Occlusion Study', 564, 905)
     } else {
       // Back of flipping sketchbook sheet: Graphite anatomy & geometric studies
       ctx.strokeStyle = '#475569'
@@ -1061,7 +1016,7 @@ function useStudioArtworkTexture(variant) {
       ctx.closePath()
       ctx.fill()
     } else if (variant === 'machaan-theatre') {
-      // Crimson & gold theatrical spotlight poster ("MACHAAN — ASHOKA STAGE PLAY WINNER")
+      // Crimson & gold theatrical spotlight stage artwork
       const grad = ctx.createRadialGradient(256, 120, 20, 256, 280, 380)
       grad.addColorStop(0, '#fde047')
       grad.addColorStop(0.4, '#be123c')
@@ -1070,7 +1025,7 @@ function useStudioArtworkTexture(variant) {
       ctx.fillRect(0, 0, 512, 512)
 
       // Golden stage beam cone
-      ctx.fillStyle = 'rgba(254, 240, 138, 0.28)'
+      ctx.fillStyle = 'rgba(254, 240, 138, 0.32)'
       ctx.beginPath()
       ctx.moveTo(256, 24)
       ctx.lineTo(75, 490)
@@ -1078,22 +1033,29 @@ function useStudioArtworkTexture(variant) {
       ctx.closePath()
       ctx.fill()
 
-      ctx.fillStyle = '#fef08a'
-      ctx.font = '900 44px Georgia, serif'
-      ctx.textAlign = 'center'
-      ctx.fillText('MACHAAN', 256, 155)
-      ctx.font = 'italic 700 26px "Inter", sans-serif'
-      ctx.fillText('STAGE PLAY WINNER', 256, 198)
-
-      // Stylized theatre masks / silhouette
+      // Stylized theatre masks / dramatic silhouette
       ctx.strokeStyle = '#ffffff'
-      ctx.lineWidth = 10
+      ctx.lineWidth = 8
       ctx.beginPath()
-      ctx.arc(210, 310, 52, 0, Math.PI * 2)
+      ctx.arc(210, 290, 52, 0, Math.PI * 2)
       ctx.stroke()
       ctx.beginPath()
-      ctx.arc(305, 330, 52, 0, Math.PI * 2)
+      ctx.arc(305, 310, 52, 0, Math.PI * 2)
       ctx.stroke()
+
+      // Proscenium drapery folds
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.65)'
+      ctx.beginPath()
+      ctx.moveTo(0, 0)
+      ctx.quadraticCurveTo(120, 140, 0, 320)
+      ctx.closePath()
+      ctx.fill()
+
+      ctx.beginPath()
+      ctx.moveTo(512, 0)
+      ctx.quadraticCurveTo(392, 140, 512, 320)
+      ctx.closePath()
+      ctx.fill()
     } else {
       // Meraki botanical & geometric study
       ctx.fillStyle = '#fefce8'
@@ -1177,7 +1139,7 @@ function useOscilloscopeScreenTexture() {
 
     ctx.fillStyle = '#6ee7b7'
     ctx.font = '800 22px monospace'
-    ctx.fillText('CH1: 59.9dB GAIN  |  PM: 76.7°  |  180nm CMOS', 22, 34)
+    ctx.fillText('CH1: 1.20 Vpp  |  FREQ: 10.00 kHz  |  TIME: 50.0 µs/div', 22, 34)
 
     const tex = new THREE.CanvasTexture(canvas)
     tex.needsUpdate = true
@@ -1186,7 +1148,7 @@ function useOscilloscopeScreenTexture() {
 }
 
 /**
- * Generates a vibrant, modern 4K Smart TV screen texture for the Living Room TV console.
+ * Generates an ambient 4K scenic wallpaper screen for the Living Room TV console.
  */
 function useLivingRoomTVScreenTexture() {
   return useMemo(() => {
@@ -1195,62 +1157,71 @@ function useLivingRoomTVScreenTexture() {
     canvas.height = 360
     const ctx = canvas.getContext('2d')
 
-    const grad = ctx.createLinearGradient(0, 0, 640, 360)
-    grad.addColorStop(0, '#090d16')
-    grad.addColorStop(0.55, '#0f172a')
-    grad.addColorStop(1, '#1e3a8a')
-    ctx.fillStyle = grad
-    ctx.fillRect(0, 0, 640, 360)
+    // Ambient Golden Sunset Gradient (The Frame style)
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, 240)
+    skyGrad.addColorStop(0, '#0f172a')
+    skyGrad.addColorStop(0.35, '#1e293b')
+    skyGrad.addColorStop(0.7, '#ea580c')
+    skyGrad.addColorStop(1, '#fde047')
+    ctx.fillStyle = skyGrad
+    ctx.fillRect(0, 0, 640, 240)
 
-    // Subtle glowing wave backdrop
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)'
-    ctx.lineWidth = 4
-    for (let i = 0; i < 4; i++) {
+    // Glowing Golden Sun
+    ctx.fillStyle = 'rgba(254, 240, 138, 0.95)'
+    ctx.beginPath()
+    ctx.arc(380, 150, 42, 0, Math.PI * 2)
+    ctx.fill()
+
+    // Distant Mountain Silhouettes
+    ctx.fillStyle = '#431407'
+    ctx.beginPath()
+    ctx.moveTo(0, 210)
+    ctx.lineTo(120, 140)
+    ctx.lineTo(240, 190)
+    ctx.lineTo(360, 120)
+    ctx.lineTo(480, 175)
+    ctx.lineTo(640, 130)
+    ctx.lineTo(640, 240)
+    ctx.lineTo(0, 240)
+    ctx.fill()
+
+    // Near Ridge Silhouette
+    ctx.fillStyle = '#1c1917'
+    ctx.beginPath()
+    ctx.moveTo(0, 230)
+    ctx.lineTo(160, 180)
+    ctx.lineTo(320, 220)
+    ctx.lineTo(520, 170)
+    ctx.lineTo(640, 210)
+    ctx.lineTo(640, 240)
+    ctx.lineTo(0, 240)
+    ctx.fill()
+
+    // Lake Reflection
+    const waterGrad = ctx.createLinearGradient(0, 240, 0, 360)
+    waterGrad.addColorStop(0, '#78350f')
+    waterGrad.addColorStop(0.3, '#1c1917')
+    waterGrad.addColorStop(1, '#0c0a09')
+    ctx.fillStyle = waterGrad
+    ctx.fillRect(0, 240, 640, 120)
+
+    ctx.strokeStyle = 'rgba(253, 224, 71, 0.35)'
+    ctx.lineWidth = 1.5
+    for (let r = 0; r < 8; r++) {
       ctx.beginPath()
-      ctx.moveTo(0, 220 + i * 26)
-      ctx.bezierCurveTo(200, 160 + i * 18, 440, 290 - i * 14, 640, 200 + i * 22)
+      ctx.moveTo(340 - r * 18, 245 + r * 14)
+      ctx.lineTo(420 + r * 18, 245 + r * 14)
       ctx.stroke()
     }
 
-    // Top bar
-    ctx.fillStyle = '#38bdf8'
-    ctx.font = '800 18px "Inter", sans-serif'
-    ctx.fillText('● LIVE SHOWCASE   |   AKANKSHA TV', 36, 44)
-
-    // Main title
+    // Minimalist Clock & Weather in Top-Left Corner
     ctx.fillStyle = '#ffffff'
-    ctx.font = '900 36px "Inter", sans-serif'
-    ctx.fillText('SARKARI SAHAYAK AI & VLSI', 36, 108)
+    ctx.font = '600 28px "Inter", sans-serif'
+    ctx.fillText('10:24 AM', 32, 48)
 
     ctx.fillStyle = '#fde047'
-    ctx.font = '700 22px "Inter", sans-serif'
-    ctx.fillText('Multilingual Civic Platform • 60% Faster UI • 59.9 dB CMOS', 36, 146)
-
-    // Feature cards on screen
-    const cards = [
-      { title: 'REACT + THREE.JS', sub: 'Interactive 3D & Web', col: '#0284c7' },
-      { title: 'HINDI & DIALECT AI', sub: 'Voice + NLP Assistant', col: '#059669' },
-      { title: 'RISC-V & SILICON', sub: '180nm Analog & CPU', col: '#d97706' },
-    ]
-    cards.forEach((c, idx) => {
-      const cx = 36 + idx * 194
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.82)'
-      ctx.strokeStyle = c.col
-      ctx.lineWidth = 3
-      ctx.fillRect(cx, 188, 178, 126)
-      ctx.strokeRect(cx, 188, 178, 126)
-
-      ctx.fillStyle = c.col
-      ctx.fillRect(cx, 188, 178, 8)
-
-      ctx.fillStyle = '#f8fafc'
-      ctx.font = '800 17px "Inter", sans-serif'
-      ctx.fillText(c.title, cx + 14, 235)
-
-      ctx.fillStyle = '#94a3b8'
-      ctx.font = '600 15px "Inter", sans-serif'
-      ctx.fillText(c.sub, cx + 14, 268)
-    })
+    ctx.font = '500 16px "Inter", sans-serif'
+    ctx.fillText('72° F  •  Sunny  •  Ambient Display', 32, 74)
 
     const tex = new THREE.CanvasTexture(canvas)
     tex.anisotropy = 4
@@ -1260,78 +1231,10 @@ function useLivingRoomTVScreenTexture() {
 }
 
 /**
- * Generates a custom wooden/cream "WELCOME" sign texture for the front door.
+ * Clean, borderless 3D floating typography plane (disabled to keep 3D asset pure).
  */
-export function useWelcomeSignTexture() {
-  return useMemo(() => {
-    const canvas = document.createElement('canvas')
-    canvas.width = 512
-    canvas.height = 256
-    const ctx = canvas.getContext('2d')
-
-    ctx.fillStyle = '#fef3c7'
-    ctx.fillRect(0, 0, 512, 256)
-
-    ctx.strokeStyle = '#92400e'
-    ctx.lineWidth = 14
-    ctx.strokeRect(14, 14, 484, 228)
-
-    ctx.strokeStyle = '#d97706'
-    ctx.lineWidth = 4
-    ctx.strokeRect(28, 28, 456, 200)
-
-    ctx.fillStyle = '#78350f'
-    ctx.font = '900 72px Georgia, "Times New Roman", serif'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText('WELCOME', 256, 112)
-
-    ctx.fillStyle = '#b45309'
-    ctx.font = 'italic 700 28px "Inter", sans-serif'
-    ctx.fillText('✦ AKANKSHA’S HOME ✦', 256, 178)
-
-    const tex = new THREE.CanvasTexture(canvas)
-    tex.anisotropy = 4
-    tex.needsUpdate = true
-    return tex
-  }, [])
-}
-
-/**
- * Clean, borderless 3D floating typography plane.
- */
-function FloatingLabel3D({
-  position,
-  rotation = [0, 0, 0],
-  size = [0.46, 0.17],
-  lines,
-  color = '#ffffff',
-  subColor = '#fde68a',
-  fontSize = 82,
-  subFontSize = 44,
-  bobPhase = 0,
-}) {
-  const meshRef = useRef(null)
-  const tex = useFloatingTextTexture(lines, {
-    color,
-    subColor,
-    fontSize,
-    subFontSize,
-  })
-
-  useFrame(({ clock }) => {
-    if (meshRef.current) {
-      meshRef.current.position.y =
-        position[1] + Math.sin(clock.getElapsedTime() * 2.2 + bobPhase) * 0.006
-    }
-  })
-
-  return (
-    <mesh ref={meshRef} position={position} rotation={rotation}>
-      <planeGeometry args={size} />
-      <meshBasicMaterial map={tex} transparent depthWrite={false} side={THREE.DoubleSide} />
-    </mesh>
-  )
+function FloatingLabel3D() {
+  return null
 }
 
 /**
@@ -2291,27 +2194,6 @@ export function DeepBlueTiledRoof() {
 export function KitchenSkillsShowcase() {
   const promptMagnetTex = useMagnetFaceTexture('prompt-ai')
   const nlpMagnetTex = useMagnetFaceTexture('nlp-ai')
-  const ovenBadgeTex = useMagnetFaceTexture('oven-react')
-
-  const sparkleStarRef = useRef(null)
-  const nlpNodesRef = useRef(null)
-  const reactAtomRef = useRef(null)
-
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime()
-    if (sparkleStarRef.current) {
-      sparkleStarRef.current.rotation.z = Math.sin(t * 2.2) * 0.18
-      const s = 1 + Math.sin(t * 3.5) * 0.08
-      sparkleStarRef.current.scale.set(s, s, 1)
-    }
-    if (nlpNodesRef.current) {
-      nlpNodesRef.current.rotation.z = Math.sin(t * 1.8) * 0.12
-    }
-    if (reactAtomRef.current) {
-      reactAtomRef.current.rotation.y = t * 1.15
-      reactAtomRef.current.rotation.z = Math.sin(t * 1.6) * 0.15
-    }
-  })
 
   return (
     <group>
@@ -2391,167 +2273,74 @@ export function KitchenSkillsShowcase() {
         </group>
       </group>
 
-      {/* --- AI FRIDGE MAGNET 1 (Screen Left): AGENTIC AI & PROMPT ENGINEERING --- */}
+      {/* --- DECORATIVE FRIDGE MAGNET 1: Coastal Ceramic Sun Badge --- */}
       <group position={[-1.55, 1.36, 4.272]} rotation={[0, Math.PI, 0]}>
         <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.004]} castShadow>
           <cylinderGeometry args={[0.092, 0.096, 0.016, 32]} />
-          <meshStandardMaterial color="#0f172a" metalness={0.6} roughness={0.3} />
+          <meshStandardMaterial color="#9a3412" roughness={0.4} />
         </mesh>
         <mesh position={[0, 0, 0.012]}>
-          <torusGeometry args={[0.091, 0.007, 16, 36]} />
-          <meshStandardMaterial
-            color="#38bdf8"
-            emissive="#0284c7"
-            emissiveIntensity={0.85}
-            metalness={0.4}
-            roughness={0.2}
-          />
-        </mesh>
-        <mesh position={[0, 0, 0.014]}>
           <circleGeometry args={[0.088, 32]} />
           <meshBasicMaterial map={promptMagnetTex} />
         </mesh>
-        <group ref={sparkleStarRef} position={[0.028, 0.024, 0.022]}>
-          <mesh>
-            <octahedronGeometry args={[0.022, 0]} />
-            <meshStandardMaterial
-              color="#fde047"
-              emissive="#f59e0b"
-              emissiveIntensity={0.9}
-              metalness={0.3}
-              roughness={0.2}
-            />
-          </mesh>
-          <mesh rotation={[0, 0, Math.PI / 4]} scale={[0.68, 0.68, 0.68]}>
-            <octahedronGeometry args={[0.022, 0]} />
-            <meshStandardMaterial
-              color="#38bdf8"
-              emissive="#0ea5e9"
-              emissiveIntensity={0.9}
-            />
-          </mesh>
-        </group>
       </group>
 
-      <FloatingLabel3D
-        position={[-1.54, 1.56, 4.23]}
-        rotation={[0, Math.PI, 0]}
-        size={[0.38, 0.15]}
-        color="#ffffff"
-        subColor="#7dd3fc"
-        fontSize={72}
-        subFontSize={42}
-        bobPhase={0}
-        lines={[
-          'PROMPT ENGINEERING',
-          { text: 'LLM AGENTS & RAG AI', sub: true },
-        ]}
-      />
-
-      {/* --- AI FRIDGE MAGNET 2 (Screen Right): MULTILINGUAL NLP & VOICE AI --- */}
+      {/* --- DECORATIVE FRIDGE MAGNET 2: Botanical Sage Fern Badge --- */}
       <group position={[-1.94, 1.36, 4.272]} rotation={[0, Math.PI, 0]}>
         <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0.004]} castShadow>
-          <cylinderGeometry args={[0.092, 0.096, 0.016, 6]} />
-          <meshStandardMaterial color="#064e3b" metalness={0.55} roughness={0.3} />
+          <cylinderGeometry args={[0.092, 0.096, 0.016, 32]} />
+          <meshStandardMaterial color="#064e3b" roughness={0.4} />
         </mesh>
         <mesh position={[0, 0, 0.012]}>
-          <torusGeometry args={[0.091, 0.007, 16, 6]} />
-          <meshStandardMaterial
-            color="#34d399"
-            emissive="#059669"
-            emissiveIntensity={0.85}
-            metalness={0.4}
-            roughness={0.2}
-          />
-        </mesh>
-        <mesh position={[0, 0, 0.014]}>
           <circleGeometry args={[0.086, 32]} />
           <meshBasicMaterial map={nlpMagnetTex} />
         </mesh>
-        <group ref={nlpNodesRef} position={[0, -0.025, 0.02]}>
-          {[-0.028, 0, 0.028].map((nx, nIdx) => (
-            <mesh key={`node-${nIdx}`} position={[nx, nIdx === 1 ? 0.012 : 0, 0]}>
-              <sphereGeometry args={[0.009, 12, 12]} />
-              <meshStandardMaterial
-                color={nIdx === 1 ? '#fde047' : '#34d399'}
-                emissive={nIdx === 1 ? '#f59e0b' : '#10b981'}
-                emissiveIntensity={0.9}
-              />
-            </mesh>
-          ))}
-        </group>
       </group>
 
-      <FloatingLabel3D
-        position={[-1.95, 1.56, 4.23]}
-        rotation={[0, Math.PI, 0]}
-        size={[0.38, 0.15]}
-        color="#ffffff"
-        subColor="#6ee7b7"
-        fontSize={72}
-        subFontSize={42}
-        bobPhase={1.6}
-        lines={[
-          'MULTILINGUAL NLP',
-          { text: 'HINDI & DIALECT AI', sub: true },
-        ]}
-      />
-
-      {/* --- OPPOSITE SIDE OF KITCHEN: THE OVEN --- */}
+      {/* --- KITCHEN RANGE & OVEN WITH COPPER TEA KETTLE --- */}
       <group position={[-1.815, 0, 1.608]} rotation={[0, 0, 0]}>
-        <group position={[0, 0.56, 0.014]}>
-          <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.105, 0.11, 0.014, 32]} />
-            <meshStandardMaterial color="#0f172a" metalness={0.6} roughness={0.3} />
-          </mesh>
-          <mesh position={[0, 0, 0.009]}>
-            <circleGeometry args={[0.1, 32]} />
-            <meshBasicMaterial map={ovenBadgeTex} />
-          </mesh>
-        </group>
-
+        {/* Cast Iron Cooktop Burner Grate */}
         <mesh position={[0, 0.915, -0.06]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.11, 0.13, 0.03, 24]} />
-          <meshStandardMaterial color="#1e293b" metalness={0.7} roughness={0.25} />
+          <boxGeometry args={[0.48, 0.018, 0.44]} />
+          <meshStandardMaterial color="#1e293b" roughness={0.8} />
+        </mesh>
+        <mesh position={[0, 0.925, -0.06]}>
+          <ringGeometry args={[0.07, 0.11, 24]} />
+          <meshStandardMaterial color="#0f172a" roughness={0.85} />
         </mesh>
 
-        <group ref={reactAtomRef} position={[0, 1.01, -0.06]}>
-          <mesh>
-            <sphereGeometry args={[0.024, 16, 16]} />
-            <meshStandardMaterial
-              color="#fde047"
-              emissive="#f59e0b"
-              emissiveIntensity={1.1}
-            />
+        {/* Realistic Whistling Copper & Wood Tea Kettle on the Cooktop */}
+        <group position={[0, 0.935, -0.06]}>
+          {/* Kettle Body */}
+          <mesh position={[0, 0.09, 0]} castShadow>
+            <cylinderGeometry args={[0.095, 0.125, 0.16, 24]} />
+            <meshStandardMaterial color="#ea580c" metalness={0.85} roughness={0.22} />
           </mesh>
-          {[0, Math.PI / 3, (2 * Math.PI) / 3].map((ang, i) => (
-            <mesh key={`orbit-${i}`} rotation={[0.35, 0, ang]} scale={[1.35, 0.58, 1]}>
-              <torusGeometry args={[0.068, 0.006, 12, 36]} />
-              <meshStandardMaterial
-                color="#38bdf8"
-                emissive="#0ea5e9"
-                emissiveIntensity={0.95}
-                metalness={0.3}
-                roughness={0.2}
-              />
-            </mesh>
-          ))}
+          {/* Kettle Domed Lid */}
+          <mesh position={[0, 0.18, 0]} castShadow>
+            <sphereGeometry args={[0.065, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+            <meshStandardMaterial color="#ea580c" metalness={0.85} roughness={0.22} />
+          </mesh>
+          {/* Lid Knob (Walnut Wood) */}
+          <mesh position={[0, 0.22, 0]} castShadow>
+            <sphereGeometry args={[0.016, 12, 12]} />
+            <meshStandardMaterial color="#78350f" roughness={0.5} />
+          </mesh>
+          {/* Angled Kettle Spout with Whistle Cap */}
+          <mesh position={[0.10, 0.11, 0]} rotation={[0, 0, -0.58]} castShadow>
+            <cylinderGeometry args={[0.014, 0.022, 0.10, 12]} />
+            <meshStandardMaterial color="#ea580c" metalness={0.85} roughness={0.22} />
+          </mesh>
+          <mesh position={[0.138, 0.155, 0]} castShadow>
+            <cylinderGeometry args={[0.016, 0.016, 0.025, 12]} />
+            <meshStandardMaterial color="#cbd5e1" metalness={0.9} roughness={0.15} />
+          </mesh>
+          {/* Ergonomic Arch Handle (Oak / Walnut) */}
+          <mesh position={[0, 0.20, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
+            <torusGeometry args={[0.088, 0.012, 12, 24, Math.PI]} />
+            <meshStandardMaterial color="#78350f" roughness={0.45} />
+          </mesh>
         </group>
-
-        <FloatingLabel3D
-          position={[0, 1.21, 0.04]}
-          rotation={[0, 0, 0]}
-          size={[0.64, 0.21]}
-          color="#ffffff"
-          subColor="#fde68a"
-          fontSize={76}
-          subFontSize={42}
-          bobPhase={0.8}
-          lines={[
-            'REACT & THREE.JS',
-            { text: 'FULL-STACK WEB • 60% FASTER UI', sub: true },
-          ]}
-        />
       </group>
     </group>
   )
@@ -2571,32 +2360,6 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
   const page2InsideTex = useNewspaperPageTexture('page2-inside')
   const tvScreenTex = useLivingRoomTVScreenTexture()
 
-  const skill1BadgeTex = useFloatingTextTexture(
-    [
-      'VLSI & CMOS IC DESIGN',
-      { text: '59.9 dB OP-AMP • CADENCE VIRTUOSO', sub: true },
-    ],
-    {
-      color: '#ffffff',
-      subColor: '#fde047',
-      fontSize: 70,
-      subFontSize: 40,
-    }
-  )
-
-  const skill2BadgeTex = useFloatingTextTexture(
-    [
-      'EMBEDDED C/C++ & RISC-V',
-      { text: '5-STAGE PIPELINE • BIOMETRIC FIRMWARE', sub: true },
-    ],
-    {
-      color: '#ffffff',
-      subColor: '#6ee7b7',
-      fontSize: 68,
-      subFontSize: 38,
-    }
-  )
-
   const lockedSignTex = useFloatingTextTexture(
     [
       'PRIMARY BEDROOM',
@@ -2611,8 +2374,6 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
   )
 
   const pageFlipHingeRef = useRef(null)
-  const badge1Ref = useRef(null)
-  const badge2Ref = useRef(null)
   const coffeeSteamRef = useRef(null)
 
   useFrame(({ clock }, delta) => {
@@ -2630,15 +2391,6 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
         3.2,
         delta
       )
-    }
-
-    if (badge1Ref.current && badge2Ref.current) {
-      const p1Scale = 1 - smoothstep(0.35, 0.55, flipProgress)
-      const p2Scale = smoothstep(0.45, 0.68, flipProgress)
-      badge1Ref.current.scale.set(p1Scale, p1Scale, p1Scale)
-      badge1Ref.current.visible = p1Scale > 0.01
-      badge2Ref.current.scale.set(p2Scale, p2Scale, p2Scale)
-      badge2Ref.current.visible = p2Scale > 0.01
     }
 
     if (coffeeSteamRef.current) {
@@ -2904,28 +2656,6 @@ export function LivingRoomSkillsShowcase({ scrollRef }) {
             <mesh position={[0.19, -0.0015, 0]} rotation={[Math.PI / 2, 0, Math.PI]}>
               <planeGeometry args={[0.38, 0.31]} />
               <meshBasicMaterial map={page1BackTex} />
-            </mesh>
-          </group>
-
-          {/* Borderless 3D Skill Badge Header above Newspaper */}
-          <group position={[0, 0.11, -0.155]} rotation={[-0.52, 0, 0]}>
-            <mesh ref={badge1Ref}>
-              <planeGeometry args={[0.44, 0.14]} />
-              <meshBasicMaterial
-                map={skill1BadgeTex}
-                transparent
-                depthWrite={false}
-                side={THREE.DoubleSide}
-              />
-            </mesh>
-            <mesh ref={badge2Ref} visible={false} scale={[0, 0, 0]}>
-              <planeGeometry args={[0.44, 0.14]} />
-              <meshBasicMaterial
-                map={skill2BadgeTex}
-                transparent
-                depthWrite={false}
-                side={THREE.DoubleSide}
-              />
             </mesh>
           </group>
         </group>
@@ -3548,22 +3278,6 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
             <meshStandardMaterial color="#38bdf8" emissive="#0284c7" emissiveIntensity={1.2} />
           </mesh>
         </group>
-
-        {/* Clean Borderless 3D Wall Typography above the Silicon Lab Bench */}
-        <FloatingLabel3D
-          position={[0, 1.48, -0.25]}
-          rotation={[0, 0, 0]}
-          size={[1.45, 0.42]}
-          color="#ffffff"
-          subColor="#fde047"
-          fontSize={76}
-          subFontSize={40}
-          bobPhase={0.4}
-          lines={[
-            'SILICON & HARDWARE LAB',
-            { text: '59.9 dB CMOS OP-AMP • 21.3 µm² LATCH • BIOMETRIC PCB', sub: true },
-          ]}
-        />
       </group>
 
       {/* =====================================================================
@@ -3885,7 +3599,7 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
           </group>
         </group>
 
-        {/* Framed Paintings leaning & mounted in the Attic Gallery (Machaan Theatre & Meraki Botanical) */}
+        {/* Framed Paintings leaning & mounted in the Attic Gallery (Theatrical Stage & Botanical Canvas) */}
         <group position={[-1.32, 0.44, 2.75]} rotation={[-0.1, 0.72, 0.06]}>
           <mesh castShadow>
             <boxGeometry args={[0.54, 0.54, 0.03]} />
@@ -3896,22 +3610,6 @@ export function EngineerAndArtistStudioShowcase({ scrollRef }) {
             <meshStandardMaterial map={machaanArtTex} roughness={0.38} />
           </mesh>
         </group>
-
-        {/* Clean Borderless 3D Floating Typography in the Attic Art Studio */}
-        <FloatingLabel3D
-          position={[0.08, 0.94, 1.38]}
-          rotation={[0, 0, 0]}
-          size={[1.38, 0.38]}
-          color="#ffffff"
-          subColor="#fde047"
-          fontSize={74}
-          subFontSize={38}
-          bobPhase={1.2}
-          lines={[
-            'ATTIC STUDY & ART STUDIO',
-            { text: 'WORKSTATION • MERAKI FINE ART • MACHAAN STAGECRAFT', sub: true },
-          ]}
-        />
       </group>
     </group>
   )

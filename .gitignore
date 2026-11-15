@@ -17,3 +17,5 @@ candidate_info.json
 target_companies.txt
 output/
 semiconductor_excel_project/
+__pycache__/
+*.pyc
